@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Database Viewer</title>
+    <script>
+        async function fetchData() {
+            const response = await fetch("http://127.0.0.1:5000/data");
+            const data = await response.json();
+            
+            let table = "<table border='1'><tr>";
+            Object.keys(data[0]).forEach(key => {
+                table += `<th>${key}</th>`;
+            });
+            table += "</tr>";
+            
+            data.forEach(row => {
+                table += "<tr>";
+                Object.values(row).forEach(value => {
+                    table += `<td>${value}</td>`;
+                });
+                table += "</tr>";
+            });
+            
+            table += "</table>";
+            document.getElementById("output").innerHTML = table;
+        }
+    </script>
+</head>
+<body>
+    <h2>Database Data</h2>
+    <button onclick="fetchData()">Load Data</button>
+    <div id="output"></div>
+</body>
+</html>

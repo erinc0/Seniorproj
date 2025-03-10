@@ -1,30 +1,28 @@
-<!--reference https://www.istockphoto.com/photos/modern-factory!-->
+<!-- https://www.istockphoto.com/photos/modern-factory!-->
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <title>Welcome</title>
-  <link rel="stylesheet" href="style3.css">
+	<link rel="stylesheet" href="{{ url_for('static', filename='style3.css') }}">
   <style>
     h2{
       font-size: 60px;
       margin: 0;
     }
-
   </style>
 </head>
 <body>
 
 
 <div class = "topnav">
-<a href="contactform.html" >Contact us</a>
-
-  <a href="signup.html" style="float:right" >Sign up</a>
-  <a href="login.html" style="float: right"> Sign in </a>
+  <a href="{{ url_for('contactus') }}" >Contact us</a>
+  <a href="signup.html" style="float:right" >Sign up</a> <!-- NEED TO MAKE AND FIX-->
+  <a href="{{ url_for('login') }}" style="float: right"> Sign in </a>
 </div>
 
   <div class = "text-block">
-     <img src="estation1.png" alt="eStation Logo" width="400">
+     <img src="{{ url_for('static', filename='estation1.png') }}" alt="eStation Logo" width="400">
     <p style="margin: 0">supply parts made simple.</p>
   </div>
 

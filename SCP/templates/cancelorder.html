@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <title>Recent Orders</title>
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
 <header>
@@ -17,7 +17,7 @@
 
 <script>
     async function loadOrders() {
-        const buyerID = 2; // testing the buyer id you know
+        const buyerID = {{ session['id'] }}; // testing the buyer id you know
         const response = await fetch(`http://127.0.0.1:5000/history?search=${buyerID}`);
         const data = await response.json();
 

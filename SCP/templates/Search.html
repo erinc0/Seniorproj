@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Search</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header>
+<img src="estation.png" alt="eStation Logo" width="150">
+</header>
+<h1>Search</h1>
+<form action="http://127.0.0.1:5000/search" method="get">
+    <input type="text" name="search" id="search" required><br><br>
+    <button type="submit">Search</button>
+</form>
+
+<form>
+<label for="minval"> Minimum price
+    <input type ="number" name ="minval" id="minval">
+</label>
+<label for="maxval"> Maximum price
+    <input type ="number" name ="maxval" id="maxval">
+</label>
+<button type = "button" onclick="userfilter()"> Filter </button>
+<div id="results"></div>
+
+</form>
+
+<script>
+    function userfilter() {
+
+        let minval = document.getElementById("minval").value;
+        let maxval = document.getElementById("maxval").value;
+        let search = document.getElementById("search").value;
+        fetch(`http://127.0.0.1:5000/filterp?minval=${minval}&maxval=${maxval}&search=${search}`)
+    .then(response => response.json())
+            .then(data=>{
+                let resultsDiv = document.getElementById("results");
+                resultsDiv.innerHTML = "";
+                data.forEach(product=> {
+
+                    resultsDiv.innerHTML += `<p>${product.ProdName}- $${product.ProdPrice}</p>`;
+                });
+            });
+    }
+
+</script>
+<p> <a href= "other.html"> Back to Buyer Homepage </a></p>
+<p> <a href= "VendorMainpage.html"> Back to Vendor Homepage </a></p>
+
+</body>
+</html>

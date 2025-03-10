@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='allstyle.css') }}">
+    <style >
+        img{
+            margin-top: 15px;
+        }
+    </style>
+</head>
+<body>
+
+<div class = "topnav">
+    <img src="../static/estation1.png" alt="estation1.png"
+         style="width: 100px;height:60px">
+    <a href="{{ url_for('contactus') }}" >Contact us</a>
+    <a href="signup.html" style="float:right" >Sign up</a>
+    <a href="{{ url_for('homepage') }}" style="float: right"> Home </a>
+</div>
+<header>
+    Sign-in
+</header>
+<form action="{{ url_for('login') }}" method="post">
+    <label for="accountType">Select Account Type:</label>
+    <select id="accountType" name="accountType">
+    <option value="Buyer">Buyer</option>
+    <option value="Vendor">Vendor</option>
+	</select><br><br>
+    <label for="username">
+	username
+	</label><input type="username" name="username" id="username" ><br><br>
+    <label for="password">
+        password
+    </label><input type="password" name="password" id="password" ><br><br>
+     <input type="submit" class="btn" value="Sign In"></br></br>
+</form>
+
+</body>
+</html>
