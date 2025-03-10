@@ -2,15 +2,68 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Report</title>
+    <title>Recent Orders</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
 <header>
     Estation
 </header>
-<h1>
-    Recent Orders
-</h1>
+<h1>Recent Orders</h1>
+
+<!-- Order List -->
+<div id="order-list">
+    <p>Loading orders...</p>
+</div>
+
+<script>
+    // Function to fetch and display recent orders
+    async function loadOrders() {
+        const buyerID = 1; // Set a test BuyerID
+const response = await fetch(`http://127.0.0.1:5000/history?search=${buyerID}`);
+
+        const data = await response.json();
+
+        if (data.length === 0) {
+            document.getElementById("order-list").innerHTML = "<p>No recent orders found.</p>";
+            return;
+        }
+
+        let table = "<table border='1'><tr><th>Order ID</th><th>Buyer ID</th><th>Date</th><th>Status</th><th>Amount</th><th>Action</th></tr>";
+
+        data.forEach(order => {
+            table += `<tr>
+                        <td>${order.OrderID}</td>
+                        <td>${order.BuyerID}</td>
+                        <td>${order.Date}</td>
+                        <td>${order.Status}</td>
+                        <td>${order.Amount}</td>
+                        <td><button onclick="deleteOrder(${order.OrderID})">Delete</button></td>
+                      </tr>`;
+        });
+
+        table += "</table>";
+        document.getElementById("order-list").innerHTML = table;
+    }
+
+    // Function to delete an order
+    async function deleteOrder(OrderID) {
+        const response = await fetch(`http://127.0.0.1:5000/cancel/${OrderID}`, {
+            method: 'DELETE'
+        });
+        const result = await response.json();
+
+        if (result.success) {
+            alert("Order deleted successfully");
+            loadOrders(); // Refresh orders after deletion
+        } else {
+            alert("Error: " + result.error);
+        }
+    }
+
+    // Load orders when the page loads
+    window.onload = loadOrders;
+</script>
+
 </body>
 </html>

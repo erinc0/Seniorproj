@@ -110,17 +110,24 @@ def filter():
     conn.close()
     return jsonify(data)
 
-@app.route('/cancel', methods=['DELETE'])
+@app.route('/cancel/<int:OrderID>', methods=['DELETE'])
 def cancel(OrderID):
     conn = connect_db()
     cursor = conn.cursor()
-    cursor.execute("DELETE FROM 'OrderItems' WHERE OrderID=?", (OrderID))
-    rows = cursor.fetchall()
-    data=[dict(row) for row in rows]
-    conn.close()
-    conn.commit()
-    conn.close()
-    return jsonify({'success' :True}), 200
+
+    try:
+        cursor.execute("DELETE FROM OrderItems WHERE OrderID=?", (OrderID,))
+        cursor.execute("DELETE FROM 'Order' WHERE OrderID=?", (OrderID,))
+
+        conn.commit()
+        return jsonify({'success': True}), 200
+
+    except sqlite3.Error as e:
+        return jsonify({'error': str(e)}), 500
+
+    finally:
+        conn.close()
+
 
 
 if __name__ == '__main__':
