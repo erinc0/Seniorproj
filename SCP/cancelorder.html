@@ -11,17 +11,14 @@
 </header>
 <h1>Recent Orders</h1>
 
-<!-- Order List -->
 <div id="order-list">
     <p>Loading orders...</p>
 </div>
 
 <script>
-    // Function to fetch and display recent orders
     async function loadOrders() {
-        const buyerID = 1; // Set a test BuyerID
-const response = await fetch(`http://127.0.0.1:5000/history?search=${buyerID}`);
-
+        const buyerID = 2; // testing the buyer id you know
+        const response = await fetch(`http://127.0.0.1:5000/history?search=${buyerID}`);
         const data = await response.json();
 
         if (data.length === 0) {
@@ -37,16 +34,21 @@ const response = await fetch(`http://127.0.0.1:5000/history?search=${buyerID}`);
                         <td>${order.BuyerID}</td>
                         <td>${order.Date}</td>
                         <td>${order.Status}</td>
-                        <td>${order.Amount}</td>
-                        <td><button onclick="deleteOrder(${order.OrderID})">Delete</button></td>
-                      </tr>`;
+                        <td>${order.Amount}</td>`;
+
+            if (order.Status === "Pending") {
+                table += `<td><button onclick="deleteOrder(${order.OrderID})">Cancel</button></td>`;
+            } else {
+                table += `<td><button onclick="alert('Sorry, this order cannot be cancelled due to its status being ${order.Status}. Please contact the help desk.')" disabled>Cannot Cancel</button></td>`;
+            }
+
+            table += "</tr>";
         });
 
         table += "</table>";
         document.getElementById("order-list").innerHTML = table;
     }
 
-    // Function to delete an order
     async function deleteOrder(OrderID) {
         const response = await fetch(`http://127.0.0.1:5000/cancel/${OrderID}`, {
             method: 'DELETE'
@@ -55,13 +57,12 @@ const response = await fetch(`http://127.0.0.1:5000/history?search=${buyerID}`);
 
         if (result.success) {
             alert("Order deleted successfully");
-            loadOrders(); // Refresh orders after deletion
+            loadOrders();
         } else {
             alert("Error: " + result.error);
         }
     }
 
-    // Load orders when the page loads
     window.onload = loadOrders;
 </script>
 
