@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
     <title>VendorAdd</title>
     <style> h1, main{
 			textarea {
@@ -15,11 +15,11 @@
         }  }</style>
 </head>
 <body>
-<img src="estation.png" alt="eStation Logo" width="150">
+<img src="{{ url_for('static', filename='estation1.png') }}" alt="eStation Logo" width="150">
 <h1>New Listing</h1>
 <main>
     <hr>
-    <form action="http://127.0.0.1:5000/newlisting" method="post">
+    <form "{{ url_for('VendorAdd') }}" method="post">
         <label>Name:<br>
 		<input type="text" name="name" required><br><br>
         </label>
@@ -36,7 +36,7 @@
 	</form>  <!-- reference: https://www.w3schools.com/howto/howto_html_file_upload_button.asp-->
     
 </main>
-<p> <a href= "VendorMainpage.html"> Back to Home </a></p>
+<p> <a href="{{ url_for('Bhomepage') }}"> Back to Vendor Homepage </a></p>
 </body>
 </html>
 

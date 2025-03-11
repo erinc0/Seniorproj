@@ -61,20 +61,24 @@ def login():
             if account:
                 session['loggedin'] = True
                 session['id'] = account['BuyerID']
+                session['usertype'] = 'Buyer'
                 session['username'] = account['BuyerName']
                 msg = 'Logged in successfully !'
                 return redirect(url_for('Bhomepage'))
             else:
                 msg = 'Incorrect username / password !'
         else:
+            print("boser3")
             cursor.execute('SELECT * FROM Supplier WHERE SupplierEmail = ? AND SupplierPasscode = ?', (username, password, ))
             account = cursor.fetchone()
             if account:
+                print("boser4")
                 session['loggedin'] = True
-                session['id'] = account['id']
-                session['username'] = account['username']
+                session['id'] = account['SupplierID']
+                session['usertype'] = 'Vendor'
+                session['username'] = account['SupplierName']
                 msg = 'Logged in successfully !'
-                return render_template('VendorMainpage.html', msg = msg)
+                return redirect(url_for('Vhomepage'))
             else:
                 msg = 'Incorrect username / password !'
     return render_template('login.html', msg = msg)
@@ -88,6 +92,10 @@ def logout():
 @app.route('/Bhomepage')
 def Bhomepage():
     return render_template('BuyerMainpage.html', username=session['username'])
+
+@app.route('/Vhomepage')
+def Vhomepage():
+    return render_template('VendorMainpage.html', username=session['username'])
 
 @app.route('/test', methods=['GET']) #used for test page
 def test():
@@ -115,30 +123,39 @@ def history():
     else:
         return render_template('cancelorder.html')
             
-@app.route('/newlisting', methods=['POST']) # used for create new listing
-def all_i_feel_is_sad():
-    print("here1")
-    conn = connect_db()
-    cursor = conn.cursor()            
-    supplier = '1'
-    name = request.form.get('name')
-    price = request.form.get('price')
-    quant = request.form.get('quantity')
-    desc = request.form.get('description')
-    print(desc)
-    try:
-        cursor.execute("INSERT INTO Product (SupplierID, ProdName, ProdPrice, ProdQuantity, ProdDesc) VALUES (?, ?, ?, ?, ?)", 
-         (supplier, name, price, quant, desc))
-        conn.commit()
-        conn.close()
-        return jsonify({'success': 'Product added successfully'}), 201
-    except sqlite3.Error as e:
-        return jsonify({'error': str(e)}), 500
+@app.route('/VendorAdd', methods=['GET','POST']) # used for create new listing
+def VendorAdd():
+    if request.method == 'POST':
+        print("here1")
+        conn = connect_db()
+        cursor = conn.cursor()            
+        supplier = session['id']
+        name = request.form.get('name')
+        price = request.form.get('price')
+        quant = request.form.get('quantity')
+        desc = request.form.get('description')
+        print(desc)
+        try:
+            cursor.execute("INSERT INTO Product (SupplierID, ProdName, ProdPrice, ProdQuantity, ProdDesc) VALUES (?, ?, ?, ?, ?)", 
+             (supplier, name, price, quant, desc))
+            conn.commit()
+            conn.close()
+            return jsonify({'success': 'Product added successfully'}), 201
+        except sqlite3.Error as e:
+            conn.close()
+            return jsonify({'error': str(e)}), 500
+    else:
+        return render_template('VendorAdd.html', username=session['username'])
 
 @app.route('/search') #used for search page
 def search():
     print("boser")
     return render_template('Search.html', username=session['username'])
+    
+@app.route('/Vsearch') #used for search page    
+def Vsearch():
+    print("boser")
+    return render_template('VSearch.html', username=session['username'])
 
 @app.route('/searchS', methods=['GET']) #used for search feature Except it isnt working 
 def searchS():

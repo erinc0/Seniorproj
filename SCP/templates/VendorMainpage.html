@@ -3,30 +3,23 @@
 <head>
     <meta charset="UTF-8">
     <title>Title</title>
-    <link rel="stylesheet" href="style.css">
-
-    <style> h1, h2 {
-        text-align: center;
-        font-size: 40px;
-        padding-top: initial;
-        padding-bottom: initial;
-    }</style>
-    <style> h4, h5, h6, h7 {
-        font-size: 20px;
-    }</style>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
-<body style="background-color: slategray">
+<body>
 <header>
 
     <h1 style="color: black"> Vendor Homepage</h1>
-    <img src = "estation.png" alt="logo"
+    <img src="{{ url_for('static', filename='estation1.png') }}" alt="logo"
          style="width: 200px;height:100px">
 </header>
 <main>
-    <hr>
-    <h4> <a href= "VendorScreen.html"> Add a New Listing</a></h4>
-    <h4> <a href= "Search.html"> Search for items</a></h4>
-
+	<h1>Welcome, {{ session['username'] }}!</h1>
+    <p>Your ID: {{ session['id'] }}</p>
+    <h4> <a href="{{ url_for('VendorAdd') }}"> Add Listing</a></h4>
+	<h4> <a href="{{ url_for('Vsearch') }}"> Search</a></h4>
 </main>
 </body>
+<footer>
+<a href="{{ url_for('logout') }}">Logout</a>
+</footer>
 </html>
