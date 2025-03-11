@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="eng">
+  <head>
+    <meta charset="UTF-8">
+    <title>Simple Purchase History</title>
+	<link rel="stylesheet" href="style.css">
+    <style>
+      body { font-family: sans-serif; }
+      .box { border: 1px solid #ccc; padding: 8px; margin: 5px 0; }
+    </style>
+  </head>
+  <body>
+  <img src="estation.png" alt="eStation Logo" width="150">
+    <h1>My Purchase History</h1>
+
+    <!-- Simple form to add a purchase -->
+    <form action="http://127.0.0.1:5000/history" method="get">
+		<input type="text" name="search" required><br><br>
+		<button>Load History</button>
+	</form>
+
+    <!-- Purchase history list -->
+    <div id="history">
+
+    </div>
+
+
+  </div>
+
+    <!-- Very basic JavaScript to add new purchases -->
+    <script>
+        async function getHistory() {
+            const response = await fetch("http://127.0.0.1:5000/history");
+            const data = await response.json();
+
+            let table = "<table border='1'><tr>";
+            Object.keys(data[0]).forEach(key => {
+                table += `<th>${key}</th>`;
+            });
+            table += "<th>Actions</th><tr></tr>"
+
+            data.forEach(row => {
+                table += "<tr>";
+                Object.values(row).forEach(value => {
+                    table += `<td>${value}</td>`;
+                });
+
+                const OrderID = row['OrderID'];
+                table += `<td><button onclick="deleteOrder(${OrderID})" id="button1">Delete</button></td>`;
+
+                table += "</tr>";
+
+            });
+
+            table += "</table>";
+            document.getElementById("history").innerHTML = table;
+            document.getElementById("cancel").innerHTML = table;
+
+        }
+async function deleteOrder(OrderID){
+    const response = await fetch(`http://127.0.0.1:5000/cancel/${OrderID}`,{
+    method: 'DELETE'
+});
+    const del = await response.json();
+    if (del.success){
+    alert('erased');
+    await getHistory();
+}
+        }
+window.onload = getHistory();
+    </script>
+
+  <p> <a href= "other.html"> Back to Home </a></p>
+  </body>
+</html>
