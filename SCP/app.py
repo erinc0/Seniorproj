@@ -79,6 +79,12 @@ def login():
                 msg = 'Incorrect username / password !'
     return render_template('login.html', msg = msg)
 
+@app.route('/logout')
+def logout():
+    session.clear()  # Clears all session data
+    return redirect(url_for('login'))
+
+
 @app.route('/Bhomepage')
 def Bhomepage():
     return render_template('BuyerMainpage.html', username=session['username'])

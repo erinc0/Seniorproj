@@ -5,17 +5,9 @@
     <title>Title</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 
-    <style> h1, h2 {
-        text-align: center;
-        font-size: 40px;
-        padding-top: initial;
-        padding-bottom: initial;
-    }</style>
-    <style> h4, h5, h6, h7 {
-        font-size: 20px;
-    }</style>
+
 </head>
-<body style="background-color: slategray">
+
 <header>
 
     <h1 style="color: black"> Customer Homepage</h1>
@@ -26,7 +18,10 @@
 	<h1>Welcome, {{ session['username'] }}!</h1>
     <p>Your ID: {{ session['id'] }}</p>
     <h4> <a href="{{ url_for('cancel') }}"> Old orders</a></h4>
-	<h4> <a href="{{ url_for('search') }}"> search</a></h4>
+	<h4> <a href="{{ url_for('search') }}"> Search</a></h4>
 </main>
 </body>
+<footer>
+<a href="{{ url_for('logout') }}">Logout</a>
+</footer>
 </html>
