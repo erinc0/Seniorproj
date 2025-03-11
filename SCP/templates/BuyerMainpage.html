@@ -19,14 +19,14 @@
 <header>
 
     <h1 style="color: black"> Customer Homepage</h1>
-    <img src = "estation.png" alt="logo"
+    <img src="{{ url_for('static', filename='estation1.png') }}" alt="logo"
          style="width: 200px;height:100px">
 </header>
 <main>
 	<h1>Welcome, {{ session['username'] }}!</h1>
     <p>Your ID: {{ session['id'] }}</p>
     <h4> <a href="{{ url_for('cancel') }}"> Old orders</a></h4>
-
+	<h4> <a href="{{ url_for('search') }}"> search</a></h4>
 </main>
 </body>
 </html>

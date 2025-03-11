@@ -129,15 +129,34 @@ def all_i_feel_is_sad():
     except sqlite3.Error as e:
         return jsonify({'error': str(e)}), 500
 
-@app.route('/search', methods=['GET', 'POST']) #used for search feature
-def all_i_feel_is_bad():           
+@app.route('/search') #used for search page
+def search():
+    print("boser")
+    return render_template('Search.html', username=session['username'])
+
+@app.route('/searchS', methods=['GET']) #used for search feature Except it isnt working 
+def searchS():
     conn = connect_db()
     cursor = conn.cursor()
+    print("boser")
     search = request.args.get('search')
-    #https://stackoverflow.com/questions/62199521/how-to-properly-use-sql-like-statement-to-query-db-from-flask-application
-    cursor.execute("SELECT * FROM Product WHERE ProdName LIKE :search", {"search": '%' + search + '%'}) 
+    cursor.execute("SELECT * FROM Product WHERE ProdName LIKE ?", (f"%{search}%",))
     rows = cursor.fetchall()
     data = [dict(row) for row in rows]
+    conn.close()
+    return jsonify(data)
+        
+@app.route('/filterp', methods=['GET'])
+def filter():
+    print("boser")
+    conn = connect_db()
+    cursor = conn.cursor()
+    minval = request.args.get('minval', type=int)
+    maxval=request.args.get('maxval', type=int)
+    search = request.args.get('search')
+    cursor.execute("SELECT * FROM Product WHERE ProdPrice >=? AND ProdPrice<=? AND ProdName LIKE ?", (minval, maxval, f"%{search}%"))
+    rows = cursor.fetchall()
+    data=[dict(row) for row in rows]
     conn.close()
     return jsonify(data)
 
@@ -149,20 +168,6 @@ def help():
     cursor.execute("SELECT * FROM 'HelpDesk'")
     rows = cursor.fetchall()
     data = [dict(row) for row in rows]
-    conn.close()
-    return jsonify(data)
-
-
-@app.route('/filterp', methods=['GET'])
-def filter():
-    conn = connect_db()
-    cursor = conn.cursor()
-    minval = request.args.get('minval', type=int)
-    maxval=request.args.get('maxval', type=int)
-    search = request.args.get('search')
-    cursor.execute("SELECT * FROM Product WHERE ProdPrice >=? AND ProdPrice<=? AND ProdName LIKE ?", (minval, maxval, f"%{search}%"))
-    rows = cursor.fetchall()
-    data=[dict(row) for row in rows]
     conn.close()
     return jsonify(data)
 
@@ -181,7 +186,7 @@ def cancel():
         finally:
             conn.close()
     else:
-        return render_template('cancelorder.html')
+        return render_template('cancelorder.html', username=session['username'])
 
 @app.route('/cancel/<int:OrderID>', methods=['DELETE'])
 def cancelOrder(OrderID):

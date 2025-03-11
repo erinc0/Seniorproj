@@ -7,14 +7,14 @@
 </head>
 <body>
 <header>
-    Estation
+<img src="{{ url_for('static', filename='estation1.png') }}" alt="eStation Logo" width="150">
 </header>
 <h1>Recent Orders</h1>
 
 <div id="order-list">
     <p>Loading orders...</p>
 </div>
-
+<p> <a href="{{ url_for('Bhomepage') }}"> Back to Buyer Homepage </a></p>
 <script>
     async function loadOrders() {
         const buyerID = {{ session['id'] }}; // testing the buyer id you know

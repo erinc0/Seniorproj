@@ -3,16 +3,16 @@
 <head>
     <meta charset="UTF-8">
     <title>Search</title>
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
 <header>
-<img src="estation.png" alt="eStation Logo" width="150">
+<img src="{{ url_for('static', filename='estation1.png') }}" alt="eStation Logo" width="150">
 </header>
 <h1>Search</h1>
-<form action="http://127.0.0.1:5000/search" method="get">
+<form>
     <input type="text" name="search" id="search" required><br><br>
-    <button type="submit">Search</button>
+<button type = "button" onclick="lookup()"> Search </button>
 </form>
 
 <form>
@@ -27,27 +27,44 @@
 
 </form>
 
+
 <script>
-    function userfilter() {
+	function lookup() {
+    let search = document.getElementById("search").value;
 
-        let minval = document.getElementById("minval").value;
-        let maxval = document.getElementById("maxval").value;
-        let search = document.getElementById("search").value;
-        fetch(`http://127.0.0.1:5000/filterp?minval=${minval}&maxval=${maxval}&search=${search}`)
-    .then(response => response.json())
-            .then(data=>{
-                let resultsDiv = document.getElementById("results");
-                resultsDiv.innerHTML = "";
-                data.forEach(product=> {
-
-                    resultsDiv.innerHTML += `<p>${product.ProdName}- $${product.ProdPrice}</p>`;
-                });
+    fetch(`http://127.0.0.1:5000/searchS?search=${search}`)
+        .then(response => response.json())
+        .then(data => {
+            let resultsDiv = document.getElementById("results");
+            resultsDiv.innerHTML = "";
+            data.forEach(product => {
+                resultsDiv.innerHTML += `<p>${product.ProdName} - $${product.ProdPrice}</p>`;
             });
-    }
-
+        });
+}
 </script>
-<p> <a href= "other.html"> Back to Buyer Homepage </a></p>
-<p> <a href= "VendorMainpage.html"> Back to Vendor Homepage </a></p>
+
+
+<script>
+	function userfilter() {
+    let minval = document.getElementById("minval").value;
+    let maxval = document.getElementById("maxval").value;
+    let search = document.getElementById("search").value;
+
+    fetch(`http://127.0.0.1:5000/filterp?minval=${minval}&maxval=${maxval}&search=${search}`)
+        .then(response => response.json())
+        .then(data => {
+            let resultsDiv = document.getElementById("results");
+            resultsDiv.innerHTML = "";
+            data.forEach(product => {
+                resultsDiv.innerHTML += `<p>${product.ProdName} - $${product.ProdPrice}</p>`;
+            });
+        });
+}
+</script>
+
+
+<p> <a href="{{ url_for('Bhomepage') }}"> Back to Buyer Homepage </a></p>
 
 </body>
 </html>
