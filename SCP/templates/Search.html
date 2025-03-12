@@ -23,10 +23,11 @@
     <input type ="number" name ="maxval" id="maxval">
 </label>
 <button type = "button" onclick="userfilter()"> Filter </button>
-<div id="results"></div>
+
 
 </form>
 
+<div id="results"></div>
 
 <script>
 	function lookup() {
@@ -38,12 +39,19 @@
             let resultsDiv = document.getElementById("results");
             resultsDiv.innerHTML = "";
             data.forEach(product => {
-                resultsDiv.innerHTML += `<p>${product.ProdName} - $${product.ProdPrice}</p>`;
+                resultsDiv.innerHTML += `<p>${product.ProductID} ${product.ProdName} - $${product.ProdPrice}
+				<button type="button" onclick="gotoItem(${product.ProductID})">Check item</button>
+				</p>`;
             });
         });
 }
 </script>
 
+<script>
+	function gotoItem(productId) {
+		window.location.href = `/item/${productId}`;  // Redirect to item page with the product ID
+	}
+</script>
 
 <script>
 	function userfilter() {
@@ -63,6 +71,16 @@
 }
 
 </script>
+
+
+
+
+
+
+
+
+
+
 
 
 <p> <a href="{{ url_for('Bhomepage') }}"> Back to Buyer Homepage </a></p>

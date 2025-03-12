@@ -45,11 +45,11 @@ def contactus():
 
 @app.route('/login', methods =['GET', 'POST']) #base is geeksforge
 def login():
-    conn = connect_db()
-    cursor = conn.cursor()
-    msg = ''
-    print("boser")
     if request.method == 'POST' and 'username' in request.form and 'password' in request.form:
+        conn = connect_db()
+        cursor = conn.cursor()
+        msg = ''
+        print("boser")
         accountType = request.form['accountType']
         username = request.form['username']
         password = request.form['password']
@@ -81,7 +81,8 @@ def login():
                 return redirect(url_for('Vhomepage'))
             else:
                 msg = 'Incorrect username / password !'
-    return render_template('login.html', msg = msg)
+    else:
+        return render_template('login.html')
 
 
 @app.route('/logout')
@@ -148,17 +149,17 @@ def VendorAdd():
     else:
         return render_template('VendorAdd.html', username=session['username'])
 
-@app.route('/search') #used for search page
+@app.route('/search') #used for search page for customer
 def search():
     print("boser")
     return render_template('Search.html', username=session['username'])
     
-@app.route('/Vsearch') #used for search page    
+@app.route('/Vsearch') #used for search page for vendors   
 def Vsearch():
     print("boser")
     return render_template('VSearch.html', username=session['username'])
 
-@app.route('/searchS', methods=['GET']) #used for search feature Except it isnt working 
+@app.route('/searchS', methods=['GET']) #the actual search action
 def searchS():
     conn = connect_db()
     cursor = conn.cursor()
@@ -225,6 +226,23 @@ def cancelOrder(OrderID):
         return jsonify({'error': str(e)}), 500
     finally:
         conn.close()
+
+@app.route('/item/<int:ItemID>', methods=['GET'])
+def item(ItemID):
+    conn = connect_db()
+    cursor = conn.cursor()
+    
+    # Fetch item details
+    cursor.execute("SELECT * FROM Product WHERE ProductID = ?", (ItemID,))
+    item_data = cursor.fetchone()
+    
+    conn.close()
+
+    if item_data:
+        return render_template('item.html', item=item_data)
+    else:
+        return "Item not found", 404
+
 
 
 
