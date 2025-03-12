@@ -7,13 +7,31 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
-
 <h1>{{ item['ProdName'] }}</h1>
 <p><strong>Price:</strong> ${{ item['ProdPrice'] }}</p>
 <p><strong>Description:</strong> {{ item['ProdDesc'] }}</p>
 <p><strong>Quantity Available:</strong> {{ item['ProdQuantity'] }}</p>
-
+<p>	<input type="number" id="quantity" name="quantity" min="1" max={{ item['ProdQuantity'] }}> </p>
+<p>	<button onclick="addToCart()">Add to cart</button> </p>
 <a href="{{ url_for('search') }}">Back to Search</a>
+
+<script>
+    function addToCart() {
+        let quantity = document.getElementById("quantity").value;
+		let itemID = {{ item['ProductID'] }};
+        fetch(`/add_to_cart/${itemID}/${quantity}`, {
+            method: 'POST'
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                alert("Item added to cart!");
+            } else {
+                alert("Error adding to cart: " + data.error);
+            }
+        })
+    }
+</script>
 
 </body>
 </html>

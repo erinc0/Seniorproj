@@ -27,9 +27,9 @@ def homepage():
 
 @app.route('/contactus', methods=['GET','POST']) #For help desk and test labled index
 def contactus():
-    conn = connect_db()
-    cursor = conn.cursor()
     if request.method == 'POST':
+        conn = connect_db()
+        cursor = conn.cursor()
         name = request.form.get('name')
         email = request.form.get('email')
         desc = request.form.get('desc')
@@ -196,7 +196,7 @@ def help():
     conn.close()
     return jsonify(data)
 
-@app.route('/cancel', methods=['GET','DELETE'])
+@app.route('/cancel', methods=['GET','DELETE']) #i think this part aint completely necesary
 def cancel():
     if request.method == 'DELETE':
         conn = connect_db()
@@ -227,24 +227,33 @@ def cancelOrder(OrderID):
     finally:
         conn.close()
 
-@app.route('/item/<int:ItemID>', methods=['GET'])
+@app.route('/item/<int:ItemID>', methods=['GET','POST'])
 def item(ItemID):
     conn = connect_db()
     cursor = conn.cursor()
-    
-    # Fetch item details
-    cursor.execute("SELECT * FROM Product WHERE ProductID = ?", (ItemID,))
+    cursor.execute("SELECT * FROM Product WHERE ProductID = ?", (ItemID,))# Fetch item details
     item_data = cursor.fetchone()
-    
     conn.close()
-
     if item_data:
         return render_template('item.html', item=item_data)
     else:
         return "Item not found", 404
 
-
-
-
+@app.route('/add_to_cart/<int:ItemID>/<int:quantity>', methods=['POST'])
+def add_to_cart(ItemID,quantity):
+    print("boser")
+    conn = connect_db()
+    cursor = conn.cursor()
+    CartID = session['id']
+    try:
+            cursor.execute("INSERT INTO CartItems (CartID, ProductID, CartQuantity) VALUES (?, ?, ?)", 
+             (CartID, ItemID, quantity))
+            conn.commit()
+            return jsonify({'success': True}), 201
+    except sqlite3.Error as e:
+        return jsonify({'error': str(e)}), 500
+    finally:
+        conn.close()
+        
 if __name__ == '__main__':
     app.run(debug=True)
