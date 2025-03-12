@@ -3,13 +3,26 @@
 <head>
     <meta charset="UTF-8">
     <title>Search</title>
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="allstyle.css">
+    <style>
+        header{
+            padding-left: 279px;
+        }
+    </style>
 </head>
 <body>
-<header>
-<img src="estation.png" alt="eStation Logo" width="150">
-</header>
-<h1>Search</h1>
+<div class = "topnav">
+    <img src = "estation1.png" alt="logo"
+         style="width: 100px;height:60px">
+    <a href= "VendorMainpage.html" style="float: right"> Vendor Homepage </a>
+    <a href= "buyer.html" style="float: right"> Buyer Homepage </a>
+
+    <header style= margin-bottom:20px>
+        Search
+    </header>
+
+
+
 <form action="http://127.0.0.1:5000/search" method="get">
     <input type="text" name="search" id="search" required><br><br>
     <button type="submit">Search</button>
@@ -33,6 +46,13 @@
         let minval = document.getElementById("minval").value;
         let maxval = document.getElementById("maxval").value;
         let search = document.getElementById("search").value;
+
+
+        localStorage.setItem('min', minval);
+        localStorage.setItem('max', maxval);
+        localStorage.setItem('search', search);
+        window.location.href = "catalog.html";
+
         fetch(`http://127.0.0.1:5000/filterp?minval=${minval}&maxval=${maxval}&search=${search}`)
     .then(response => response.json())
             .then(data=>{
@@ -41,13 +61,15 @@
                 data.forEach(product=> {
 
                     resultsDiv.innerHTML += `<p>${product.ProdName}- $${product.ProdPrice}</p>`;
+
                 });
             });
     }
 
+
+
 </script>
-<p> <a href= "other.html"> Back to Buyer Homepage </a></p>
-<p> <a href= "VendorMainpage.html"> Back to Vendor Homepage </a></p>
+
 
 </body>
 </html>

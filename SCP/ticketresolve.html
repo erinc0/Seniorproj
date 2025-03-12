@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Recent Orders</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header>
+    Estation
+</header>
+<h1>Recent Orders</h1>
+
+<div id="order-list">
+    <p>Loading orders...</p>
+</div>
+
+<script>
+    async function loadOrders() {
+        const buyerID = 2; // testing the buyer id you know
+        const response = await fetch(`http://127.0.0.1:5000/history?search=${buyerID}`);
+        const data = await response.json();
+
+        if (data.length === 0) {
+            document.getElementById("order-list").innerHTML = "<p>No recent orders found.</p>";
+            return;
+        }
+
+        let table = "<table border='1'><tr><th>Order ID</th><th>Buyer ID</th><th>Date</th><th>Status</th><th>Amount</th><th>Action</th></tr>";
+
+        data.forEach(order => {
+            table += `<tr>
+                        <td>${order.OrderID}</td>
+                        <td>${order.BuyerID}</td>
+                        <td>${order.Date}</td>
+                        <td>${order.Status}</td>
+                        <td>${order.Amount}</td>`;
+
+            if (order.Status === "Pending") {
+                table += `<td><button onclick="deleteOrder(${order.OrderID})">Cancel</button></td>`;
+            } else {
+                table += `<td><button onclick="alert('Sorry, this order cannot be cancelled due to its status being ${order.Status}. Please contact the help desk.')" disabled>Cannot Cancel</button></td>`;
+            }
+
+            table += "</tr>";
+        });
+
+        table += "</table>";
+        document.getElementById("order-list").innerHTML = table;
+    }
+
+    async function deleteOrder(OrderID) {
+        const response = await fetch(`http://127.0.0.1:5000/cancel/${OrderID}`, {
+            method: 'DELETE'
+        });
+        const result = await response.json();
+
+        if (result.success) {
+            alert("Order deleted successfully");
+            loadOrders();
+        } else {
+            alert("Error: " + result.error);
+        }
+    }
+
+    window.onload = loadOrders;
+</script>
+
+</body>
+</html>

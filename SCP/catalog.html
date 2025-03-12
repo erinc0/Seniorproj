@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Title</title>
+  <link rel="stylesheet" href="homes.css">
+
+  <style> img{
+    height: 290px;
+    width: 490px;
+    justify-self: center;
+    margin: 10px;
+
+  }
+  header{
+    text-align: center;
+    padding-left: 140px;
+  }
+  </style>
+</head>
+<body>
+
+
+<div class = "topnav">
+  <img src = "estation1.png" alt="logo"
+       style="width: 100px;height:60px">
+  <a href="Search.html" style="float: right"> Back to search </a>
+
+  <header style= margin-bottom:20px>
+    Catalog
+  </header>
+  <div class="column2">
+   <p>Product name</p>
+    <p>Price name</p>
+    <p>Description</p>
+    <p>Supplier</p>
+  </div>
+
+
+<div id="results"></div>
+<div class="column">
+  <div id="prod"></div>
+  <div id="price"></div>
+  <div id="desc"></div>
+  <div id="supplier"></div>
+</div>
+
+
+<div id = 'min'></div>
+<div id = 'max'></div>
+<div id = 'search'></div>
+<script>
+let minval = localStorage.getItem('min');
+let maxval = localStorage.getItem('max');
+let search = localStorage.getItem('search');
+
+
+
+fetch(`http://127.0.0.1:5000/filterp?minval=${minval}&maxval=${maxval}&search=${search}`)
+        .then(response => response.json())
+        .then(data=>{
+          let resultsDiv = document.getElementById("results");
+          let price = document.getElementById("price");
+          let prod = document.getElementById("prod");
+          let desc = document.getElementById("desc");
+          let supplier = document.getElementById("supplier");
+          resultsDiv.innerHTML = "";
+          data.forEach(product=> {
+
+            price.innerHTML +=`<p>$${product.ProdPrice}<p>`
+            prod.innerHTML += `<p>${product.ProdName}<p>`
+            supplier.innerHTML += `<p>${product.SupplierID}<p>`
+            desc.innerHTML += `<p>${product.ProdDesc}<p>`
+          });
+        });
+
+</script>
+</body>
+</html>

@@ -5,7 +5,7 @@ from flask_cors import CORS
 app = Flask(__name__)
 CORS(app)  # Enables CORS for all routes
 
-DATABASE = "SeniorCapstoneDatabase.db"
+DATABASE = "SCP/SeniorCapstoneDatabase.db"
 
 def connect_db():
     """Creates a connection to the SQLite database."""
