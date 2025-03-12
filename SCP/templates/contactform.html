@@ -3,9 +3,27 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Contactform</title>
+    <title>Contact Form</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
- 
+    <style>
+        #message-box {
+            display: none;
+            margin-top: 10px;
+            padding: 10px;
+            border-radius: 5px;
+            font-weight: bold;
+        }
+        .success {
+            color: green;
+            border: 1px solid green;
+            background-color: #d4edda;
+        }
+        .error {
+            color: red;
+            border: 1px solid red;
+            background-color: #f8d7da;
+        }
+    </style>
 </head>
 <body>
     <img src="{{ url_for('static', filename='estation1.png') }}" alt="eStation Logo" width="150">
@@ -17,23 +35,51 @@
 
     <h1>Contact Us</h1>
 
-<form action="{{ url_for('contactus') }}" method="post">
-    <label>Name:<br>
-    <input type="text" name="name" required><br><br>
-    </label>
+    <form id="contactForm" action="{{ url_for('contactus') }}" method="post">
+        <label>Name:<br>
+        <input type="text" name="name" required><br><br>
+        </label>
 
-    <label>Email:<br>
-    <input type="email" name="email" required><br><br>
-    </label>
+        <label>Email:<br>
+        <input type="email" name="email" required><br><br>
+        </label>
 
-    <label>Message:<br>
-    <textarea name="desc" required></textarea><br><br>
-    </label>
+        <label>Message:<br>
+        <textarea name="desc" required></textarea><br><br>
+        </label>
 
-    <button type="submit">Send</button>
+        <button type="submit">Send</button>
     </form>
+
+    <!-- Success/Error Message Box -->
+    <div id="message-box"></div>
 
     <p> <a href="{{ url_for('homepage') }}"> Back to Home</a></p>
 
+    <script>
+        document.getElementById("contactForm").onsubmit = async function(event) {
+            event.preventDefault(); 
+
+            const formData = new FormData(this);
+
+            const response = await fetch(this.action, {
+                method: "POST",
+                body: formData
+            });
+
+            const messageBox = document.getElementById("message-box");
+
+            if (response.ok) {
+                messageBox.textContent = "Message sent. A team member will email you shortly.";
+                messageBox.className = "success";
+                this.reset(); 
+            } else {
+                messageBox.textContent = "Message failed. Please try again.";
+                messageBox.className = "error";
+            }
+
+            messageBox.style.display = "block"; 
+        };
+    </script>
 </body>
 </html>
