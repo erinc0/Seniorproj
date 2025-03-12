@@ -59,12 +59,12 @@ let search = localStorage.getItem('search');
 fetch(`http://127.0.0.1:5000/filterp?minval=${minval}&maxval=${maxval}&search=${search}`)
         .then(response => response.json())
         .then(data=>{
-          let items = document.getElementById("results");
+          let resultsDiv = document.getElementById("results");
           let price = document.getElementById("price");
           let prod = document.getElementById("prod");
           let desc = document.getElementById("desc");
           let supplier = document.getElementById("supplier");
-          items.innerHTML = "";
+          resultsDiv.innerHTML = "";
           data.forEach(product=> {
 
             price.innerHTML +=`<p>$${product.ProdPrice}<p>`

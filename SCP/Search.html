@@ -56,11 +56,11 @@
         fetch(`http://127.0.0.1:5000/filterp?minval=${minval}&maxval=${maxval}&search=${search}`)
     .then(response => response.json())
             .then(data=>{
-                let items = document.getElementById("results");
-                items.innerHTML = "";
+                let resultsDiv = document.getElementById("results");
+                resultsDiv.innerHTML = "";
                 data.forEach(product=> {
 
-                    items.innerHTML += `<p>${product.ProdName}- $${product.ProdPrice}</p>`;
+                    resultsDiv.innerHTML += `<p>${product.ProdName}- $${product.ProdPrice}</p>`;
 
                 });
             });
