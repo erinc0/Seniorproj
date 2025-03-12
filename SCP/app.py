@@ -43,41 +43,45 @@ def contactus():
     else:
         return render_template('contactform.html')
 
-@app.route('/login', methods=['POST'])
+@app.route('/login', methods =['GET', 'POST']) #base is geeksforge
 def login():
     conn = connect_db()
     cursor = conn.cursor()
-    
+    msg = ''
+    print("boser")
     if request.method == 'POST' and 'username' in request.form and 'password' in request.form:
         accountType = request.form['accountType']
         username = request.form['username']
         password = request.form['password']
-
+        print("boser1")
         if accountType == "Buyer":
-            cursor.execute("SELECT * FROM Buyer WHERE BuyerEmail = ? AND BuyerPasscode = ?", (username, password,))
+            print("boser2")
+            cursor.execute("SELECT * FROM Buyer WHERE BuyerEmail = ? AND BuyerPasscode = ?", (username, password, ))
             account = cursor.fetchone()
             if account:
                 session['loggedin'] = True
                 session['id'] = account['BuyerID']
                 session['usertype'] = 'Buyer'
                 session['username'] = account['BuyerName']
-                return jsonify({'success': True, 'redirect': url_for('Bhomepage')})  # Send JSON response
+                msg = 'Logged in successfully !'
+                return redirect(url_for('Bhomepage'))
             else:
-                return jsonify({'success': False, 'message': 'Incorrect username or password'}), 401
-
+                msg = 'Incorrect username / password !'
         else:
-            cursor.execute("SELECT * FROM Supplier WHERE SupplierEmail = ? AND SupplierPasscode = ?", (username, password,))
+            print("boser3")
+            cursor.execute('SELECT * FROM Supplier WHERE SupplierEmail = ? AND SupplierPasscode = ?', (username, password, ))
             account = cursor.fetchone()
             if account:
+                print("boser4")
                 session['loggedin'] = True
                 session['id'] = account['SupplierID']
                 session['usertype'] = 'Vendor'
                 session['username'] = account['SupplierName']
-                return jsonify({'success': True, 'redirect': url_for('Vhomepage')})  # Send JSON response
+                msg = 'Logged in successfully !'
+                return redirect(url_for('Vhomepage'))
             else:
-                return jsonify({'success': False, 'message': 'Incorrect username or password'}), 401
-    
-    return jsonify({'success': False, 'message': 'Invalid request'}), 400
+                msg = 'Incorrect username / password !'
+    return render_template('login.html', msg = msg)
 
 
 @app.route('/logout')

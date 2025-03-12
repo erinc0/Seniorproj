@@ -2,73 +2,40 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Sign In</title>
+    <title>Title</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='allstyle.css') }}">
-    <style>
-        img {
+    <style >
+        img{
             margin-top: 15px;
-        }
-        #error-message {
-            display: none;
-            color: red;
-            margin-top: 10px;
-            font-weight: bold;
         }
     </style>
 </head>
 <body>
 
-<div class="topnav">
+<div class = "topnav">
     <img src="../static/estation1.png" alt="estation1.png"
          style="width: 100px;height:60px">
-    <a href="{{ url_for('contactus') }}">Contact us</a>
-    <a href="signup.html" style="float:right">Sign up</a>
+    <a href="{{ url_for('contactus') }}" >Contact us</a>
+    <a href="signup.html" style="float:right" >Sign up</a>
     <a href="{{ url_for('homepage') }}" style="float: right"> Home </a>
 </div>
-
-<header>Sign-in</header>
-
-<form id="loginForm">
+<header>
+    Sign-in
+</header>
+<form action="{{ url_for('login') }}" method="post">
     <label for="accountType">Select Account Type:</label>
     <select id="accountType" name="accountType">
-        <option value="Buyer">Buyer</option>
-        <option value="Vendor">Vendor</option>
-    </select><br><br>
-
-    <label for="username">Username:</label>
-    <input type="text" name="username" id="username" required><br><br>
-
-    <label for="password">Password:</label>
-    <input type="password" name="password" id="password" required><br><br>
-
-    <input type="submit" class="btn" value="Sign In"><br><br>
-
-    <!-- Error message for incorrect login -->
-    <p id="error-message"></p>
+    <option value="Buyer">Buyer</option>
+    <option value="Vendor">Vendor</option>
+	</select><br><br>
+    <label for="username">
+	username
+	</label><input type="username" name="username" id="username" ><br><br>
+    <label for="password">
+        password
+    </label><input type="password" name="password" id="password" ><br><br>
+     <input type="submit" class="btn" value="Sign In"></br></br>
 </form>
-
-<script>
-    document.getElementById("loginForm").onsubmit = async function(event) {
-        event.preventDefault(); // Prevent normal form submission
-
-        const formData = new FormData(this);
-        const response = await fetch("{{ url_for('login') }}", {
-            method: "POST",
-            body: formData
-        });
-
-        const result = await response.json();
-        const errorMessage = document.getElementById("error-message");
-
-        if (result.success) {
-            window.location.href = result.redirect; // Redirect on success
-        } else {
-            errorMessage.textContent = result.message;
-            errorMessage.style.display = "block";
-            document.getElementById("loginForm").reset(); // Clear form on failure
-        }
-    };
-</script>
 
 </body>
 </html>
