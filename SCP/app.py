@@ -24,6 +24,17 @@ def test():
     return jsonify(data)
 
 
+@app.route('/order', methods=['GET']) #purchase history
+def order():
+    conn = connect_db()
+    cursor = conn.cursor()
+    cursor.execute("SELECT * FROM 'Order'")
+    rows = cursor.fetchall()
+    data = [dict(row) for row in rows]
+    conn.close()
+    return jsonify(data)
+
+
 @app.route('/history', methods=['GET']) #purchase history
 def history():
     conn = connect_db()
@@ -63,10 +74,12 @@ def all_i_feel_is_sad():
     price = request.form.get('price')
     quant = request.form.get('quantity')
     desc = request.form.get('description')
+    image = request.form.get('file')
+
     print(desc)
     try:
-        cursor.execute("INSERT INTO Product (SupplierID, ProdName, ProdPrice, ProdQuantity, ProdDesc) VALUES (?, ?, ?, ?, ?)", 
-         (supplier, name, price, quant, desc))
+        cursor.execute("INSERT INTO Product (SupplierID, ProdName, ProdPrice, ProdQuantity, ProdDesc, ProdImage) VALUES (?, ?, ?, ?, ?, ?)",
+         (supplier, name, price, quant, desc, image))
         conn.commit()
         conn.close()
         return jsonify({'success': 'Product added successfully'}), 201

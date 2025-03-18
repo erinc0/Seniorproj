@@ -51,7 +51,7 @@ CREATE TABLE IF NOT EXISTS "Product" (
 	"ProdPrice"	NUMERIC NOT NULL,
 	"ProdQuantity"	INTEGER NOT NULL,
 	"ProdDesc"	TEXT NOT NULL,
-	"ProdImage"	BLOB,
+	"ProdImage"	blob,
 	PRIMARY KEY("ProductID") ON CONFLICT ABORT,
 	FOREIGN KEY("SupplierID") REFERENCES "Supplier"("SupplierID")
 );

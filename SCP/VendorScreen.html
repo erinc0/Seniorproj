@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="homes.css">
     <title>VendorAdd</title>
     <style> h1, main{
 			textarea {
@@ -13,12 +13,20 @@
             -webkit-appearance: none;
             margin: 0;
         }  }</style>
+
 </head>
 <body>
-<img src="estation.png" alt="eStation Logo" width="150">
-<h1>New Listing</h1>
+<div class = "topnav">
+    <img src = "whiteversion.webp" alt="logo"
+         style="width: 100px;height:40px" >
+    <a href="Homepage.html">| Back to Home</a>
+    <a href="login.html" style="float: right"> Logout </a>
+
+</div>
+
+<header>New Listing</header>
 <main>
-    <hr>
+
     <form action="http://127.0.0.1:5000/newlisting" method="post">
         <label>Name:<br>
 		<input type="text" name="name" required><br><br>
@@ -29,6 +37,9 @@
 		<label>Quantity: <br>
 		<input type="number" name="quantity" min="1" step="1" max="1500" value=""/><br><br>
         </label>
+        <label>Image:<br>
+        <input type="file" name="file" formenctype="multipart/form-data"/>
+        </label>
 		<label> Description: <br>
 		<textarea name="description" rows="4" cols ="40"></textarea> <!-- reference: https://www.w3schools.com/tags/tag_textarea.asp-->
     <button type="submit">Submit</button>
@@ -36,7 +47,7 @@
 	</form>  <!-- reference: https://www.w3schools.com/howto/howto_html_file_upload_button.asp-->
     
 </main>
-<p> <a href= "VendorMainpage.html"> Back to Home </a></p>
+
 </body>
 </html>
 

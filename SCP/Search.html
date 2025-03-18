@@ -3,21 +3,21 @@
 <head>
     <meta charset="UTF-8">
     <title>Search</title>
-    <link rel="stylesheet" href="allstyle.css">
+    <link rel="stylesheet" href="homes.css">
     <style>
-        header{
-            padding-left: 279px;
-        }
+
     </style>
 </head>
 <body>
 <div class = "topnav">
-    <img src = "estation1.png" alt="logo"
-         style="width: 100px;height:60px">
-    <a href= "VendorMainpage.html" style="float: right"> Vendor Homepage </a>
-    <a href= "buyer.html" style="float: right"> Buyer Homepage </a>
+    <img src = "whiteversion.webp" alt="logo"
+         style="width: 100px;height:40px">
+    <a href="Homepage.html">| Back to Home</a>
+    <a href= "VendorMainpage.html" style="float: right"> Vendor Homepage</a>
+    <a href= "buyer.html" style="float: right">Buyer Homepage</a>
 
-    <header style= margin-bottom:20px>
+</div>
+    <header >
         Search
     </header>
 
@@ -60,7 +60,7 @@
                 resultsDiv.innerHTML = "";
                 data.forEach(product=> {
 
-                    resultsDiv.innerHTML += `<p>${product.ProdName}- $${product.ProdPrice}</p>`;
+
 
                 });
             });
@@ -70,6 +70,6 @@
 
 </script>
 
-
+</div>
 </body>
 </html>
