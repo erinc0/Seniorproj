@@ -136,10 +136,11 @@ def VendorAdd():
         price = request.form.get('price')
         quant = request.form.get('quantity')
         desc = request.form.get('description')
+        image = request.form.get('file')
         print(desc)
         try:
-            cursor.execute("INSERT INTO Product (SupplierID, ProdName, ProdPrice, ProdQuantity, ProdDesc) VALUES (?, ?, ?, ?, ?)", 
-             (supplier, name, price, quant, desc))
+            cursor.execute("INSERT INTO Product (SupplierID, ProdName, ProdPrice, ProdQuantity, ProdDesc, ProdImage) VALUES (?, ?, ?, ?, ?, ?)",
+                (supplier, name, price, quant, desc, image))
             conn.commit()
             conn.close()
             return jsonify({'success': 'Product added successfully'}), 201
@@ -158,6 +159,20 @@ def search():
 def Vsearch():
     print("boser")
     return render_template('VSearch.html', username=session['username'])
+
+@app.route('/Vmetricspage')
+def Vmetricspage():
+    return render_template('vendormetrics.html', username=session['username'])
+
+@app.route('/Vmetrics', methods=['GET']) #purchase history
+def Vmetrics():
+    conn = connect_db()
+    cursor = conn.cursor()
+    cursor.execute("SELECT * FROM 'Order'")
+    rows = cursor.fetchall()
+    data = [dict(row) for row in rows]
+    conn.close()
+    return jsonify(data)
 
 @app.route('/searchS', methods=['GET']) #the actual search action
 def searchS():
@@ -213,6 +228,22 @@ def cancel():
     else:
         return render_template('cancelorder.html', username=session['username'])
 
+@app.route('/cartpage', methods=['GET']) #purchase history
+def cartpage():
+    return render_template('Cart.html')
+
+@app.route('/cart', methods=['GET']) #purchase history
+def cart():
+    conn = connect_db()
+    cursor = conn.cursor()
+    search = request.args.get('search')
+    print(search)
+    cursor.execute("SELECT * FROM CartItems WHERE CartID=:search", {"search":search})
+    rows = cursor.fetchall()
+    data = [dict(row) for row in rows]
+    conn.close()
+    return jsonify(data)
+        
 @app.route('/cancel/<int:OrderID>', methods=['DELETE'])
 def cancelOrder(OrderID):
     conn = connect_db()

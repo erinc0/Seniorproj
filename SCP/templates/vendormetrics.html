@@ -1,16 +1,69 @@
+<!-- https://www.w3schools.com/ai/ai_chartjs.asp!-->
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.js"></script>
     <meta charset="UTF-8">
-    <title>Report</title>
-    <link rel="stylesheet" href="style.css">
+    <title>Title</title>
+    <link rel="stylesheet" href="homes.css">
+
+    <style> img{
+        height: 290px;
+        width: 490px;
+        justify-self: center;
+        float: left;
+        padding-left: 5px;
+
+    }
+    canvas{
+        justify-self: center;
+
+    }
+    h1{
+        font-size: 30px;
+    }
+    </style>
 </head>
 <body>
-<header>
-    Estation
+
+<div class = "topnav">
+    <img src = "whiteversion.webp" alt="logo"
+         style="width: 100px;height:40px">
+    <a href="Homepage.html">| Back to Home</a>
+    <a href="login.html" style="float: right"> Logout </a>
+
+</div>
+<header style="font-size: 50px; font-weight: bold; padding-top: 20px;">
+    Vendor Metrics
 </header>
 <h1>
-    Vendor Updated Metrics
+    Here are your latest metrics
 </h1>
+<canvas id="myChart" style="width:100%;max-width:700px"></canvas>
 </body>
 </html>
+<script>
+     async function graph() {
+         const response = await fetch(`http://127.0.0.1:5000/Vmetrics`);
+         const data = await response.json();
+
+         const profit = data.map(product => product.Amount);
+         const ID = data.map(product => `Order ${product.OrderID}`);
+
+        new Chart("myChart", {
+             type: "bar",
+             data: {
+                 labels: ID,
+                 datasets: [{
+                     label: "Profit",
+                     data: profit,
+                     borderColor:  '#FFC0CB',
+                     backgroundColor: '#FFC0CB'
+                 }]
+             },
+             options: {responsive: true}
+         });
+     }
+window.onload =graph;
+</script>
