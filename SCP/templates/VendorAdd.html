@@ -19,21 +19,26 @@
 <h1>New Listing</h1>
 <main>
     <hr>
-    <form "{{ url_for('VendorAdd') }}" method="post">
+    <form action="{{ url_for('VendorAdd') }}" method="post" enctype="multipart/form-data">
         <label>Name:<br>
-		<input type="text" name="name" required><br><br>
+            <input type="text" name="name" required><br><br>
         </label>
-		<label>Price:<br>
-		<input type="number" name="price" min="0.01" step="0.01" max="2500" /><br><br>
+        <label>Price:<br>
+            <input type="number" name="price" min="0.01" step="0.01" max="2500"><br><br>
         </label>
-		<label>Quantity: <br>
-		<input type="number" name="quantity" min="1" step="1" max="1500" value=""/><br><br>
+        <label>Quantity:<br>
+            <input type="number" name="quantity" min="1" step="1" max="1500"><br><br>
         </label>
-		<label> Description: <br>
-		<textarea name="description" rows="4" cols ="40"></textarea> <!-- reference: https://www.w3schools.com/tags/tag_textarea.asp-->
-    <button type="submit">Submit</button>
+        <label>Description:<br>
+            <textarea name="description" rows="4" cols="40"></textarea><br><br>
         </label>
-	</form>  <!-- reference: https://www.w3schools.com/howto/howto_html_file_upload_button.asp-->
+        <label>Upload Image:<br>
+            <input type="file" name="image" accept="image/*"><br><br>
+        </label>
+        <button type="submit">Submit</button>
+    </form>
+    
+      <!-- reference: https://www.w3schools.com/howto/howto_html_file_upload_button.asp-->
     
 </main>
 <p> <a href="{{ url_for('Vhomepage') }}"> Back to Vendor Homepage </a></p>

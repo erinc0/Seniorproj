@@ -29,19 +29,24 @@
 
 
 <script>
-	function lookup() {
+function lookup() {
     let search = document.getElementById("search").value;
-
-    fetch(`http://127.0.0.1:5000/searchS?search=${search}`)
+    fetch(`/searchS?search=${search}`)
         .then(response => response.json())
         .then(data => {
             let resultsDiv = document.getElementById("results");
             resultsDiv.innerHTML = "";
             data.forEach(product => {
-                resultsDiv.innerHTML += `<p>${product.ProdName} - $${product.ProdPrice}</p>`;
+                resultsDiv.innerHTML += `
+                    <p>
+                        <img src="/get_product_image/${product.ProductID}" alt="Product Image" width="100">
+                        ${product.ProdName} - $${product.ProdPrice}
+                        <button type="button" onclick="gotoItem(${product.ProductID})">Check item</button>
+                    </p>`;
             });
         });
 }
+
 </script>
 
 

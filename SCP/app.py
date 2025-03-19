@@ -1,6 +1,18 @@
 from flask import Flask, jsonify, request, session, render_template, url_for, redirect
 import sqlite3
 from flask_cors import CORS
+import base64  # Required for encoding/decoding images
+import os
+from werkzeug.utils import secure_filename
+
+from flask import send_file
+import io
+
+
+
+
+
+
 
 app = Flask(__name__)
 CORS(app)  # Enables CORS for all routes
@@ -12,6 +24,20 @@ app.secret_key = 'your secret key'
 @app.route('/')
 def home():
     return render_template('Homepage.html')
+
+@app.route('/get_product_image/<int:product_id>')
+def get_product_image(product_id):
+    conn = connect_db()
+    cursor = conn.cursor()
+    
+    cursor.execute("SELECT ProdImage FROM Product WHERE ProductID=?", (product_id,))
+    image_data = cursor.fetchone()
+    conn.close()
+    
+    if image_data and image_data["ProdImage"]:
+        return send_file(io.BytesIO(image_data["ProdImage"]), mimetype='image/jpeg')
+
+    return "", 404  # Return a 404 error if no image is found
 
 def connect_db():
     """Creates a connection to the SQLite database."""
@@ -125,21 +151,30 @@ def history():
     else:
         return render_template('cancelorder.html')
             
-@app.route('/VendorAdd', methods=['GET','POST']) # used for create new listing
+@app.route('/VendorAdd', methods=['GET', 'POST']) 
 def VendorAdd():
     if request.method == 'POST':
-        print("here1")
         conn = connect_db()
         cursor = conn.cursor()            
+
         supplier = session['id']
         name = request.form.get('name')
         price = request.form.get('price')
         quant = request.form.get('quantity')
         desc = request.form.get('description')
-        print(desc)
+
+        # Handle Image Upload
+        image_file = request.files.get('image')  # Get the file
+        image_data = None
+        if image_file:
+            image_data = image_file.read()  # Read file as BLOB
+
         try:
-            cursor.execute("INSERT INTO Product (SupplierID, ProdName, ProdPrice, ProdQuantity, ProdDesc) VALUES (?, ?, ?, ?, ?)", 
-             (supplier, name, price, quant, desc))
+            cursor.execute("""
+                INSERT INTO Product (SupplierID, ProdName, ProdPrice, ProdQuantity, ProdDesc, ProdImage) 
+                VALUES (?, ?, ?, ?, ?, ?)
+            """, (supplier, name, price, quant, desc, image_data))
+
             conn.commit()
             conn.close()
             return jsonify({'success': 'Product added successfully'}), 201
@@ -159,17 +194,25 @@ def Vsearch():
     print("boser")
     return render_template('VSearch.html', username=session['username'])
 
-@app.route('/searchS', methods=['GET']) #the actual search action
+@app.route('/searchS', methods=['GET']) 
 def searchS():
     conn = connect_db()
     cursor = conn.cursor()
-    print("boser")
     search = request.args.get('search')
     cursor.execute("SELECT * FROM Product WHERE ProdName LIKE ?", (f"%{search}%",))
     rows = cursor.fetchall()
-    data = [dict(row) for row in rows]
+    
+    # Convert results to JSON with Base64 image encoding
+    data = []
+    for row in rows:
+        product = dict(row)
+        if product["ProdImage"]:
+            product["ProdImage"] = base64.b64encode(product["ProdImage"]).decode('utf-8')
+        data.append(product)
+
     conn.close()
     return jsonify(data)
+
         
 @app.route('/filterp', methods=['GET'])
 def filter():
@@ -227,17 +270,23 @@ def cancelOrder(OrderID):
     finally:
         conn.close()
 
-@app.route('/item/<int:ItemID>', methods=['GET','POST'])
+@app.route('/item/<int:ItemID>', methods=['GET'])
 def item(ItemID):
     conn = connect_db()
     cursor = conn.cursor()
-    cursor.execute("SELECT * FROM Product WHERE ProductID = ?", (ItemID,))# Fetch item details
+    cursor.execute("SELECT * FROM Product WHERE ProductID = ?", (ItemID,))
     item_data = cursor.fetchone()
     conn.close()
+
     if item_data:
-        return render_template('item.html', item=item_data)
+        # Convert image BLOB to Base64
+        item_dict = dict(item_data)
+        if item_data["ProdImage"]:
+            item_dict["ProdImage"] = base64.b64encode(item_data["ProdImage"]).decode('utf-8')
+        return render_template('item.html', item=item_dict)
     else:
         return "Item not found", 404
+
 
 @app.route('/add_to_cart/<int:ItemID>/<int:quantity>', methods=['POST'])
 def add_to_cart(ItemID,quantity):
