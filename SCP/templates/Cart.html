@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Recent Orders</title>
+    <title>Cart</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
@@ -17,32 +17,62 @@
 <p> <a href="{{ url_for('Bhomepage') }}"> Back to Buyer Homepage </a></p>
 <script>
     async function LoadCart() {
-        const buyerID = {{ session['id'] }}; // testing the buyer id you know
-        const response = await fetch(`http://127.0.0.1:5000/cart?search=${buyerID}`);
+        const response = await fetch(`http://127.0.0.1:5000/cart`);
         const data = await response.json();
-
         if (data.length === 0) {
             document.getElementById("cart-list").innerHTML = "<p>No recent orders found.</p>";
             return;
         }
-
-        let table = "<table border='1'><tr><th>Cart Item ID</th><th>Product ID</th><th>Quantity</th></tr>";
-
+        let table = "<table border='1'><tr><th>Product ID</th><th>Product Name</th><th>Price</th><th>Quantity</th><th>Total</th><th>Actions</th></tr>";
         data.forEach(cart => {
-            table += `<tr>
-                        <td>${cart.CartItemID}</td>
-                        <td>${cart.ProductID}</td>
-                        <td>${cart.CartQuantity}</td>`;
-
-            table += "</tr>";
+			let total = cart.ProdPrice * cart.CartQuantity;
+            table += `<tr>   
+				<td>${cart.ProductID}</td>
+					<td>${cart.ProdName}</td>
+					<td>$${cart.ProdPrice}</td>
+					<td>
+					<input type="number" style="width: 50px;" id="Cartquantity" name="quantity" value="${cart.CartQuantity}" min="1" step="1" max="${cart.ProdQuantity} ">
+					</td>
+					<td>$${total}</td>
+					<td>
+					<button onclick="updateCart(${cart.ProductID})">Update</button>
+					<button onclick="removeFromCart(${cart.ProductID})">Remove</button>
+					</td>
+				  </tr>`;
         });
-
         table += "</table>";
         document.getElementById("cart-list").innerHTML = table;
     }
 
+	async function updateCart(productID) {
+        let quantity = document.getElementById(`Cartquantity`).value;
+        const response = await fetch(`/update_cart/${productID}/${quantity}`, {
+            method: "POST"
+        });
 
+        const data = await response.json();
+        if (data.success) {
+            alert("Cart updated!");
+            LoadCart(); // Reload the cart to reflect changes
+        } else {
+            alert("Error: " + data.error);
+        }
+    }
 
+	async function removeFromCart(productID) {
+        const response = await fetch(`/remove_from_cart/${productID}`, {
+            method: "DELETE"
+        });
+
+        const data = await response.json();
+        if (data.success) {
+            alert("Item removed from cart!");
+            LoadCart(); // Reload the cart to reflect changes
+        } else {
+            alert("Error: " + data.error);
+        }
+    }
+	
     window.onload = LoadCart;
 </script>
 

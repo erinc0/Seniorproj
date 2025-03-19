@@ -227,22 +227,6 @@ def cancel():
             conn.close()
     else:
         return render_template('cancelorder.html', username=session['username'])
-
-@app.route('/cartpage', methods=['GET']) #purchase history
-def cartpage():
-    return render_template('Cart.html')
-
-@app.route('/cart', methods=['GET']) #purchase history
-def cart():
-    conn = connect_db()
-    cursor = conn.cursor()
-    search = request.args.get('search')
-    print(search)
-    cursor.execute("SELECT * FROM CartItems WHERE CartID=:search", {"search":search})
-    rows = cursor.fetchall()
-    data = [dict(row) for row in rows]
-    conn.close()
-    return jsonify(data)
         
 @app.route('/cancel/<int:OrderID>', methods=['DELETE'])
 def cancelOrder(OrderID):
@@ -272,19 +256,62 @@ def item(ItemID):
 
 @app.route('/add_to_cart/<int:ItemID>/<int:quantity>', methods=['POST'])
 def add_to_cart(ItemID,quantity):
+    if 'loggedin' not in session:
+        return jsonify({'error': 'User not logged in'}), 401
     print("boser")
     conn = connect_db()
     cursor = conn.cursor()
     CartID = session['id']
     try:
+        # Check if the item is already in the cart
+        cursor.execute("SELECT * FROM CartItems WHERE CartID = ? AND ProductID = ?", (CartID, ItemID))
+        existing_item = cursor.fetchone()
+
+        if existing_item:
+            # Update quantity if the item is already in the cart
+            cursor.execute("UPDATE CartItems SET CartQuantity = CartQuantity + ? WHERE CartID = ? AND ProductID = ?",
+                           (quantity, CartID, ItemID))
+        else:
+            # Insert new item to cart
             cursor.execute("INSERT INTO CartItems (CartID, ProductID, CartQuantity) VALUES (?, ?, ?)", 
              (CartID, ItemID, quantity))
-            conn.commit()
-            return jsonify({'success': True}), 201
+        conn.commit()
+        return jsonify({'success': True}), 201
     except sqlite3.Error as e:
         return jsonify({'error': str(e)}), 500
     finally:
         conn.close()
+        
+@app.route('/cartpage', methods=['GET']) #purchase history
+def cartpage():
+    return render_template('Cart.html')
+
+@app.route('/cart', methods=['GET']) #purchase history
+def cart():
+    conn = connect_db()
+    cursor = conn.cursor()
+    search = session['id']
+    print(search)
+    cursor.execute("SELECT * FROM CartItems INNER JOIN Product ON CartItems.ProductID = Product.ProductID WHERE CartID=:search", {"search":search})
+    rows = cursor.fetchall()
+    data = [dict(row) for row in rows]
+    conn.close()
+    return jsonify(data)
+
+@app.route('/update_cart/<int:ItemID>/<int:quantity>', methods=['POST']) #purchase history
+def update_cart(ItemID, quantity):
+    conn = connect_db()
+    cursor = conn.cursor()
+    CartID = session['id']
+    cursor.execute("UPDATE CartItems SET CartQuantity = ? WHERE CartID = ? AND ProductID = ?",
+                           (quantity, CartID, ItemID))
+    return jsonify({'success': True}), 201
+    
+@app.route('/remove_from_cart', methods=['POST']) #purchase history
+def remove_from_cart():
+    return render_template('Cart.html')
+        
+        
         
 if __name__ == '__main__':
     app.run(debug=True)
