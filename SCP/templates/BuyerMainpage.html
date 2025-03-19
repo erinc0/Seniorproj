@@ -3,21 +3,68 @@
 <head>
     <meta charset="UTF-8">
     <title>Title</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='homes.css') }}">
+	<style> img{
+	height: 290px;
+	width: 490px;
+	justify-self: center;
+	padding-left: 5px;
+	float: left;
+	}
+	</style>
 </head>
 <body>
-<header>
+<div class = "topnav">
+    <img src = "{{ url_for('static', filename='whiteversion.webp') }}" alt="logo"
+         style="width: 100px;height:40px" >
+    <a href="Homepage.html">| Back to Home</a>
+    <a href="login.html" style="float: right"> Logout </a>
 
-    <h1 style="color: black"> Customer Homepage</h1>
-    <img src="{{ url_for('static', filename='estation1.png') }}" alt="logo"
-         style="width: 200px;height:100px">
+</div>
+<header>
+    Buyer Homepage
 </header>
 <main>
 	<h1>Welcome, {{ session['username'] }}!</h1>
     <p>Your ID: {{ session['id'] }}</p>
-    <h4> <a href="{{ url_for('cancel') }}"> Old orders</a></h4>
-	<h4> <a href="{{ url_for('search') }}"> Search</a></h4>
-	<h4> <a href="{{ url_for('cartpage') }}"> cart</a></h4>
+<div class="row nomargin">
+    <div class="container">
+        <a href="{{ url_for('contactus') }}">
+            <img src="{{ url_for('static', filename='PhoneCall.jpg')}}" class="opimage"></a>
+        <div class ="mid">
+            <div class ="text"> Contact us
+            </div>
+        </div>
+    </div>
+    <div class="container">
+        <a href="{{ url_for('cancel') }}">
+            <img src="{{ url_for('static', filename='graph.png')}}" class="opimage">
+        </a>
+        <div class="mid">
+            <div class ="text">Orders
+            </div>
+        </div>
+    </div>
+</div>	
+<div class="row nomargin">
+    <div class="container">
+        <a href="{{ url_for('search') }}">
+            <img src="{{ url_for('static', filename='2.png')}}" class="opimage">    </a>
+        <div class="mid">
+            <div class="text"> Search
+            </div>
+        </div>
+    </div>
+
+    <div class="container">
+        <a href="{{ url_for('cartpage') }}">
+            <img src="{{ url_for('static', filename='3.png')}}" class="opimage">    </a>
+        <div class="mid">
+            <div class="text"> Cart
+            </div>
+        </div>
+    </div>
+</div>	
 </main>
 </body>
 <footer>

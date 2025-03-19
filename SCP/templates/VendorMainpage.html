@@ -3,21 +3,68 @@
 <head>
     <meta charset="UTF-8">
     <title>Title</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='homes.css') }}">
+	<style> img{
+	height: 290px;
+	width: 490px;
+	justify-self: center;
+	padding-left: 5px;
+	float: left;
+	}
+	</style>
 </head>
 <body>
-<header>
+<div class = "topnav">
+    <img src = "{{ url_for('static', filename='whiteversion.webp') }}" alt="logo"
+         style="width: 100px;height:40px" >
+    <a href="Homepage.html">| Back to Home</a>
+    <a href="login.html" style="float: right"> Logout </a>
 
-    <h1 style="color: black"> Vendor Homepage</h1>
-    <img src="{{ url_for('static', filename='estation1.png') }}" alt="logo"
-         style="width: 200px;height:100px">
+</div>
+<header>
+    Vendor Homepage
 </header>
 <main>
 	<h1>Welcome, {{ session['username'] }}!</h1>
     <p>Your ID: {{ session['id'] }}</p>
-    <h4> <a href="{{ url_for('VendorAdd') }}"> Add Listing</a></h4>
-	<h4> <a href="{{ url_for('Vsearch') }}"> Search</a></h4>
-	<h4> <a href="{{ url_for('Vmetricspage') }}"> Vendormetics</a></h4>
+<div class="row nomargin">
+    <div class="container">
+        <a href="{{ url_for('contactus') }}">
+            <img src="{{ url_for('static', filename='PhoneCall.jpg')}}" class="opimage"></a>
+        <div class ="mid">
+            <div class ="text"> Contact us
+            </div>
+        </div>
+    </div>
+    <div class="container">
+        <a href="{{ url_for('VendorAdd') }}">
+            <img src="{{ url_for('static', filename='sell.png')}}" class="opimage">
+        </a>
+        <div class="mid">
+            <div class ="text">Add new listing
+            </div>
+        </div>
+    </div>
+</div>	
+<div class="row nomargin">
+    <div class="container">
+        <a href="{{ url_for('Vsearch') }}">
+            <img src="{{ url_for('static', filename='2.png')}}" class="opimage">    </a>
+        <div class="mid">
+            <div class="text"> Search
+            </div>
+        </div>
+    </div>
+
+    <div class="container">
+        <a href="{{ url_for('Vmetricspage') }}">
+            <img src="{{ url_for('static', filename='graph.png')}}" class="opimage">    </a>
+        <div class="mid">
+            <div class="text"> Cart
+            </div>
+        </div>
+    </div>
+</div>	
 </main>
 </body>
 <footer>

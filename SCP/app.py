@@ -66,7 +66,7 @@ def login():
                 msg = 'Logged in successfully !'
                 return redirect(url_for('Bhomepage'))
             else:
-                msg = 'Incorrect username / password !'
+                return jsonify({'Incorrect': 'wrong password/username'}), 201
         else:
             print("boser3")
             cursor.execute('SELECT * FROM Supplier WHERE SupplierEmail = ? AND SupplierPasscode = ?', (username, password, ))
@@ -80,7 +80,7 @@ def login():
                 msg = 'Logged in successfully !'
                 return redirect(url_for('Vhomepage'))
             else:
-                msg = 'Incorrect username / password !'
+                return jsonify({'Incorrect': 'wrong password/username'}), 201
     else:
         return render_template('login.html')
 
@@ -303,12 +303,29 @@ def update_cart(ItemID, quantity):
     conn = connect_db()
     cursor = conn.cursor()
     CartID = session['id']
-    cursor.execute("UPDATE CartItems SET CartQuantity = ? WHERE CartID = ? AND ProductID = ?",
+    try:
+        cursor.execute("UPDATE CartItems SET CartQuantity = ? WHERE CartID = ? AND ProductID = ?",
                            (quantity, CartID, ItemID))
-    return jsonify({'success': True}), 201
+        conn.commit()
+        return jsonify({'success': True}), 201
+    except sqlite3.Error as e:
+        return jsonify({'error': str(e)}), 500
+    finally:
+        conn.close()
     
-@app.route('/remove_from_cart', methods=['POST']) #purchase history
-def remove_from_cart():
+@app.route('/remove_from_cart/<int:ItemID>', methods=['DELETE']) #purchase history
+def remove_from_cart(ItemID):
+    conn = connect_db()
+    cursor = conn.cursor()
+    CartID = session['id']
+    try:
+        cursor.execute("DELETE FROM CartItems WHERE CartID = ? AND ProductID = ?", (CartID, ItemID))
+        conn.commit()
+        return jsonify({'success': True}), 201
+    except sqlite3.Error as e:
+        return jsonify({'error': str(e)}), 500
+    finally:
+        conn.close()
     return render_template('Cart.html')
         
         
