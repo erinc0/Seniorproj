@@ -43,7 +43,7 @@ def contactus():
     else:
         return render_template('contactform.html')
 
-@app.route('/login', methods =['GET', 'POST']) #base is geeksforge
+@app.route('/login', methods =['GET', 'POST']) #login form
 def login():
     if request.method == 'POST' and 'username' in request.form and 'password' in request.form:
         conn = connect_db()
@@ -103,7 +103,7 @@ def Vhomepage():
 def test():
     conn = connect_db()
     cursor = conn.cursor()
-    cursor.execute("SELECT * FROM Product")  # Change 'Product' if incorrect
+    cursor.execute("SELECT * FROM Product")
     rows = cursor.fetchall()
     data = [dict(row) for row in rows]
     conn.close()
