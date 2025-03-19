@@ -3,13 +3,19 @@
 <head>
     <meta charset="UTF-8">
     <title>Search</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='homes.css') }}">
 </head>
 <body>
-<header>
-<img src="{{ url_for('static', filename='estation1.png') }}" alt="eStation Logo" width="150">
+<div class = "topnav">
+    <img src = "{{ url_for('static', filename='whiteversion.webp') }}" alt="logo"
+         style="width: 100px;height:40px">
+    <a href="{{ url_for('Bhomepage') }}" style="float: right">Buyer Homepage</a>
+
+</div>
+
+<header >
+	Search
 </header>
-<h1>Search</h1>
 <form>
     <input type="text" name="search" id="search" required><br><br>
 <button type = "button" onclick="lookup()"> Search </button>
@@ -23,11 +29,17 @@
     <input type ="number" name ="maxval" id="maxval">
 </label>
 <button type = "button" onclick="userfilter()"> Filter </button>
-
-
 </form>
 
-<div id="results"></div>
+<div id="results">
+	<div class="column">
+	<div id="prod"></div>
+	<div id="price"></div>
+	<div id="desc"></div>
+	<div id="supplier"></div>
+	<div id="image"></div>
+	</div>
+</div>
 
 <script>
 	function lookup() {
@@ -62,28 +74,17 @@
     fetch(`http://127.0.0.1:5000/filterp?minval=${minval}&maxval=${maxval}&search=${search}`)
         .then(response => response.json())
         .then(data => {
-            let resultsDiv = document.getElementById("results");
+			let resultsDiv = document.getElementById("results");
             resultsDiv.innerHTML = "";
             data.forEach(product => {
-                resultsDiv.innerHTML += `<p>${product.ProdName} - $${product.ProdPrice}</p>`;
+                resultsDiv.innerHTML += `<p>${product.ProductID} ${product.ProdName} - $${product.ProdPrice}
+				<button type="button" onclick="gotoItem(${product.ProductID})">Check item</button>
+				</p>`;
             });
         });
 }
 
 </script>
-
-
-
-
-
-
-
-
-
-
-
-
-<p> <a href="{{ url_for('Bhomepage') }}"> Back to Buyer Homepage </a></p>
 
 </body>
 </html>

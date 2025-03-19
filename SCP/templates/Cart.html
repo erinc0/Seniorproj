@@ -31,7 +31,7 @@
 					<td>${cart.ProdName}</td>
 					<td>$${cart.ProdPrice}</td>
 					<td>
-					<input type="number" style="width: 50px;" id="Cartquantity" name="quantity" value="${cart.CartQuantity}" min="1" step="1" max="${cart.ProdQuantity} ">
+					<input type="number" style="width: 50px;" id="quantity-${cart.ProductID}" name="quantity" value="${cart.CartQuantity}" min="1" step="1" max="${cart.ProdQuantity} ">
 					</td>
 					<td>$${total}</td>
 					<td>
@@ -45,7 +45,7 @@
     }
 
 	async function updateCart(productID) {
-        let quantity = document.getElementById(`Cartquantity`).value;
+        let quantity = document.getElementById(`quantity-${productID}`).value;
         const response = await fetch(`/update_cart/${productID}/${quantity}`, {
             method: "POST"
         });
