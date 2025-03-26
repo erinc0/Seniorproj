@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Edit Product</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+<h1>Edit Product</h1>
+<form action="{{ url_for('update_product', product_id=product['ProductID']) }}" method="post" enctype="multipart/form-data">
+    <label>Title:<br>
+        <input type="text" name="name" value="{{ product['ProdName'] }}"><br><br>
+    </label>
+    <label>Price:<br>
+        <input type="number" name="price" step="0.01" value="{{ product['ProdPrice'] }}"><br><br>
+    </label>
+    <label>Quantity:<br>
+        <input type="number" name="quantity" value="{{ product['ProdQuantity'] }}"><br><br>
+    </label>
+    <label>Description:<br>
+        <textarea name="description">{{ product['ProdDesc'] }}</textarea><br><br>
+    </label>
+    <label>Image:<br>
+        <input type="file" name="image" accept="image/*"><br><br>
+    </label>
+    <button type="submit">Update</button>
+</form>
+</body>
+</html>

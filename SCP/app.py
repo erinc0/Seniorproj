@@ -151,6 +151,101 @@ def VendorAdd():
     else:
         return render_template('VendorAdd.html', username=session['username'])
 
+@app.route('/VendorEdit')
+def VendorEdit():
+    return render_template('VendorEdit.html')
+
+@app.route('/vendor_products', methods=['GET'])
+def vendor_products():
+    search = request.args.get('search', '')
+    conn = connect_db()
+    cursor = conn.cursor()
+    cursor.execute("SELECT * FROM Product WHERE SupplierID=? AND ProdName LIKE ?", (session['id'], f"%{search}%"))
+    rows = cursor.fetchall()
+    
+    data = []
+    for row in rows:
+        product = dict(row)
+        if product["ProdImage"]:
+            product["ProdImage"] = base64.b64encode(product["ProdImage"]).decode('utf-8')  # Convert to Base64
+        data.append(product)
+    
+    conn.close()
+    return jsonify(data)
+
+
+@app.route('/VendorEditProd/<int:product_id>', methods=['GET', 'POST'])
+def VendorEditProd(product_id):
+    conn = connect_db()
+    cursor = conn.cursor()
+
+    if request.method == 'POST':
+        name = request.form.get('name')
+        price = request.form.get('price')
+        quantity = request.form.get('quantity')
+        description = request.form.get('description')
+        image_file = request.files.get('image')
+
+        if image_file:
+            image_data = image_file.read()
+            cursor.execute("""
+                UPDATE Product SET ProdName=?, ProdPrice=?, ProdQuantity=?, ProdDesc=?, ProdImage=?
+                WHERE ProductID=?
+            """, (name, price, quantity, description, image_data, product_id))
+        else:
+            cursor.execute("""
+                UPDATE Product SET ProdName=?, ProdPrice=?, ProdQuantity=?, ProdDesc=?
+                WHERE ProductID=?
+            """, (name, price, quantity, description, product_id))
+
+        conn.commit()
+        conn.close()
+        return redirect(url_for('VendorEdit'))
+
+    cursor.execute("SELECT * FROM Product WHERE ProductID=?", (product_id,))
+    product = cursor.fetchone()
+    conn.close()
+
+    if product:
+        return render_template('VendorEditProd.html', product=product)
+    else:
+        return "Product not found", 404
+
+
+@app.route('/update_product/<int:product_id>', methods=['POST'])
+def update_product(product_id):
+    conn = connect_db()
+    cursor = conn.cursor()
+
+    name = request.form.get('name')
+    price = request.form.get('price')
+    quantity = request.form.get('quantity')
+    description = request.form.get('description')
+    image = request.files.get('image')
+    image_data = image.read() if image else None
+
+    try:
+        if image_data:
+            cursor.execute("""
+                UPDATE Product 
+                SET ProdName = ?, ProdPrice = ?, ProdQuantity = ?, ProdDesc = ?, ProdImage = ? 
+                WHERE ProductID = ?
+            """, (name, price, quantity, description, image_data, product_id))
+        else:
+            cursor.execute("""
+                UPDATE Product 
+                SET ProdName = ?, ProdPrice = ?, ProdQuantity = ?, ProdDesc = ?
+                WHERE ProductID = ?
+            """, (name, price, quantity, description, product_id))
+
+        conn.commit()
+        return redirect(url_for('Vhomepage'))
+    except sqlite3.Error as e:
+        return jsonify({'error': str(e)}), 500
+    finally:
+        conn.close()
+
+
 @app.route('/search') #used for search page for customer
 def search():
     #print("boser")
