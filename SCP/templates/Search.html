@@ -1,89 +1,151 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns="http://www.w3.org/1999/html">
 <head>
     <meta charset="UTF-8">
     <title>Search</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='homes.css') }}">
+    <style>
+        form {
+            background-color: #1f4291;
+            height: 2px;
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            margin-top: inherit;
+            padding-top: -5px;
+            padding-left: 91px;
+
+        }
+        input, textarea, button {
+            width: 100%;
+            margin-top: inherit;
+            padding-bottom: 9px;
+
+        }
+
+    </style>
 </head>
 <body>
+
+
 <div class = "topnav">
     <img src = "{{ url_for('static', filename='whiteversion.webp') }}" alt="logo"
-         style="width: 100px;height:40px">
-    <a href="{{ url_for('Bhomepage') }}" style="float: right">Buyer Homepage</a>
+         style="width: 100px;height:40px; padding-left:20px;">
+    <a href="{{ url_for('Bhomepage') }}" style="float: right"><img src = "{{ url_for('static', filename='home.png') }}"  alt="logo"
+                                                                   style="width: 40px;height:40px; margin-top: -6px;padding-right: 4px"></a>
+    <a href="{{ url_for('view_cart') }}" style="float: right"><img src = "{{ url_for('static', filename='carty.png') }}"  alt="logo"
+                                                                   style="width: 40px;height:40px; margin-top: -6px;"></a>
+    <form>
+        <input type="text" name="search" id="search" placeholder="search" ><br><br>
+        <button type = "button" onclick="lookup()" style="float: left;
+            width: 50px;
+            padding: 0px;
+            border: none;
+            border-radius: 0;
+            cursor: pointer;
+            margin-top: inherit;"><img src = "{{ url_for('static', filename='maggy.png') }}" alt="logo"
+                                       style="width: 40px;padding-left:0;height:36px;  display: flex; border-top-right-radius: 10px;border-bottom-right-radius:10px;">
+        </button>
+    </form>
 
 </div>
 
-<header >
-	Search
-</header>
-<form>
-    <input type="text" name="search" id="search" required><br><br>
-<button type = "button" onclick="lookup()"> Search </button>
-</form>
+<div id="mySidenav" class="sidenav">
+    <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
+    <p>Filter by Price</p>
 
-<form>
-<label for="minval"> Minimum price
-    <input type ="number" name ="minval" id="minval">
-</label>
-<label for="maxval"> Maximum price
-    <input type ="number" name ="maxval" id="maxval">
-</label>
-<button type = "button" onclick="userfilter()"> Filter </button>
-</form>
+    <form style="padding-left: 50px; padding-top: 60px">
+        <label for="minval"> Minimum
+            <input type ="number" name ="minval" id="minval" style="width: 100px; position: relative; display: flex;>
+        </label>
+        <br>
+        <label for="maxval"> Maximum
+            <input type ="number" name ="maxval" id="maxval" style="width: 100px; ">
+        </label>
+        <br>
+        <button type = "button" onclick="userfilter()" style="width: 100px; position: relative; display: flex;"> Filter </button>
+
+
+    </form>
+
+
+</div>
+
+
+<span onclick="openNav()">Filter settings</span>
+
+
+<div id = "bruh1">
+<img src = "{{ url_for('static', filename='maggy.png') }}" alt="logo"
+     style="width: 300px;height:300px; align-self: center; float: right; padding-right:400px; padding-top: 150px">
+<p style=" align-self: center; float: right; padding-right:450px; padding-top: 20px">No results, try searching!</p>
+</div>
 
 <div id="results">
-	<div class="column">
-	<div id="prod"></div>
-	<div id="price"></div>
-	<div id="desc"></div>
-	<div id="supplier"></div>
-	<div id="image"></div>
-	</div>
+
 </div>
 
 <script>
-	function lookup() {
-    let search = document.getElementById("search").value;
-
-    fetch(`http://127.0.0.1:5000/searchS?search=${search}`)
-        .then(response => response.json())
-        .then(data => {
-            let resultsDiv = document.getElementById("results");
-            resultsDiv.innerHTML = "";
-            data.forEach(product => {
-                resultsDiv.innerHTML += `<p>${product.ProductID} ${product.ProdName} - $${product.ProdPrice}
-				<button type="button" onclick="gotoItem(${product.ProductID})">Check item</button>
-				</p>`;
+    function lookup() {
+        document.getElementById("bruh1").innerHTML= "";
+        let search = document.getElementById("search").value;
+        fetch(`/searchS?search=${search}`)
+            .then(response => response.json())
+            .then(data => {
+                let resultsDiv = document.getElementById("results");
+                resultsDiv.innerHTML = "";
+                data.forEach(product => {
+                    resultsDiv.innerHTML += `
+                    <p>
+                        <img src="/get_product_image/${product.ProductID}" style="width: 100px;height:100px;">
+                        ${product.ProdName} - $${product.ProdPrice}
+                        <button type="button" style="align-self: center" onclick="gotoItem(${product.ProductID})">Check item</button>
+                    </p>`;
+                });
             });
-        });
-}
+    }
+
 </script>
 
 <script>
-	function gotoItem(productId) {
-		window.location.href = `/item/${productId}`;  // Redirect to item page with the product ID
-	}
+    function gotoItem(productId) {
+        window.location.href = `/item/${productId}`;  // Redirect to item page with the product ID
+        document.getElementById("bruh1").remove();
+    }
 </script>
 
 <script>
-	function userfilter() {
-    let minval = document.getElementById("minval").value;
-    let maxval = document.getElementById("maxval").value;
-    let search = document.getElementById("search").value;
+    function userfilter() {
+        document.getElementById("bruh1").innerHTML= "";
+        let minval = document.getElementById("minval").value;
+        let maxval = document.getElementById("maxval").value;
+        let search = document.getElementById("search").value;
 
-    fetch(`http://127.0.0.1:5000/filterp?minval=${minval}&maxval=${maxval}&search=${search}`)
-        .then(response => response.json())
-        .then(data => {
-			let resultsDiv = document.getElementById("results");
-            resultsDiv.innerHTML = "";
-            data.forEach(product => {
-                resultsDiv.innerHTML += `<p>${product.ProductID} ${product.ProdName} - $${product.ProdPrice}
-				<button type="button" onclick="gotoItem(${product.ProductID})">Check item</button>
-				</p>`;
+        fetch(`http://127.0.0.1:5000/filterp?minval=${minval}&maxval=${maxval}&search=${search}`)
+            .then(response => response.json())
+            .then(data => {
+                let resultsDiv = document.getElementById("results");
+                resultsDiv.innerHTML = "";
+                data.forEach(product => {
+                    resultsDiv.innerHTML += `
+                    <p>
+                        <img src="/get_product_image/${product.ProductID}" alt="Product Image" width="10px" height="10px">
+                        ${product.ProdName} - $${product.ProdPrice}
+                        <button type="button" onclick="gotoItem(${product.ProductID})">Check item</button>
+                    </p>`;
+                });
             });
-        });
-}
+    }
+</script>
+<script>
+    function openNav() {
+        document.getElementById("mySidenav").style.width = "250px";
+    }
 
+    /* Set the width of the side navigation to 0 */
+    function closeNav() {
+        document.getElementById("mySidenav").style.width = "0";
+    }
 </script>
 
 </body>

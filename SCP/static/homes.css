@@ -169,7 +169,6 @@ form {
     max-width: 400px;
     margin: 20px auto;
     padding: 20px;
-    border: 1px solid #ddd;
     border-radius: 8px;
     background-color: #f9f9f9;
 }
@@ -218,4 +217,46 @@ footer {
     height: 40px;
     cursor: pointer;
     text-align: center;
+}
+.sidenav {
+    height: 100%;
+    width: 0;
+    position: fixed;
+    z-index: 1;
+    top: 0;
+    left: 0;
+    background-color: #1f4291;
+    overflow-x: hidden;
+    padding-top: 60px;
+    transition: 0.5s;
+    color: white;
+}
+
+/* The navigation menu links */
+.sidenav a {
+    padding: 8px 8px 8px 32px;
+    text-decoration: none;
+    font-size: 25px;
+    color: #818181;
+    display: block;
+    transition: 0.3s;
+}
+
+/* When you mouse over the navigation links, change their color */
+.sidenav a:hover {
+    color: #f1f1f1;
+}
+
+/* Position and style the close button (top right corner) */
+.sidenav .closebtn {
+    position: absolute;
+    top: 0;
+    right: 25px;
+    font-size: 36px;
+    margin-left: 50px;
+}
+
+#main {
+    transition: margin-left .5s;
+    padding: 20px;
 }
