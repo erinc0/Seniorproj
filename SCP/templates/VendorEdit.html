@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Edit Existing Products</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+<header>
+    <h1>Vendor Edit Product Page</h1>
+    <img src="{{ url_for('static', filename='estation1.png') }}" alt="eStation Logo" width="150">
+</header>
+
+<main>
+    <h2>Search Your Products</h2>
+    <input type="text" id="search" placeholder="Search by product name">
+    <button onclick="searchProducts()">Search</button>
+    
+    <h2>Product Listings</h2>
+    <div id="results"></div>
+</main>
+
+<script>
+function searchProducts() {
+    let search = document.getElementById("search").value;
+    fetch(`/vendor_products?search=${search}`)
+        .then(response => response.json())
+        .then(data => {
+            let resultsDiv = document.getElementById("results");
+            resultsDiv.innerHTML = "";
+            data.forEach(product => {
+                resultsDiv.innerHTML += `
+                    <div style="margin: 10px; padding: 10px; border: 1px solid #000;">
+                        <p>Product ID: ${product.ProductID}</p>
+                        <p>Product Name: ${product.ProdName}</p>
+                        <p>Price: $${product.ProdPrice}</p>
+                        <p>Quantity: ${product.ProdQuantity}</p>
+                        <p>Description: ${product.ProdDesc}</p>
+                        <p>Supplier ID: ${product.SupplierID}</p>
+                        <img src="data:image/jpeg;base64,${product.ProdImage}" alt="Product Image" width="100">
+                        <br>
+                        <button onclick="editProduct(${product.ProductID})">Edit</button>
+                    </div>`;
+            });
+        });
+}
+
+function editProduct(productId) {
+    window.location.href = `/edit_product/${productId}`;
+}
+</script>
+
+<p><a href="{{ url_for('Vhomepage') }}">Back to Vendor Homepage</a></p>
+
+</body>
+</html>
