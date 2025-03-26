@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Cart</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+<header>
+<img src="{{ url_for('static', filename='estation1.png') }}" alt="eStation Logo" width="150">
+</header>
+<body>
+<div id="main">
+    <h1>Checkout</h1>
+    <form id="checkoutForm" action="{{ url_for('checkout') }}" method="post">
+        <label>Payment Type:<br>
+        <select  name="Payment" id="Pay" onchange="PayType()">
+			<option disabled selected value> -- select an option -- </option>
+			<option value="Paypal">Paypal</option>
+			<option value="Card">Card</option>
+		</select><br><br>
+        </label>
+		<div name="PaymentInfo" id="PaymentInfo">
+		</div>
+    </form>
+	
+    <p> <a href="{{ url_for('Bhomepage') }}"> Back to Home</a></p>
+</div>
+<script>
+	function PayType() {
+        let InfoDiv = document.getElementById("PaymentInfo");
+        if (document.getElementById("Pay").value === "Paypal") {
+            InfoDiv.innerHTML = `
+				<button type="button" onclick="CompletePayment()">Finish with Paypal</button>
+				`;
+        } else if (document.getElementById("Pay").value === "Card") {
+            InfoDiv.innerHTML =
+				`
+				<label for="cname">Name on Card</label>
+				<input type="text" id="cname" name="cardname" placeholder="John More Doe">
+				<label for="ccnum">Credit card number</label>
+				<input type="text" id="ccnum" name="cardnumber" placeholder="1111-2222-3333-4444">
+				<label for="expmonth">Exp Month</label>
+				<input type="text" id="expmonth" name="expmonth" placeholder="September">
+				<label for="expyear">Exp Year</label>
+                <input type="text" id="expyear" name="expyear" placeholder="2018">
+				<label for="cvv">CVV</label>
+                <input type="text" id="cvv" name="cvv" placeholder="352">
+				<button type="button" onclick="CompletePayment()">Complete Payment</button>
+				`;
+        } else {
+            InfoDiv.innerHTML = "";
+        }
+    }
+	
+	function CompletePayment() {
+        fetch(`/checkout`, {
+            method: 'POST'
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                alert("Payment successful");
+				document.getElementById("main").innerHTML = `<p>
+					Order placed
+					</p>
+					<p> <a href="{{ url_for('Bhomepage') }}"> Back to Home</a></p>`;
+            } else {
+                alert("Error Completing Payment " + data.error);
+            }
+        })
+    }
+	
+</script>
+</body>
+
+
+
+
+
+
+
+
+</body>
+</html>

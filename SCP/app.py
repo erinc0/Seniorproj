@@ -1,4 +1,5 @@
 from flask import Flask, jsonify, request, session, render_template, url_for, redirect
+from datetime import datetime
 import sqlite3
 from flask_cors import CORS
 
@@ -152,27 +153,13 @@ def VendorAdd():
 
 @app.route('/search') #used for search page for customer
 def search():
-    print("boser")
+    #print("boser")
     return render_template('Search.html', username=session['username'])
     
 @app.route('/Vsearch') #used for search page for vendors   
 def Vsearch():
-    print("boser")
+    #print("boser")
     return render_template('VSearch.html', username=session['username'])
-
-@app.route('/Vmetricspage')
-def Vmetricspage():
-    return render_template('vendormetrics.html', username=session['username'])
-
-@app.route('/Vmetrics', methods=['GET']) #purchase history
-def Vmetrics():
-    conn = connect_db()
-    cursor = conn.cursor()
-    cursor.execute("SELECT * FROM 'Order'")
-    rows = cursor.fetchall()
-    data = [dict(row) for row in rows]
-    conn.close()
-    return jsonify(data)
 
 @app.route('/searchS', methods=['GET']) #the actual search action
 def searchS():
@@ -185,6 +172,20 @@ def searchS():
     data = [dict(row) for row in rows]
     conn.close()
     return jsonify(data)
+            
+@app.route('/Vmetricspage')
+def Vmetricspage():
+    return render_template('vendormetrics.html', username=session['username'])
+
+@app.route('/Vmetrics', methods=['GET']) #purchase history
+def Vmetrics():
+    conn = connect_db()
+    cursor = conn.cursor()
+    cursor.execute("SELECT * FROM 'Order'")
+    rows = cursor.fetchall()
+    data = [dict(row) for row in rows]
+    conn.close()
+    return jsonify(data)        
         
 @app.route('/filterp', methods=['GET'])
 def filter():
@@ -282,23 +283,23 @@ def add_to_cart(ItemID,quantity):
     finally:
         conn.close()
         
-@app.route('/cartpage', methods=['GET']) #purchase history
+@app.route('/cartpage', methods=['GET']) #cart
 def cartpage():
     return render_template('Cart.html')
 
-@app.route('/cart', methods=['GET']) #purchase history
+@app.route('/cart', methods=['GET']) #cart
 def cart():
     conn = connect_db()
     cursor = conn.cursor()
-    search = session['id']
+    BuyerID = session['id']
     print(search)
-    cursor.execute("SELECT * FROM CartItems INNER JOIN Product ON CartItems.ProductID = Product.ProductID WHERE CartID=:search", {"search":search})
+    cursor.execute("SELECT * FROM CartItems INNER JOIN Product ON CartItems.ProductID = Product.ProductID WHERE CartID=:BuyerID", {"BuyerID":BuyerID})
     rows = cursor.fetchall()
     data = [dict(row) for row in rows]
     conn.close()
     return jsonify(data)
 
-@app.route('/update_cart/<int:ItemID>/<int:quantity>', methods=['POST']) #purchase history
+@app.route('/update_cart/<int:ItemID>/<int:quantity>', methods=['POST']) #cart
 def update_cart(ItemID, quantity):
     conn = connect_db()
     cursor = conn.cursor()
@@ -313,7 +314,7 @@ def update_cart(ItemID, quantity):
     finally:
         conn.close()
     
-@app.route('/remove_from_cart/<int:ItemID>', methods=['DELETE']) #purchase history
+@app.route('/remove_from_cart/<int:ItemID>', methods=['DELETE']) #cart
 def remove_from_cart(ItemID):
     conn = connect_db()
     cursor = conn.cursor()
@@ -326,9 +327,58 @@ def remove_from_cart(ItemID):
         return jsonify({'error': str(e)}), 500
     finally:
         conn.close()
-    return render_template('Cart.html')
+    
         
-        
-        
+
+
+
+
+
+
+
+
+
+
+
+@app.route('/checkout', methods=['GET'])
+def checkoutpage():
+    return render_template('Checkout.html')
+@app.route('/checkout', methods=['GET','POST'])
+def checkout():
+    if request.method == 'POST':
+        print("boser1")
+        conn = connect_db()
+        cursor = conn.cursor()
+        ID = session['id']
+        print(ID)
+        now = datetime.today().strftime('%Y-%m-%d')
+        print(now)
+        Total = 0.0
+        try:
+            print("boser2")
+            cursor.execute("INSERT INTO 'Order' (BuyerID, Date, Status, Amount) VALUES (?, ?, ?, ?)", (ID, now, "Processing", Total))
+            print("boser3")
+            OrderID = cursor.lastrowid
+            print(OrderID)
+            cursor.execute("SELECT * FROM CartItems INNER JOIN Product ON CartItems.ProductID = Product.ProductID WHERE CartID=:ID", {"ID":ID})
+            rows = cursor.fetchall()
+            data = [dict(row) for row in rows]
+            for item in data:
+                ProductID = item["ProductID"]
+                Quantity = item["CartQuantity"]
+                Price = item["ProdPrice"]
+                Subtotal = Quantity * Price
+                Total += Subtotal
+                cursor.execute("INSERT INTO OrderItems (OrderID, ProductID, Quantity, Price) VALUES (?,?,?,?)", (OrderID, ProductID, Quantity, Subtotal))
+            cursor.execute("UPDATE 'Order' SET Amount = ? WHERE OrderID = ?",(Total, OrderID))
+            conn.commit()
+            return jsonify({'success': True}), 201
+        except sqlite3.Error as e:
+            print("DB Error:", e)  # helpful in dev logs
+            return jsonify({'error': str(e)}), 500
+        finally:
+            conn.close()
+
+
 if __name__ == '__main__':
     app.run(debug=True)
