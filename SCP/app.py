@@ -466,6 +466,7 @@ def checkout():
                 Total += Subtotal
                 cursor.execute("INSERT INTO OrderItems (OrderID, ProductID, Quantity, Price) VALUES (?,?,?,?)", (OrderID, ProductID, Quantity, Subtotal))
             cursor.execute("UPDATE 'Order' SET Amount = ? WHERE OrderID = ?",(Total, OrderID))
+            cursor.execute("DELETE FROM CartItems WHERE CartID = ?", (ID,))
             conn.commit()
             return jsonify({'success': True}), 201
         except sqlite3.Error as e:
