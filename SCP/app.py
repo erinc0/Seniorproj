@@ -446,18 +446,6 @@ def remove_from_cart(ItemID):
     finally:
         conn.close()
     
-        
-
-
-
-
-
-
-
-
-
-
-
 @app.route('/checkout', methods=['GET'])
 def checkoutpage():
     return render_template('Checkout.html')

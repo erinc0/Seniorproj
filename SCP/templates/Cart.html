@@ -11,10 +11,12 @@
 </header>
 <h1>Cart</h1>
 
-<div id="cart-list">
+<div id="cart-list" onload="Check()">
     <p>Loading Cart...</p>
 </div>
-<p> <a href="{{ url_for('checkoutpage') }}"> Checkout </a></p>
+<div id="checkout">
+	<p> <a href="{{ url_for('checkoutpage') }}"> Checkout </a></p>
+</div>
 <p> <a href="{{ url_for('Bhomepage') }}"> Back to Buyer Homepage </a></p>
 
 <script>
@@ -22,29 +24,34 @@
         const response = await fetch(`http://127.0.0.1:5000/cart`);
         const data = await response.json();
         if (data.length === 0) {
-            document.getElementById("cart-list").innerHTML = "<p>No recent orders found.</p>";
+            document.getElementById("cart-list").innerHTML = "<p>Cart empty.</p>";
+			document.getElementById("checkout").innerHTML = `<p> <a href="{{ url_for('search') }}"> Go to search </a></p>`;
             return;
-        }
-        let table = "<table border='1'><tr><th>Product ID</th><th>Product Name</th><th>Price</th><th>Quantity</th><th>Total</th><th>Actions</th></tr>";
-        data.forEach(cart => {
-			let total = cart.ProdPrice * cart.CartQuantity;
-            table += `<tr>   
-				<td>${cart.ProductID}</td>
-					<td>${cart.ProdName}</td>
-					<td>$${cart.ProdPrice}</td>
-					<td>
-					<input type="number" style="width: 50px;" id="quantity-${cart.ProductID}" name="quantity" value="${cart.CartQuantity}" min="1" step="1" max="${cart.ProdQuantity} ">
-					</td>
-					<td>$${total}</td>
-					<td>
-					<button onclick="updateCart(${cart.ProductID})">Update</button>
-					<button onclick="removeFromCart(${cart.ProductID})">Remove</button>
-					</td>
-				  </tr>`;
-        });
-        table += "</table>";
-        document.getElementById("cart-list").innerHTML = table;
-    }
+        }else{
+			let table = "<table border='1'><tr><th>Product ID</th><th>Product Name</th><th>Price</th><th>Quantity</th><th>Total</th><th>Actions</th></tr>";
+			data.forEach(cart => {
+				let total = cart.ProdPrice * cart.CartQuantity;
+				let FormatTotal = total.toFixed(2);
+				table += `<tr>   
+					<td>${cart.ProductID}</td>
+						<td>${cart.ProdName}</td>
+						<td>$${cart.ProdPrice}</td>
+						<td>
+						<input type="number" style="width: 50px;" id="quantity-${cart.ProductID}" name="quantity" value="${cart.CartQuantity}" min="1" step="1" max="${cart.ProdQuantity} ">
+						</td>
+						<td>$${FormatTotal}</td>
+						<td>
+						<button onclick="updateCart(${cart.ProductID})">Update</button>
+						<button onclick="removeFromCart(${cart.ProductID})">Remove</button>
+						</td>
+					  </tr>`;
+			});
+			table += "</table>";
+			document.getElementById("cart-list").innerHTML = table;
+			document.getElementById("checkout").innerHTML = `<p> <a href="{{ url_for('checkoutpage') }}"> Checkout </a></p>`;
+			return;
+		}
+	}
 
 	async function updateCart(productID) {
         let quantity = document.getElementById(`quantity-${productID}`).value;
