@@ -373,6 +373,28 @@ def item(ItemID):
         return render_template('item.html', item=item_dict)
     else:
         return "Item not found", 404
+@app.route('/view_cart', methods=['GET'])
+def view_cart():
+    conn = connect_db()
+    cursor = conn.cursor()
+    CartID = session['id']
+
+    try:
+        cursor.execute("""
+            SELECT p.ProdName, c.CartQuantity, p.ProdPrice, (c.CartQuantity * p.ProdPrice) AS TotalPrice
+            FROM CartItems c
+            JOIN Product p ON c.ProductID = p.ProductID
+            WHERE c.CartID = ?
+        """, (CartID,))
+        cart_items = cursor.fetchall()
+
+        cart_data = [dict(item) for item in cart_items]
+        return render_template('cart.html', cart_items=cart_data)
+
+    except sqlite3.Error as e:
+        return jsonify({'error': str(e)}), 500
+    finally:
+        conn.close()
 
 
 @app.route('/add_to_cart/<int:ItemID>/<int:quantity>', methods=['POST'])

@@ -16,7 +16,9 @@
 	<h1>Welcome, {{ session['username'] }}!</h1>
     <p>Your ID: {{ session['id'] }}</p>
     <h4> <a href="{{ url_for('cancel') }}"> Old orders</a></h4>
-	<h4> <a href="{{ url_for('search') }}"> Search</a></h4>
+    <h4> <a href="{{ url_for('search') }}"> Search</a></h4>
+    <h4> <a href="{{ url_for('view_cart') }}"> View Cart</a></h4>
+    
 </main>
 </body>
 <footer>
