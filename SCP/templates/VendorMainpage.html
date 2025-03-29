@@ -14,13 +14,7 @@
 	</style>
 </head>
 <body>
-<div class = "topnav">
-    <img src = "{{ url_for('static', filename='whiteversion.webp') }}" alt="logo"
-         style="width: 100px;height:40px" >
-    <a href="Homepage.html">| Back to Home</a>
-    <a href="login.html" style="float: right"> Logout </a>
-
-</div>
+    {% include 'topnavVendor.html' %}
 <header>
     Vendor Homepage
 </header>

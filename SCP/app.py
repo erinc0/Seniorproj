@@ -1,6 +1,7 @@
 from flask import Flask, jsonify, request, session, render_template, url_for, redirect
 from datetime import datetime
 import sqlite3
+import base64
 from flask_cors import CORS
 #test
 app = Flask(__name__)
@@ -44,46 +45,41 @@ def contactus():
     else:
         return render_template('contactform.html')
 
-@app.route('/login', methods =['GET', 'POST']) #login form
+@app.route('/login', methods=['GET', 'POST'])  # login form
 def login():
     if request.method == 'POST' and 'username' in request.form and 'password' in request.form:
         conn = connect_db()
         cursor = conn.cursor()
-        msg = ''
-        print("boser")
         accountType = request.form['accountType']
         username = request.form['username']
         password = request.form['password']
-        print("boser1")
+
         if accountType == "Buyer":
-            print("boser2")
-            cursor.execute("SELECT * FROM Buyer WHERE BuyerEmail = ? AND BuyerPasscode = ?", (username, password, ))
+            cursor.execute("SELECT * FROM Buyer WHERE BuyerEmail = ? AND BuyerPasscode = ?", (username, password,))
             account = cursor.fetchone()
             if account:
                 session['loggedin'] = True
                 session['id'] = account['BuyerID']
                 session['usertype'] = 'Buyer'
                 session['username'] = account['BuyerName']
-                msg = 'Logged in successfully !'
                 return redirect(url_for('Bhomepage'))
             else:
-                return jsonify({'Incorrect': 'wrong password/username'}), 201
+                return render_template('login.html', error="Incorrect username/password!")
+
         else:
-            print("boser3")
-            cursor.execute('SELECT * FROM Supplier WHERE SupplierEmail = ? AND SupplierPasscode = ?', (username, password, ))
+            cursor.execute("SELECT * FROM Supplier WHERE SupplierEmail = ? AND SupplierPasscode = ?", (username, password,))
             account = cursor.fetchone()
             if account:
-                print("boser4")
                 session['loggedin'] = True
                 session['id'] = account['SupplierID']
                 session['usertype'] = 'Vendor'
                 session['username'] = account['SupplierName']
-                msg = 'Logged in successfully !'
                 return redirect(url_for('Vhomepage'))
             else:
-                return jsonify({'Incorrect': 'wrong password/username'}), 201
+                return render_template('login.html', error="Incorrect Username/Password")
     else:
         return render_template('login.html')
+
 
 
 @app.route('/logout')
@@ -239,7 +235,7 @@ def update_product(product_id):
             """, (name, price, quantity, description, product_id))
 
         conn.commit()
-        return redirect(url_for('Vhomepage'))
+        return redirect(url_for('VendorEdit'))
     except sqlite3.Error as e:
         return jsonify({'error': str(e)}), 500
     finally:

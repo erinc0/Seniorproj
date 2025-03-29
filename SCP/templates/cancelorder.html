@@ -3,12 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <title>Recent Orders</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='homes.css') }}">
 </head>
 <body>
-<header>
-<img src="{{ url_for('static', filename='estation1.png') }}" alt="eStation Logo" width="150">
-</header>
+    {% include 'topnav.html' %}
+
 <h1>Recent Orders</h1>
 
 <div id="order-list">

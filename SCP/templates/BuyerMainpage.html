@@ -14,13 +14,7 @@
 	</style>
 </head>
 <body>
-<div class = "topnav">
-    <img src = "{{ url_for('static', filename='whiteversion.webp') }}" alt="logo"
-         style="width: 100px;height:40px" >
-    <a href="Homepage.html">| Back to Home</a>
-    <a href="login.html" style="float: right"> Logout </a>
-
-</div>
+    {% include 'topnav.html' %}
 <header>
     Buyer Homepage
 </header>
@@ -68,6 +62,5 @@
 </main>
 </body>
 <footer>
-<a href="{{ url_for('logout') }}">Logout</a>
 </footer>
 </html>

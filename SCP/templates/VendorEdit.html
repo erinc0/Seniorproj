@@ -3,13 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <title>Edit Existing Products</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='homes.css') }}">
 </head>
 <body>
-<header>
-    <h1>Vendor Edit Product Page</h1>
-    <img src="{{ url_for('static', filename='estation1.png') }}" alt="eStation Logo" width="150">
-</header>
+    {% include 'topnavVendor.html' %}
 
 <main>
     <h2>Search Your Products</h2>

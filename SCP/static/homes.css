@@ -260,3 +260,23 @@ footer {
     transition: margin-left .5s;
     padding: 20px;
 }
+.topnavVendor {
+    overflow: hidden;
+    background-color: #1f4291;
+    height: 50px;
+}
+
+/* Style the topnav links */
+.topnavVendor a {
+    float: left;
+    display: block;
+    color: white;
+    text-align: center;
+    padding: 11px 19px;
+    text-decoration: none;
+}
+
+/* Change color on hover */
+.topnavVendor a:hover {
+    background-color: lightslategray;
+    color: black;
