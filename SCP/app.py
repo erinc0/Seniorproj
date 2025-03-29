@@ -88,6 +88,61 @@ def logout():
     session.clear()  # Clears all session data
     return redirect(url_for('login'))
 
+@app.route('/signup', methods=['GET', 'POST'])
+def signup():
+    if request.method == 'POST':
+        account_type = request.form.get('accountType')
+        username = request.form.get('username')
+        email = request.form.get('email')
+        password = request.form.get('password')
+        address = request.form.get('address')
+        phone = request.form.get('phone')
+
+        # Basic validation
+        if len(username) < 3:
+            return render_template('signup.html', error="Username must be at least 3 characters long.")
+
+        if len(password) < 3:
+            return render_template('signup.html', error="Password must be at least 3 characters long.")
+
+        if not (email.count("@") == 1 and ".com" in email):
+            return render_template('signup.html', error="Invalid email format. Must contain '@' and '.com'.")
+
+        if not phone.isdigit():
+            return render_template('signup.html', error="Phone number must contain only digits.")
+
+        conn = connect_db()
+        cursor = conn.cursor()
+
+        # Check if the email is already in use for both buyers and suppliers
+        cursor.execute("SELECT * FROM Buyer WHERE BuyerEmail = ?", (email,))
+        buyer_account = cursor.fetchone()
+
+        cursor.execute("SELECT * FROM Supplier WHERE SupplierEmail = ?", (email,))
+        supplier_account = cursor.fetchone()
+
+        if buyer_account or supplier_account:
+            return render_template('signup.html', error="Email already in use. Please choose another.")
+
+        try:
+            if account_type == "Buyer":
+                cursor.execute("""
+                    INSERT INTO Buyer (BuyerName, BuyerEmail, BuyerPasscode, BuyerAddress, BuyerPhone)
+                    VALUES (?, ?, ?, ?, ?)
+                """, (username, email, password, address, phone))
+            else:
+                cursor.execute("""
+                    INSERT INTO Supplier (SupplierName, SupplierEmail, SupplierPasscode, SupplierAddress, SupplierPhone)
+                    VALUES (?, ?, ?, ?, ?)
+                """, (username, email, password, address, phone))
+
+            conn.commit()
+            conn.close()
+            return redirect(url_for('login'))
+        except sqlite3.Error as e:
+            conn.close()
+            return render_template('signup.html', error=f"Database error: {str(e)}")
+    return render_template('signup.html')
 
 @app.route('/Bhomepage')
 def Bhomepage():
