@@ -2,20 +2,13 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='homes.css') }}">
     <title>VendorAdd</title>
-    <style> h1, main{
-			textarea {
-		resize: none;
-		}
-		input::-webkit-outer-spin-button,
-		input::-webkit-inner-spin-button {
-            -webkit-appearance: none;
-            margin: 0;
-        }  }</style>
+    
 </head>
 <body>
-<img src="{{ url_for('static', filename='estation1.png') }}" alt="eStation Logo" width="150">
+    {% include 'topnavVendor.html' %}
+
 <h1>New Listing</h1>
 <main>
     <hr>
