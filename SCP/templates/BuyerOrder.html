@@ -33,9 +33,8 @@
                         <td>${order.BuyerID}</td>
                         <td>${order.DateStart}</td>
                         <td>${order.Status}</td>
-                        <td>${order.Amount}</td>`;
-
-            if (order.Status === "Pending") {
+                        <td>$${order.Amount.toFixed(2)}</td>`;
+            if (order.Status === "Active") {
                 table += `<td><button onclick="deleteOrder(${order.OrderID})">Cancel</button></td>`;
             } else {
                 table += `<td><button onclick="alert('Sorry, this order cannot be cancelled due to its status being ${order.Status}. Please contact the help desk.')" disabled>Cannot Cancel</button></td>`;

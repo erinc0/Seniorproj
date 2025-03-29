@@ -4,6 +4,7 @@ import sqlite3
 import base64
 from flask_cors import CORS
 #test
+
 app = Flask(__name__)
 CORS(app)  # Enables CORS for all routes
 
@@ -106,6 +107,9 @@ def test():
     conn.close()
     return jsonify(data)
 
+@app.route('/BuyerOrders')
+def BuyerOrders():
+    return render_template('BuyerOrder.html', username=session['username'])
 
 @app.route('/history', methods=['GET']) #purchase history
 def history():
@@ -120,7 +124,7 @@ def history():
         conn.close()
         return jsonify(data)
     else:
-        return render_template('cancelorder.html')
+        return render_template('BuyerOrder.html')
             
 @app.route('/VendorAdd', methods=['GET','POST']) # used for create new listing
 def VendorAdd():
@@ -158,7 +162,6 @@ def vendor_products():
     cursor = conn.cursor()
     cursor.execute("SELECT * FROM Product WHERE SupplierID=? AND ProdName LIKE ?", (session['id'], f"%{search}%"))
     rows = cursor.fetchall()
-    
     data = []
     for row in rows:
         product = dict(row)
@@ -318,7 +321,7 @@ def cancel():
         finally:
             conn.close()
     else:
-        return render_template('cancelorder.html', username=session['username'])
+        return render_template('BuyerOrder.html', username=session['username'])
         
 @app.route('/cancel/<int:OrderID>', methods=['DELETE'])
 def cancelOrder(OrderID):
@@ -436,7 +439,7 @@ def checkout():
         Total = 0.0
         try:
             print("boser2")
-            cursor.execute("INSERT INTO 'Order' (BuyerID, Date, Status, Amount) VALUES (?, ?, ?, ?)", (ID, now, "Processing", Total))
+            cursor.execute("INSERT INTO 'Order' (BuyerID, DateStart, Status, Amount) VALUES (?, ?, ?, ?)", (ID, now, "Active", Total))
             print("boser3")
             OrderID = cursor.lastrowid
             print(OrderID)
@@ -449,7 +452,7 @@ def checkout():
                 Price = item["ProdPrice"]
                 Subtotal = Quantity * Price
                 Total += Subtotal
-                cursor.execute("INSERT INTO OrderItems (OrderID, ProductID, Quantity, Price) VALUES (?,?,?,?)", (OrderID, ProductID, Quantity, Subtotal))
+                cursor.execute("INSERT INTO OrderItems (OrderID, ProductID, Quantity, Subtotal) VALUES (?,?,?,?)", (OrderID, ProductID, Quantity, Subtotal))
             cursor.execute("UPDATE 'Order' SET Amount = ? WHERE OrderID = ?",(Total, OrderID))
             cursor.execute("DELETE FROM CartItems WHERE CartID = ?", (ID,))
             conn.commit()
