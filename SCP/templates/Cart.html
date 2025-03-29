@@ -37,7 +37,10 @@
 						<td>${cart.ProdName}</td>
 						<td>$${cart.ProdPrice}</td>
 						<td>
-						<input type="number" style="width: 50px;" id="quantity-${cart.ProductID}" name="quantity" value="${cart.CartQuantity}" min="1" step="1" max="${cart.ProdQuantity} ">
+						<input type="number" style="width: 50px;"
+						id="quantity-${cart.ProductID}" name="quantity" 
+						value="${cart.CartQuantity}" min="1" step="1" max="${cart.ProdQuantity}"
+						oninput="checkValue(this)">
 						</td>
 						<td>$${FormatTotal}</td>
 						<td>
@@ -52,7 +55,18 @@
 			return;
 		}
 	}
-
+	
+	function checkValue(sender) {
+		let min = sender.min;
+		let max = sender.max;
+		let value = parseInt(sender.value);
+		if (value>max) {
+			sender.value = max;
+		} else if (value<min) {
+			sender.value = min;
+		}
+	}
+	
 	async function updateCart(productID) {
         let quantity = document.getElementById(`quantity-${productID}`).value;
         const response = await fetch(`/update_cart/${productID}/${quantity}`, {
