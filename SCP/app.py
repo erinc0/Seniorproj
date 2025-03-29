@@ -1,6 +1,7 @@
 from flask import Flask, jsonify, request, session, render_template, url_for, redirect
 from datetime import datetime
 import sqlite3
+import base64
 from flask_cors import CORS
 #test
 app = Flask(__name__)
@@ -234,7 +235,7 @@ def update_product(product_id):
             """, (name, price, quantity, description, product_id))
 
         conn.commit()
-        return redirect(url_for('Vhomepage'))
+        return redirect(url_for('VendorEdit'))
     except sqlite3.Error as e:
         return jsonify({'error': str(e)}), 500
     finally:
