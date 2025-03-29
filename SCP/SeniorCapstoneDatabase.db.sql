@@ -45,16 +45,24 @@ CREATE TABLE IF NOT EXISTS "OrderItems" (
 	FOREIGN KEY("ProductID") REFERENCES "Product"("ProductID")
 );
 CREATE TABLE IF NOT EXISTS "Product" (
-	"ProductID"	INTEGER NOT NULL,
-	"SupplierID"	INTEGER NOT NULL,
-	"ProdName"	TEXT NOT NULL,
-	"ProdPrice"	NUMERIC NOT NULL,
-	"ProdQuantity"	INTEGER NOT NULL,
-	"ProdDesc"	TEXT NOT NULL,
-	"ProdImage"	BLOB,
-	PRIMARY KEY("ProductID") ON CONFLICT ABORT,
-	FOREIGN KEY("SupplierID") REFERENCES "Supplier"("SupplierID")
+    "ProductID" INTEGER NOT NULL,
+    "SupplierID" INTEGER NOT NULL,
+    "ProdName" TEXT NOT NULL,
+    "ProdPrice" NUMERIC NOT NULL,
+    "ProdQuantity" INTEGER NOT NULL,
+    "ProdDesc" TEXT NOT NULL,
+    "ProdImage" BLOB,
+    "ProdCategory" TEXT NOT NULL CHECK("ProdCategory" IN (
+        'CPU', 'GPU', 'APU', 'Motherboard', 'RAM', 'HDD', 'SSD', 'NVMe', 
+        'PSU', 'Air Coolers', 'Liquid Coolers', 'PC Cases', 'Memory', 
+        'Optical Drives', 'Sound Cards', 'Network Cards', 'Keyboard', 
+        'Mouse', 'Monitor', 'Speakers', 'Expansion Cards', 
+        'Cables and Connectors'
+    )),
+    PRIMARY KEY("ProductID") ON CONFLICT ABORT,
+    FOREIGN KEY("SupplierID") REFERENCES "Supplier"("SupplierID")
 );
+
 CREATE TABLE IF NOT EXISTS "Supplier" (
 	"SupplierID"	INTEGER NOT NULL,
 	"SupplierName"	TEXT NOT NULL,

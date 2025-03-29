@@ -181,28 +181,36 @@ def history():
     else:
         return render_template('BuyerOrder.html')
             
-@app.route('/VendorAdd', methods=['GET','POST']) # used for create new listing
+@app.route('/VendorAdd', methods=['GET', 'POST'])
 def VendorAdd():
     if request.method == 'POST':
-        print("here1")
         conn = connect_db()
-        cursor = conn.cursor()            
+        cursor = conn.cursor()
         supplier = session['id']
         name = request.form.get('name')
         price = request.form.get('price')
         quant = request.form.get('quantity')
+        category = request.form.get('category')  # New category field
         desc = request.form.get('description')
-        image = request.form.get('file')
-        print(desc)
+        image = request.files.get('file')
+
+        image_data = None
+        if image:
+            image_data = image.read()
+
         try:
-            cursor.execute("INSERT INTO Product (SupplierID, ProdName, ProdPrice, ProdQuantity, ProdDesc, ProdImage) VALUES (?, ?, ?, ?, ?, ?)",
-                (supplier, name, price, quant, desc, image))
+            cursor.execute("""
+                INSERT INTO Product (SupplierID, ProdName, ProdPrice, ProdQuantity, ProdDesc, ProdImage, ProdCategory) 
+                VALUES (?, ?, ?, ?, ?, ?, ?)
+            """, (supplier, name, price, quant, desc, image_data, category))
+
             conn.commit()
             conn.close()
-            return jsonify({'success': 'Product added successfully'}), 201
+            return redirect(url_for('Vhomepage'))
         except sqlite3.Error as e:
             conn.close()
-            return jsonify({'error': str(e)}), 500
+            return render_template('VendorAdd.html', error=str(e), username=session.get('username'))
+
     else:
         return render_template('VendorAdd.html', username=session['username'])
 
@@ -264,6 +272,21 @@ def VendorEditProd(product_id):
         return render_template('VendorEditProd.html', product=product)
     else:
         return "Product not found", 404
+    
+
+@app.route('/delete_product/<int:product_id>', methods=['POST'])
+def delete_product(product_id):
+    conn = connect_db()
+    cursor = conn.cursor()
+    try:
+        cursor.execute("DELETE FROM Product WHERE ProductID = ?", (product_id,))
+        conn.commit()
+        return redirect(url_for('VendorEdit'))
+    except sqlite3.Error as e:
+        return f"Error deleting product: {e}", 500
+    finally:
+        conn.close()
+
 
 
 @app.route('/update_product/<int:product_id>', methods=['POST'])
