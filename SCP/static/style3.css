@@ -5,7 +5,7 @@ https://unsplash.com/s/photos/modern-factory/*/
 body {
     margin: 0;
     font-family: Helvetica, Helvetica, sans-serif;
-    background-image: url("e3.png");
+    background-image: url("e1.png");
     background-position: center;
     background-attachment: fixed;
     background-size: cover;
@@ -52,6 +52,7 @@ body {
     transform: translate(-50%, 50%);
     padding-left: 100px;
     padding-right: 100px;
+    margin-top: 15px;
 
 }
 

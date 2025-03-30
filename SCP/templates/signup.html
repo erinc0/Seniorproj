@@ -2,39 +2,57 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
-    <link rel="stylesheet" href="allstyle.css">
-    <style >
-        img{
+    <title>Sign Up</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='homes.css') }}">
+    <style>
+        img {
             margin-top: 15px;
+        }
+        .error {
+            color: red;
+            margin-top: 10px;
         }
     </style>
 </head>
 <body>
 
-<div class = "topnav">
-
-    <img src = "estation1.png" alt="logo"
+<div class="topnav">
+    <img src="{{ url_for('static', filename='estation1.png') }}" alt="estation1.png"
          style="width: 100px;height:60px">
-
-    <a href="contactform.html" >Contact us</a>
-    <a href="login.html" style="float:right" >Sign in</a>
-    <a href="Homepage.html" style="float: right"> Home </a>
+    <a href="{{ url_for('contactus') }}">Contact us</a>
+    <a href="{{ url_for('login') }}" style="float:right">Sign in</a>
+    <a href="{{ url_for('homepage') }}" style="float: right">Home</a>
 </div>
-<header>
-    Sign-up
-</header>
-<div class = "container">
-    <button class ="bigbutton" > Buyer</button>
-    <button class ="bigbutton" > Vendor</button>
 
-</div>
-<form>
-    <label for="search">username</label><input type="username" name="search" id="search" ><br><br>
-    <label for="password">
-        password
-    </label><input type="password" name="password" id="password" ><br><br>
-    <button type="button">enter</button>
+<header>Sign-Up</header>
+
+<form action="{{ url_for('signup') }}" method="post">
+    <label for="accountType">Select Account Type:</label>
+    <select id="accountType" name="accountType" required>
+        <option value="Buyer">Buyer</option>
+        <option value="Vendor">Vendor</option>
+    </select><br><br>
+
+    <label for="username">Username</label>
+    <input type="text" name="username" id="username" required><br><br>
+
+    <label for="email">Email</label>
+    <input type="email" name="email" id="email" required><br><br>
+
+    <label for="password">Password</label>
+    <input type="password" name="password" id="password" required><br><br>
+
+    <label for="address">Address</label>
+    <input type="text" name="address" id="address" required><br><br>
+
+    <label for="phone">Phone Number</label>
+    <input type="text" name="phone" id="phone" required><br><br>
+
+    {% if error %}
+    <p class="error">{{ error }}</p>
+    {% endif %}
+
+    <input type="submit" class="btn" value="Sign Up"><br><br>
 </form>
 
 </body>

@@ -7,6 +7,8 @@
 </head>
 <body>
 <h1>Edit Product</h1>
+
+
 <form action="{{ url_for('update_product', product_id=product['ProductID']) }}" method="post" enctype="multipart/form-data">
     <label>Title:<br>
         <input type="text" name="name" value="{{ product['ProdName'] }}"><br><br>
@@ -25,5 +27,11 @@
     </label>
     <button type="submit">Update</button>
 </form>
+
+<!-- so much timeee-->
+<form action="{{ url_for('delete_product', product_id=product['ProductID']) }}" method="post" onsubmit="return confirm('Are you sure you want to delete this product?');">
+    <button type="submit" style="background-color: red; color: white;">Delete Product</button>
+</form>
+
 </body>
 </html>

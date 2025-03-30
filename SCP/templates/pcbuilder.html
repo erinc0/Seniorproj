@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>PC Builder</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='homespcbuilder.css') }}">
+  <style>
+    body {
+      background-color: white;
+      color: black;
+      font-family: Arial, sans-serif;
+      text-align: center;
+    }
+    .pc-container {
+      position: relative;
+      width: 768px;
+      margin: 40px auto;
+    }
+    .pc-image {
+      width: 100%;
+    }
+    .part-box {
+      position: absolute;
+      border: 2px solid gray;
+      background-color: rgba(128, 128, 128, 0.6);
+      transition: 0.3s;
+      cursor: pointer;
+    }
+    .part-box:hover {
+      background-color: rgba(255, 255, 255, 0.2);
+    }
+    .label {
+      position: absolute;
+      font-size: 12px;
+      font-weight: bold;
+      color: white;
+      text-align: center;
+      width: 100%;
+      top: 50%;
+      transform: translateY(-50%);
+      pointer-events: none;
+    }
+    .tooltip {
+      position: absolute;
+      background-color: black;
+      color: white;
+      padding: 5px 8px;
+      border-radius: 4px;
+      font-size: 12px;
+      visibility: hidden;
+      z-index: 10;
+    }
+    .part-box:hover .tooltip {
+      visibility: visible;
+    }
+    .part-section {
+      width: 80%;
+      margin: 40px auto;
+      text-align: left;
+      border: 1px solid #ccc;
+      padding: 20px;
+      background: #f9f9f9;
+      border-radius: 8px;
+    }
+    .part-section input {
+      padding: 6px;
+      width: 60%;
+    }
+    .part-section button {
+      padding: 6px 10px;
+      margin-left: 10px;
+      background-color: #1f4291;
+      color: white;
+      border: none;
+      border-radius: 4px;
+    }
+    .part-section button:hover {
+      background-color: #163172;
+    }
+    .result-item {
+      margin-top: 10px;
+      padding: 5px;
+      border-top: 1px solid #ccc;
+    }
+  </style>
+</head>
+<body>
+  {% include 'topnavVendor.html' %}
+  <h1 style="color: black">Build Your PC</h1>
+
+  <script>
+    const buildSelections = {};
+    function addToBuild(category, product) {
+      const idSafe = category.toLowerCase().replace(/ /g, "_");
+      buildSelections[idSafe] = product;
+
+      const partBox = document.getElementById(`box_${idSafe}`);
+      if (partBox) partBox.style.display = "none";
+
+      const label = document.getElementById(`label_${idSafe}`);
+      if (label) {
+        label.innerHTML = `<strong>${product.ProdName}</strong> added to build`;
+      }
+    }
+
+    function searchCategory(category) {
+      const idSafe = category.toLowerCase().replace(/ /g, "_");
+      const query = document.getElementById(`search_${idSafe}`).value;
+
+      fetch(`/searchS?search=${query}`)
+        .then(res => res.json())
+        .then(data => {
+          const resultDiv = document.getElementById(`results_${idSafe}`);
+          resultDiv.innerHTML = "";
+
+          const filtered = data.filter(p => p.ProdCategory.toLowerCase() === category.toLowerCase());
+          if (filtered.length === 0) {
+            resultDiv.innerHTML = "<p>No results found.</p>";
+          } else {
+            filtered.forEach(product => {
+              resultDiv.innerHTML += `
+                <div class="result-item">
+                  <img src="/get_product_image/${product.ProductID}" width="60" height="60" style="vertical-align: middle;" />
+                  <strong>${product.ProdName}</strong> - $${product.ProdPrice}
+                  <button onclick='addToBuild("${category}", ${JSON.stringify(product).replace(/'/g, "\'")})'>Add to Build</button>
+                </div>
+              `;
+            });
+          }
+        });
+    }
+
+    function gotoItem(productId) {
+      window.location.href = `/item/${productId}`;
+    }
+  </script>
+
+  <!-- Image Map with IDs -->
+  <div class="pc-container">
+    <img src="{{ url_for('static', filename='pcbuild.png') }}" class="pc-image" alt="PC Image" />
+
+    <div class="part-box" id="box_cpu" style="top: 185px; left: 230px; width: 80px; height: 80px;">
+      <div class="label">CPU</div>
+      <div class="tooltip">Click me to browse CPUs</div>
+    </div>
+
+    <div class="part-box" id="box_ram" style="top: 170px; left: 340px; width: 40px; height: 110px;">
+      <div class="label">RAM</div>
+      <div class="tooltip">Click me to browse RAM</div>
+    </div>
+
+    <div class="part-box" id="box_gpu" style="top: 360px; left: 80px; width: 400px; height: 70px;">
+      <div class="label">GPU</div>
+      <div class="tooltip">Click me to browse GPUs</div>
+    </div>
+
+    <div class="part-box" id="box_storage" style="top: 450px; left: 170px; width: 200px; height: 40px;">
+      <div class="label">Storage</div>
+      <div class="tooltip">Click me to browse Storage</div>
+    </div>
+
+    <div class="part-box" id="box_motherboard" style="top: 110px; left: 110px; width: 300px; height: 40px;">
+      <div class="label">Motherboard</div>
+      <div class="tooltip">Click me to browse Motherboards</div>
+    </div>
+
+    <div class="part-box" id="box_psu" style="top: 600px; left: 140px; width: 160px; height: 80px;">
+      <div class="label">PSU</div>
+      <div class="tooltip">Click me to browse PSUs</div>
+    </div>
+
+    <div class="part-box" id="box_pc_cases" style="top: 300px; left: 700px; width: 100px; height: 100px;">
+      <div class="label">Case</div>
+      <div class="tooltip">Click me to browse Cases</div>
+    </div>
+  </div>
+
+  <!-- Search Sections -->
+  <div id="part-searches">
+    {% for category in ['CPU', 'GPU', 'RAM', 'Storage', 'Motherboard', 'PSU', 'PC Cases'] %}
+      <div class="part-section">
+        <h2>{{ category }}</h2>
+        <p id="label_{{ category | lower | replace(' ', '_') }}"></p>
+        <input type="text" id="search_{{ category | lower | replace(' ', '_') }}" placeholder="Search {{ category }}..." />
+        <button onclick="searchCategory('{{ category }}')">Search</button>
+        <div id="results_{{ category | lower | replace(' ', '_') }}"></div>
+      </div>
+    {% endfor %}
+  </div>
+</body>
+</html>

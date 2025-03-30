@@ -3,6 +3,7 @@ from datetime import datetime
 import sqlite3
 import base64
 from flask_cors import CORS
+from flask import Response
 #test
 
 app = Flask(__name__)
@@ -28,6 +29,20 @@ def connect_db():
 def homepage():
     return render_template('Homepage.html')
 
+@app.route('/get_product_image/<int:product_id>')
+def get_product_image(product_id):
+    conn = connect_db()
+    cursor = conn.cursor()
+    cursor.execute("SELECT ProdImage FROM Product WHERE ProductID = ?", (product_id,))
+    row = cursor.fetchone()
+    conn.close()
+
+    if row and row["ProdImage"]:
+        return Response(row["ProdImage"], mimetype='image/jpeg')
+    else:
+        return '', 404  # Image not found
+
+
 @app.route('/contactus', methods=['GET','POST']) #For help desk and test labled index
 def contactus():
     if request.method == 'POST':
@@ -45,6 +60,18 @@ def contactus():
             return jsonify({'error': str(e)}), 500
     else:
         return render_template('contactform.html')
+@app.route('/search_category')
+def search_category():
+    category = request.args.get('category')
+    search = request.args.get('search', '')
+    conn = connect_db()
+    cursor = conn.cursor()
+    cursor.execute("SELECT * FROM Product WHERE ProdCategory = ? AND ProdName LIKE ?", (category, f"%{search}%"))
+    rows = cursor.fetchall()
+    data = [dict(row) for row in rows]
+    conn.close()
+    return jsonify(data)
+
 
 @app.route('/login', methods=['GET', 'POST'])  # login form
 def login():
@@ -88,6 +115,61 @@ def logout():
     session.clear()  # Clears all session data
     return redirect(url_for('login'))
 
+@app.route('/signup', methods=['GET', 'POST'])
+def signup():
+    if request.method == 'POST':
+        account_type = request.form.get('accountType')
+        username = request.form.get('username')
+        email = request.form.get('email')
+        password = request.form.get('password')
+        address = request.form.get('address')
+        phone = request.form.get('phone')
+
+        # Basic validation
+        if len(username) < 3:
+            return render_template('signup.html', error="Username must be at least 3 characters long.")
+
+        if len(password) < 3:
+            return render_template('signup.html', error="Password must be at least 3 characters long.")
+
+        if not (email.count("@") == 1 and ".com" in email):
+            return render_template('signup.html', error="Invalid email format. Must contain '@' and '.com'.")
+
+        if not phone.isdigit():
+            return render_template('signup.html', error="Phone number must contain only digits.")
+
+        conn = connect_db()
+        cursor = conn.cursor()
+
+        # Check if the email is already in use for both buyers and suppliers
+        cursor.execute("SELECT * FROM Buyer WHERE BuyerEmail = ?", (email,))
+        buyer_account = cursor.fetchone()
+
+        cursor.execute("SELECT * FROM Supplier WHERE SupplierEmail = ?", (email,))
+        supplier_account = cursor.fetchone()
+
+        if buyer_account or supplier_account:
+            return render_template('signup.html', error="Email already in use. Please choose another.")
+
+        try:
+            if account_type == "Buyer":
+                cursor.execute("""
+                    INSERT INTO Buyer (BuyerName, BuyerEmail, BuyerPasscode, BuyerAddress, BuyerPhone)
+                    VALUES (?, ?, ?, ?, ?)
+                """, (username, email, password, address, phone))
+            else:
+                cursor.execute("""
+                    INSERT INTO Supplier (SupplierName, SupplierEmail, SupplierPasscode, SupplierAddress, SupplierPhone)
+                    VALUES (?, ?, ?, ?, ?)
+                """, (username, email, password, address, phone))
+
+            conn.commit()
+            conn.close()
+            return redirect(url_for('login'))
+        except sqlite3.Error as e:
+            conn.close()
+            return render_template('signup.html', error=f"Database error: {str(e)}")
+    return render_template('signup.html')
 
 @app.route('/Bhomepage')
 def Bhomepage():
@@ -125,29 +207,43 @@ def history():
         return jsonify(data)
     else:
         return render_template('BuyerOrder.html')
+    
+
+@app.route('/pcbuilder')
+def pcbuilder():
+    return render_template('pcbuilder.html')
+
             
-@app.route('/VendorAdd', methods=['GET','POST']) # used for create new listing
+@app.route('/VendorAdd', methods=['GET', 'POST'])
 def VendorAdd():
     if request.method == 'POST':
-        print("here1")
         conn = connect_db()
-        cursor = conn.cursor()            
+        cursor = conn.cursor()
         supplier = session['id']
         name = request.form.get('name')
         price = request.form.get('price')
         quant = request.form.get('quantity')
+        category = request.form.get('category')  # New category field
         desc = request.form.get('description')
-        image = request.form.get('file')
-        print(desc)
+        image = request.files.get('file')
+
+        image_data = None
+        if image:
+            image_data = image.read()
+
         try:
-            cursor.execute("INSERT INTO Product (SupplierID, ProdName, ProdPrice, ProdQuantity, ProdDesc, ProdImage) VALUES (?, ?, ?, ?, ?, ?)",
-                (supplier, name, price, quant, desc, image))
+            cursor.execute("""
+                INSERT INTO Product (SupplierID, ProdName, ProdPrice, ProdQuantity, ProdDesc, ProdImage, ProdCategory) 
+                VALUES (?, ?, ?, ?, ?, ?, ?)
+            """, (supplier, name, price, quant, desc, image_data, category))
+
             conn.commit()
             conn.close()
-            return jsonify({'success': 'Product added successfully'}), 201
+            return redirect(url_for('Vhomepage'))
         except sqlite3.Error as e:
             conn.close()
-            return jsonify({'error': str(e)}), 500
+            return render_template('VendorAdd.html', error=str(e), username=session.get('username'))
+
     else:
         return render_template('VendorAdd.html', username=session['username'])
 
@@ -209,6 +305,21 @@ def VendorEditProd(product_id):
         return render_template('VendorEditProd.html', product=product)
     else:
         return "Product not found", 404
+    
+
+@app.route('/delete_product/<int:product_id>', methods=['POST'])
+def delete_product(product_id):
+    conn = connect_db()
+    cursor = conn.cursor()
+    try:
+        cursor.execute("DELETE FROM Product WHERE ProductID = ?", (product_id,))
+        conn.commit()
+        return redirect(url_for('VendorEdit'))
+    except sqlite3.Error as e:
+        return f"Error deleting product: {e}", 500
+    finally:
+        conn.close()
+
 
 
 @app.route('/update_product/<int:product_id>', methods=['POST'])
@@ -255,17 +366,25 @@ def Vsearch():
     #print("boser")
     return render_template('VSearch.html', username=session['username'])
 
-@app.route('/searchS', methods=['GET']) #the actual search action
+@app.route('/searchS', methods=['GET'])
 def searchS():
     conn = connect_db()
     cursor = conn.cursor()
-    print("boser")
     search = request.args.get('search')
     cursor.execute("SELECT * FROM Product WHERE ProdName LIKE ?", (f"%{search}%",))
     rows = cursor.fetchall()
-    data = [dict(row) for row in rows]
+    data = []
+
+    for row in rows:
+        product = dict(row)
+        # 👇 Remove the image data to avoid JSON errors
+        if "ProdImage" in product:
+            del product["ProdImage"]
+        data.append(product)
+
     conn.close()
     return jsonify(data)
+
             
 @app.route('/Vmetricspage')
 def Vmetricspage():
@@ -283,17 +402,25 @@ def Vmetrics():
         
 @app.route('/filterp', methods=['GET'])
 def filter():
-    print("boser")
     conn = connect_db()
     cursor = conn.cursor()
     minval = request.args.get('minval', type=int)
-    maxval=request.args.get('maxval', type=int)
+    maxval = request.args.get('maxval', type=int)
     search = request.args.get('search')
-    cursor.execute("SELECT * FROM Product WHERE ProdPrice >=? AND ProdPrice<=? AND ProdName LIKE ?", (minval, maxval, f"%{search}%"))
+    cursor.execute("SELECT * FROM Product WHERE ProdPrice >=? AND ProdPrice <=? AND ProdName LIKE ?", 
+                   (minval, maxval, f"%{search}%"))
     rows = cursor.fetchall()
-    data=[dict(row) for row in rows]
+    data = []
+
+    for row in rows:
+        product = dict(row)
+        if "ProdImage" in product:
+            del product["ProdImage"]
+        data.append(product)
+
     conn.close()
     return jsonify(data)
+
 
 @app.route('/help', methods=['GET']) #used for search feature
 def help():
