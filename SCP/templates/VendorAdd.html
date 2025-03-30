@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <link rel="stylesheet" href="{{ url_for('static', filename='homes.css') }}">
     <title>VendorAdd</title>
-    
 </head>
 <body>
     {% include 'topnavVendor.html' %}
@@ -12,7 +11,8 @@
 <h1>New Listing</h1>
 <main>
     <hr>
-    <form "{{ url_for('VendorAdd') }}" method="post">
+    <form action="{{ url_for('VendorAdd') }}" method="post" enctype="multipart/form-data">
+
         <label>Name:<br>
 		<input type="text" name="name" required><br><br>
         </label>
@@ -22,15 +22,40 @@
 		<label>Quantity: <br>
 		<input type="number" name="quantity" min="1" step="1" max="1500" value=""/><br><br>
         </label>
+        <label>Category:<br>
+        <select name="category" required>
+            <option value="CPU">CPU</option>
+            <option value="GPU">GPU</option>
+            <option value="APU">APU</option>
+            <option value="Motherboard">Motherboard</option>
+            <option value="RAM">RAM</option>
+            <option value="HDD">HDD</option>
+            <option value="SSD">SSD</option>
+            <option value="NVMe">NVMe</option>
+            <option value="PSU">PSU</option>
+            <option value="Air Coolers">Air Coolers</option>
+            <option value="Liquid Coolers">Liquid Coolers</option>
+            <option value="PC Cases">PC Cases</option>
+            <option value="Memory">Memory</option>
+            <option value="Optical Drives">Optical Drives</option>
+            <option value="Sound Cards">Sound Cards</option>
+            <option value="Network Cards">Network Cards</option>
+            <option value="Keyboard">Keyboard</option>
+            <option value="Mouse">Mouse</option>
+            <option value="Monitor">Monitor</option>
+            <option value="Speakers">Speakers</option>
+            <option value="Expansion Cards">Expansion Cards</option>
+            <option value="Cables and Connectors">Cables and Connectors</option>
+        </select><br><br>
+        </label>
 		<label>Image:<br>
         <input type="file" name="file" formenctype="multipart/form-data"/>
         </label>
 		<label> Description: <br>
-		<textarea name="description" rows="4" cols ="40"></textarea> <!-- reference: https://www.w3schools.com/tags/tag_textarea.asp-->
+		<textarea name="description" rows="4" cols ="40"></textarea>
     <button type="submit">Submit</button>
         </label>
-	</form>  <!-- reference: https://www.w3schools.com/howto/howto_html_file_upload_button.asp-->
-    
+	</form>
 </main>
 <p> <a href="{{ url_for('Vhomepage') }}"> Back to Vendor Homepage </a></p>
 </body>
