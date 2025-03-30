@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <title>Search</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='homes.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
     <style>
         form {
             background-color: #1f4291;
@@ -27,29 +28,96 @@
 </head>
 <body>
 
+<nav style>
+    <div class="nav-content">
+        <div class="logo">
+            <img src = "{{ url_for('static', filename='estation.webp') }}" alt="logo"
+                 style="width: 130px;height:70px; padding: 10px 4px;">
+        </div>
 
-<div class = "topnav">
-    <img src = "{{ url_for('static', filename='whiteversion.webp') }}" alt="logo"
-         style="width: 100px;height:40px; padding-left:20px;">
-    <a href="{{ url_for('Bhomepage') }}" style="float: right"><img src = "{{ url_for('static', filename='home.png') }}"  alt="logo"
-                                                                   style="width: 40px;height:40px; margin-top: -6px;padding-right: 4px"></a>
-    <a href="{{ url_for('cartpage') }}" style="float: right"><img src = "{{ url_for('static', filename='carty.png') }}"  alt="logo"
-                                                                   style="width: 40px;height:40px; margin-top: -6px;"></a>
-    <form>
-        <input type="text" name="search" id="search" placeholder="search" ><br><br>
-        <button type = "button" onclick="lookup()" style="float: left;
-            width: 50px;
-            padding: 0px;
-            border: none;
-            border-radius: 0;
-            cursor: pointer;
-            margin-top: inherit;"><img src = "{{ url_for('static', filename='maggy.png') }}" alt="logo"
-                                       style="width: 40px;padding-left:0;height:36px;  display: flex; border-top-right-radius: 10px;border-bottom-right-radius:10px;">
-        </button>
-    </form>
+        <ul class="nav-links" style="float: right">
+            <li><a href="{{ url_for('Bhomepage') }}">Home</a></li>
+            <li><a href="#">Contact</a></li>
+            <li><a href="{{ url_for('cartpage') }}">Cart</a></li>
+            <li><a href="#">Login</a></li>
+        </ul>
+    </div>
+</nav>
 
+
+<div class="container2" style="padding-top: 60px">
+    <div class="search-input">
+        <div class="search-bar">
+            <input type="text" id="search" placeholder="Search Products">
+            <button onclick="lookup()" style="width: 20%;
+    padding-left: 19px;
+    background-color: transparent;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-top: 0px;
+}"><i class="fa-solid fa-magnifying-glass" style="color: gray; position: absolute; font-size: 20px; padding-left: 20px"></i></button>
+        </div>
+    </div>
 </div>
 
+
+<div class="image-area">
+    <img src="{{ url_for('static', filename='e3.png') }}">
+    <div class="text-overlay">
+        All Things Computers.
+        <div class="buttons">
+            <button>Vendors</button>
+            <button>Browse Products</button>
+        </div>
+    </div>
+</div>
+<div class="image-container-section">
+<h2 style="padding-bottom: 40px">Explore Everything you need to Build your Computer.</h2>
+
+    <div class="image-container">
+    <div class="image-box">
+        <img src="{{ url_for('static', filename='cpu.png') }}" alt="cpu">
+        <p>CPUs</p>
+    </div>
+        <div class="image-box">
+            <img src="{{ url_for('static', filename='gpu.png') }}" alt="cpu">
+            <p>GPUs</p>
+        </div>
+        <div class="image-box">
+            <img src="{{ url_for('static', filename='case.png') }}" alt="cpu">
+            <p>Cases</p>
+        </div>
+        <div class="image-box">
+            <img src="{{ url_for('static', filename='mother.png') }}" alt="cpu">
+            <p>Motherboards</p>
+        </div>
+        <div class="image-box">
+            <img src="{{ url_for('static', filename='ram.png') }}" alt="cpu">
+            <p>RAM</p>
+        </div>
+        <div class="image-box">
+            <img src="{{ url_for('static', filename='SSD.png') }}" alt="cpu">
+            <p>SSD</p>
+        </div>
+        <div class="image-box">
+            <img src="{{ url_for('static', filename='monitor.png') }}" alt="cpu">
+            <p>Monitors</p>
+        </div>
+        <div class="image-box">
+            <img src="{{ url_for('static', filename='mouse.png') }}" alt="cpu">
+            <p>mouses</p>
+        </div>
+        <div class="image-box">
+            <img src="{{ url_for('static', filename='keyboard.png') }}" alt="cpu">
+            <p>Keybaord</p>
+        </div>
+    </div>
+</div>
+<h3>
+    Interested in Building your own PC? Join Today!
+</h3>
 <div id="mySidenav" class="sidenav">
     <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
     <p>Filter by Price</p>
@@ -64,22 +132,18 @@
         </label>
         <br>
         <button type = "button" onclick="userfilter()" style="width: 100px; position: relative; display: flex;"> Filter </button>
-
-
     </form>
 
 
 </div>
 
 
-<span onclick="openNav()">Filter settings</span>
+
+<span onclick="openNav()"></span>
 
 
-<div id = "bruh1">
-<img src = "{{ url_for('static', filename='maggy.png') }}" alt="logo"
-     style="width: 300px;height:300px; align-self: center; float: right; padding-right:400px; padding-top: 150px">
-<p style=" align-self: center; float: right; padding-right:450px; padding-top: 20px">No results, try searching!</p>
-</div>
+
+
 
 <div id="results">
 

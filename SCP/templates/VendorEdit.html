@@ -4,18 +4,45 @@
     <meta charset="UTF-8">
     <title>Edit Existing Products</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='homes.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
 </head>
 <body>
-    {% include 'topnavVendor.html' %}
+<nav>
+    <div class="nav-content">
+        <div class="logo">
+            <img src = "{{ url_for('static', filename='whiteversion.webp') }}" alt="logo"
+                 style="width: 130px;height:70px; padding: 10px 4px;">
+        </div>
 
-<main>
-    <h2>Search Your Products</h2>
+        <ul class="nav-links">
+            <li><a href="{{ url_for('Vhomepage') }}">Home</a></li>
+            <li><a href="#">Contact</a></li>
+            <li><a href="#">Search</a></li>
+            <li><a href="#">Logout</a></li>
+        </ul>
+    </div>
+</nav>
+<h2 style="justify-self: center; padding-top: 100px">Search Your Products</h2>
+<div class="container2" style="padding-top: 10px">
+    <div class="search-input">
+        <div class="search-bar">
     <input type="text" id="search" placeholder="Search by product name">
-    <button onclick="searchProducts()">Search</button>
-    
+    <button onclick="searchProducts()" style="width: 20%;
+    padding: 10px;
+    background-color: transparent;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-top: 0px;
+}"><i class="fa-solid fa-magnifying-glass" style="color: gray; position: absolute; padding-top: 5px;"></i></button>
+        </div>
+
     <h2>Product Listings</h2>
     <div id="results"></div>
-</main>
+
+    </div>
+</div>
 
 <script>
 function searchProducts() {
@@ -47,7 +74,7 @@ function editProduct(productId) {
 }
 </script>
 
-<p><a href="{{ url_for('Vhomepage') }}">Back to Vendor Homepage</a></p>
+
 
 </body>
 </html>
