@@ -1,0 +1,175 @@
+.topnav {
+    overflow: hidden;
+    background-color: #1f4291;
+    height: 50px;
+}
+
+/* Style the topnav links */
+.topnav a {
+    float: left;
+    display: block;
+    color: white;
+    text-align: center;
+    padding: 11px 19px;
+    text-decoration: none;
+}
+
+/* Change color on hover */
+.topnav a:hover {
+    background-color: lightslategray;
+    color: black;
+
+}
+body {
+   height: 100vh;
+    justify-content: center;
+    min-height: 100vh;
+    margin:0;
+    font-family: Arial, sans-serif;
+
+}
+input, textarea {
+    width: 100%;
+    padding: 10px;
+    margin-top: 5px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+
+
+ 
+
+
+
+
+.row{
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    width: 50%;
+    padding-left: 25%;
+justify-content: center;
+  margin-top: 0;
+
+
+
+}
+.row div {
+    width: 50%;
+
+}
+.nomargin{
+    margin:0px;
+
+}
+.logo {
+
+    display: flex;
+
+}
+
+
+
+form {
+    max-width: 400px;
+    margin: 20px auto;
+    padding: 20px;
+    border-radius: 8px;
+    background-color: #f9f9f9;
+}
+
+input, textarea {
+    width: 100%;
+    padding: 10px;
+    margin-top: 5px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+button {
+    width: 100%;
+    padding: 10px;
+    background-color: #1f4291;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-top: 10px;
+}
+
+button:hover {
+    background-color: #163172;
+}
+
+footer {
+    text-align: center;
+    padding: 10px;
+    background-color: #f4f4f4;
+    margin-top: 20px;
+}
+
+.img1{
+    width: 50px;
+    height: 50px;
+    gap: 10px;
+}
+.bigbutton{
+    display: block;
+    width:100%;
+    background-color: #1f4291;
+    color: white;
+    font-size: 16px;
+    height: 40px;
+    cursor: pointer;
+    text-align: center;
+}
+.sidenav {
+    height: 100%;
+    width: 0;
+    position: fixed;
+    z-index: 1;
+    top: 0;
+    left: 0;
+    background-color: #1f4291;
+    overflow-x: hidden;
+    padding-top: 60px;
+    transition: 0.5s;
+    color: white;
+}
+
+/* The navigation menu links */
+.sidenav a {
+    padding: 8px 8px 8px 32px;
+    text-decoration: none;
+    font-size: 25px;
+    color: #818181;
+    display: block;
+    transition: 0.3s;
+}
+
+/* When you mouse over the navigation links, change their color */
+.sidenav a:hover {
+    color: #f1f1f1;
+}
+
+
+.topnavVendor {
+    overflow: hidden;
+    background-color: #1f4291;
+    height: 50px;
+}
+
+/* Style the topnav links */
+.topnavVendor a {
+    float: left;
+    display: block;
+    color: white;
+    text-align: center;
+    padding: 11px 19px;
+    text-decoration: none;
+}
+
+/* Change color on hover */
+.topnavVendor a:hover {
+    background-color: lightslategray;
+    color: black;
