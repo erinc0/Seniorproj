@@ -27,7 +27,12 @@ def connect_db():
 
 @app.route('/homepage')
 def homepage():
-    return render_template('Homepage.html')
+    if session['usertype'] == 'Buyer':
+        return render_template('BuyerMainpage.html', username=session['username'])
+    elif session['usertype'] == 'Vendor':
+        return render_template('VendorMainpage.html', username=session['username'])
+    else:
+        return render_template('Homepage.html')
 
 @app.route('/get_product_image/<int:product_id>')
 def get_product_image(product_id):
@@ -217,33 +222,40 @@ def pcbuilder():
 @app.route('/VendorAdd', methods=['GET', 'POST'])
 def VendorAdd():
     if request.method == 'POST':
+    
         conn = connect_db()
         cursor = conn.cursor()
         supplier = session['id']
         name = request.form.get('name')
-        price = request.form.get('price')
-        quant = request.form.get('quantity')
+        price = float(request.form.get('price'))
+        quant = int(request.form.get('quantity'))
         category = request.form.get('category')  # New category field
         desc = request.form.get('description')
         image = request.files.get('file')
-
-        image_data = None
-        if image:
+        shipping_ids = request.form.getlist('shipping')  # This gives a list of selected IDs
+        if image and image.filename != '':
             image_data = image.read()
-
+        else:
+            image_data = None
+        print("POST data:", request.form)
+        print("Files:", request.files)
+        print("Session:", session)
         try:
             cursor.execute("""
                 INSERT INTO Product (SupplierID, ProdName, ProdPrice, ProdQuantity, ProdDesc, ProdImage, ProdCategory) 
                 VALUES (?, ?, ?, ?, ?, ?, ?)
             """, (supplier, name, price, quant, desc, image_data, category))
-
+            print("boser2")
+            product_id = cursor.lastrowid  # After inserting into Product
+            for ship_id in shipping_ids:
+                cursor.execute("INSERT INTO ProductShipping (ProductID, ShippingID) VALUES (?, ?)", (product_id, ship_id))
             conn.commit()
             conn.close()
             return redirect(url_for('Vhomepage'))
         except sqlite3.Error as e:
+            print("DB error:", e)  # <--- Add this
             conn.close()
             return render_template('VendorAdd.html', error=str(e), username=session.get('username'))
-
     else:
         return render_template('VendorAdd.html', username=session['username'])
 
@@ -273,7 +285,6 @@ def vendor_products():
 def VendorEditProd(product_id):
     conn = connect_db()
     cursor = conn.cursor()
-
     if request.method == 'POST':
         name = request.form.get('name')
         price = request.form.get('price')
@@ -508,17 +519,59 @@ def add_to_cart(ItemID,quantity):
 def cartpage():
     return render_template('Cart.html')
 
-@app.route('/cart', methods=['GET']) #cart
+@app.route('/cart', methods=['GET'])
 def cart():
+    if 'id' not in session:
+        print("No session ID found")
+        return jsonify({'error': 'Not logged in'}), 403
+    
     conn = connect_db()
     cursor = conn.cursor()
     BuyerID = session['id']
-    print(search)
-    cursor.execute("SELECT * FROM CartItems INNER JOIN Product ON CartItems.ProductID = Product.ProductID WHERE CartID=:BuyerID", {"BuyerID":BuyerID})
-    rows = cursor.fetchall()
-    data = [dict(row) for row in rows]
-    conn.close()
-    return jsonify(data)
+    print("boser1")
+    try:
+        cursor.execute("""
+            SELECT Product.ProductID, ProdName, ProdPrice, ProdQuantity, CartQuantity, 
+                   Shipping.ShippingID, Shipping.ShippingName, Shipping.Cost, Shipping.ShipDays
+            FROM CartItems 
+            INNER JOIN Product ON CartItems.ProductID = Product.ProductID
+            INNER JOIN ProductShipping ON Product.ProductID = ProductShipping.ProductID
+            INNER JOIN Shipping ON ProductShipping.ShippingID = Shipping.ShippingID
+            WHERE CartID = :BuyerID
+        """, {"BuyerID": BuyerID})
+        
+        rows = cursor.fetchall()
+        grouped = {}
+        data = []  # Initialize data list here
+        print("boser2")
+        for row in rows:
+            item = dict(row)
+            pid = item["ProductID"]
+
+            if pid not in grouped:
+                grouped[pid] = {
+                    "ProductID": pid,
+                    "ProdName": item["ProdName"],
+                    "ProdPrice": item["ProdPrice"],
+                    "ProdQuantity": item["ProdQuantity"],
+                    "CartQuantity": item["CartQuantity"],
+                    "ShippingOptions": []
+                }
+
+            grouped[pid]["ShippingOptions"].append({
+                "ShippingID": item["ShippingID"],
+                "ShippingName": item["ShippingName"],
+                "Cost": item["Cost"],
+                "ShipDays": item["ShipDays"]
+            })
+
+        return jsonify(list(grouped.values()))
+    except sqlite3.Error as e:
+        return jsonify({'error': str(e)}), 500
+    finally:
+        conn.close()
+
+
 
 
 @app.route('/update_cart/<int:ItemID>/<int:quantity>', methods=['POST']) #cart
@@ -580,6 +633,7 @@ def checkout():
                 Subtotal = Quantity * Price
                 Total += Subtotal
                 cursor.execute("INSERT INTO OrderItems (OrderID, ProductID, Quantity, Subtotal) VALUES (?,?,?,?)", (OrderID, ProductID, Quantity, Subtotal))
+                cursor.execute("UPDATE Product SET ProdQuantity = ProdQuantity - ? WHERE ProductID = ?",(Quantity, ProductID))
             cursor.execute("UPDATE 'Order' SET Amount = ? WHERE OrderID = ?",(Total, OrderID))
             cursor.execute("DELETE FROM CartItems WHERE CartID = ?", (ID,))
             conn.commit()
