@@ -44,11 +44,15 @@
         }else{
 			let table = "<table border='1'><tr><th>Product ID</th><th>Image</th><th>Product Name</th><th>Price</th><th>Quantity</th><th>Cost</th><th>Shipping Options</th><th>Actions</th></tr>";
 			data.forEach(cart => {
+				const saved = JSON.parse(localStorage.getItem("selectedShipping") || "{}");
+				const selected = saved[cart.ProductID] || cart.ShippingOptions[0].ShippingID;
 				let shippingOptionsHTML = "<fieldset>";
-				cart.ShippingOptions.forEach((opt, index) => {
+				cart.ShippingOptions.forEach(opt => {
 					shippingOptionsHTML += `
 						<label>
-							<input type="radio" name="shipping-${cart.ProductID}" value="${opt.ShippingID}" onchange="updateShipping()" ${index === 0 ? 'checked' : ''}>
+							<input type="radio" name="shipping-${cart.ProductID}" value="${opt.ShippingID}"
+								${opt.ShippingID === selected ? 'checked' : ''}
+								onchange="saveShipping(${cart.ProductID}, ${opt.ShippingID})">
 							${opt.ShippingName} ($${opt.Cost.toFixed(2)})
 						</label><br>`;
 				});
@@ -77,49 +81,50 @@
 			});
 			table += "</table>";
 			document.getElementById("cart-list").innerHTML = table;
-			let shippingTotal = 0;
-			data.forEach(cart => {
-				const firstShipping = cart.ShippingOptions[0];
-				if (firstShipping) {
-					shippingTotal += firstShipping.Cost;
-				}
-			});
-
-			let tax = (total + shippingTotal) * 0.06;
-			let grandTotal = total + shippingTotal + tax;
-
-			let summaryHTML = `
-				<p><strong>Item Subtotal:</strong> $${total.toFixed(2)}</p>
-				<p><strong>Shipping:</strong> $${shippingTotal.toFixed(2)}</p>
-				<p><strong>Sales Tax (6%):</strong> $${tax.toFixed(2)}</p>
-				<p><strong>Grand Total:</strong> $${grandTotal.toFixed(2)}</p>
-			`;
-			document.getElementById("checkout").innerHTML = summaryHTML + `<p><a href="{{ url_for('checkoutpage') }}"> Checkout </a></p>`;
-			return;
+			window._cartData = data; // store globally
+			updateSummary(data);
 		}
 	}
 	
-	function updateShipping() {
-		document.getElementById("cart-list").innerHTML = table;
-			let shippingTotal = 0;
-			data.forEach(cart => {
-				const firstShipping = cart.ShippingOptions[0];
-				if (firstShipping) {
-					shippingTotal += firstShipping.Cost;
-				}
-			});
-
-			let tax = (total + shippingTotal) * 0.06;
-			let grandTotal = total + shippingTotal + tax;
-
-			let summaryHTML = `
-				<p><strong>Item Subtotal:</strong> $${total.toFixed(2)}</p>
-				<p><strong>Shipping:</strong> $${shippingTotal.toFixed(2)}</p>
-				<p><strong>Sales Tax (6%):</strong> $${tax.toFixed(2)}</p>
-				<p><strong>Grand Total:</strong> $${grandTotal.toFixed(2)}</p>
-			`;
-			document.getElementById("checkout").innerHTML = summaryHTML + `<p><a href="{{ url_for('checkoutpage') }}"> Checkout </a></p>`;
+	
+	function saveShipping(productID, shippingID) {
+		let saved = JSON.parse(localStorage.getItem("selectedShipping") || "{}");
+		saved[productID] = shippingID;
+		localStorage.setItem("selectedShipping", JSON.stringify(saved));
+		
+		updateSummary(window._cartData);
 	}
+	
+	function updateSummary(cartData) {
+	let total = 0;
+	let shippingTotal = 0;
+	const saved = JSON.parse(localStorage.getItem("selectedShipping") || "{}");
+
+	cartData.forEach(cart => {
+		total += cart.ProdPrice * cart.CartQuantity;
+
+		const selectedShippingID = saved[cart.ProductID];
+		const selectedOption = cart.ShippingOptions.find(opt => opt.ShippingID === selectedShippingID);
+		if (selectedOption) {
+			shippingTotal += selectedOption.Cost;
+		}
+	});
+
+	const tax = (total + shippingTotal) * 0.06;
+	const grandTotal = total + shippingTotal + tax;
+	
+	localStorage.setItem("grandTotal", grandTotal.toFixed(2));
+
+	const summaryHTML = `
+		<p><strong>Item Subtotal:</strong> $${total.toFixed(2)}</p>
+		<p><strong>Shipping:</strong> $${shippingTotal.toFixed(2)}</p>
+		<p><strong>Sales Tax (6%):</strong> $${tax.toFixed(2)}</p>
+		<p><strong>Grand Total:</strong> $${grandTotal.toFixed(2)}</p>
+		<p><a href="{{ url_for('checkoutpage') }}"> Checkout </a></p>
+	`;
+	document.getElementById("checkout").innerHTML = summaryHTML;
+}
+
 	
 	function checkValue(sender) {
 		let min = sender.min;

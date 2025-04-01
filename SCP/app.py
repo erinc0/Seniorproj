@@ -324,6 +324,7 @@ def delete_product(product_id):
     cursor = conn.cursor()
     try:
         cursor.execute("DELETE FROM Product WHERE ProductID = ?", (product_id,))
+        cursor.execute("DELETE FROM ProductShipping WHERE ProductID = ?", (product_id,))
         conn.commit()
         return redirect(url_for('VendorEdit'))
     except sqlite3.Error as e:

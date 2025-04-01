@@ -23,10 +23,14 @@
 		<div name="PaymentInfo" id="PaymentInfo">
 		</div>
     </form>
-	<p> <a href="{{ url_for('checkoutpage') }}"> Back to checkout </a></p>
+	<div id ="test">
+<p>Grand Total: <span id="grand-total">loading...</span></p>
+	</div>
+	<p> <a href="{{ url_for('cartpage') }}"> Back to Cart </a></p>
     <p> <a href="{{ url_for('Bhomepage') }}"> Back to Home</a></p>
 </div>
 <script>
+	
 	function PayType() {
         let InfoDiv = document.getElementById("PaymentInfo");
         if (document.getElementById("Pay").value === "Paypal") {
@@ -71,6 +75,17 @@
         })
     }
 	
+	
+	document.addEventListener("DOMContentLoaded", function () {
+		const shippingSelections = JSON.parse(localStorage.getItem("selectedShipping") || "{}");
+		const grandTotal = localStorage.getItem("grandTotal");
+
+		console.log("Shipping Selections:", shippingSelections);
+		console.log("Grand Total:", grandTotal);
+
+		// Optional: display on page
+		document.getElementById("grand-total").textContent = `$${grandTotal}`;
+	});
 </script>
 </body>
 
