@@ -77,41 +77,41 @@
 <h2 style="padding-top: 600px; padding-bottom: 20px">Explore Everything you need to Build your Computer.</h2>
 
     <div class="image-container">
-    <div class="image-box">
+    <div class="image-box" onclick="prodimg('CPU')">
         <img src="{{ url_for('static', filename='cpu.png') }}" alt="cpu">
         <p>CPUs</p>
     </div>
-        <div class="image-box">
+        <div class="image-box" onclick="prodimg('GPU')">
             <img src="{{ url_for('static', filename='gpu.png') }}" alt="cpu">
             <p>GPUs</p>
         </div>
-        <div class="image-box">
+        <div class="image-box" onclick= "prodimg('case')">
             <img src="{{ url_for('static', filename='case.png') }}" alt="cpu">
             <p>Cases</p>
         </div>
-        <div class="image-box">
+        <div class="image-box" onclick= "prodimg('motherboard')">
             <img src="{{ url_for('static', filename='mother.png') }}" alt="cpu">
             <p>Motherboards</p>
         </div>
-        <div class="image-box">
+        <div class="image-box" onclick= "prodimg('RAM')">
             <img src="{{ url_for('static', filename='ram.png') }}" alt="cpu">
             <p>RAM</p>
         </div>
-        <div class="image-box">
+        <div class="image-box" onclick= "prodimg('SSD')">
             <img src="{{ url_for('static', filename='SSD.png') }}" alt="cpu">
             <p>SSD</p>
         </div>
-        <div class="image-box">
+        <div class="image-box" onclick= "prodimg('Monitors')">
             <img src="{{ url_for('static', filename='monitor.png') }}" alt="cpu">
             <p>Monitors</p>
         </div>
-        <div class="image-box">
+        <div class="image-box" onclick= "prodimg('Mouses')">
             <img src="{{ url_for('static', filename='mouse.png') }}" alt="cpu">
             <p>mouses</p>
         </div>
-        <div class="image-box">
+        <div class="image-box" onclick= "prodimg('Keyboard')">
             <img src="{{ url_for('static', filename='keyboard.png') }}" alt="cpu">
-            <p>Keybaord</p>
+            <p>Keyboard</p>
         </div>
     </div>
 </div>
@@ -161,6 +161,35 @@
                     imagebox.className = 'image-box2';
                     imagebox.innerHTML +=
                        `<img src="/get_product_image/${product.ProductID}"style="height:auto; border-radius:10px;">
+                      <p style="text-align: center; margin-top:10px; font-weight: bold;">  ${product.ProdName} </p>
+                       <p style="text-align: center">$${product.ProdPrice}</p>
+                        <button type="button" style="align-self: center" onclick="gotoItem(${product.ProductID})">Check item</button>
+
+`;
+                    imageContainer.querySelector('.image-container').appendChild(imagebox);
+                });
+                resultsDiv.appendChild(imageContainer);
+            });
+    }
+
+    function prodimg(prod) {
+
+        document.getElementById("main").style.display = 'none';
+        document.getElementById("results").innerHTML= "";
+        fetch(`/searchS?search=${prod}`)
+            .then(response => response.json())
+            .then(data => {
+                let resultsDiv = document.getElementById("results");
+                resultsDiv.innerHTML = "";
+                let imageContainer = document.createElement('div');
+                imageContainer.className = "image-container-section";
+                imageContainer.innerHTML='<h2 style="padding-bottom:20px"> Search Results</h2><div class="image-container">'
+
+                data.forEach(product => {
+                    let imagebox = document.createElement('div');
+                    imagebox.className = 'image-box2';
+                    imagebox.innerHTML +=
+                        `<img src="/get_product_image/${product.ProductID}"style="height:auto; border-radius:10px;">
                       <p style="text-align: center; margin-top:10px; font-weight: bold;">  ${product.ProdName} </p>
                        <p style="text-align: center">$${product.ProdPrice}</p>
                         <button type="button" style="align-self: center" onclick="gotoItem(${product.ProductID})">Check item</button>
