@@ -3,11 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <title>Title</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='allstyle.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='homes.css') }}">
     <style>
-        img {
-            margin-top: 15px;
-        }
+
         .error {
             color: red;
             margin-top: 10px;
@@ -16,14 +14,21 @@
 </head>
 <body>
 
-<div class="topnav">
-    <img src="{{ url_for('static', filename='estation1.png') }}" alt="estation1.png"
-         style="width: 100px;height:60px">
-    <a href="{{ url_for('contactus') }}">Contact us</a>
-    <a href="{{ url_for('signup') }}" style="float:right">Sign up</a>
-    <a href="{{ url_for('homepage') }}" style="float: right">Home</a>
-</div>
-<header>
+<nav style>
+    <div class="nav-content">
+        <div class="logo">
+            <img src = "{{ url_for('static', filename='estation.webp') }}" alt="logo"
+                 style="width: 130px;height:70px; padding: 10px 4px;">
+        </div>
+
+        <ul class="nav-links" style="float: right">
+            <li><a href="{{url_for('Bhomepage')}}">Back to Home</a></li>
+            <li><a href="{{ url_for('search')}}">Search</a></li>
+            <li><a href="{{url_for('login')}}">Logout</a></li>
+        </ul>
+    </div>
+</nav>
+<header style="padding-bottom: 60px">
     Sign-in
 </header>
 <form action="{{ url_for('login') }}" method="post">
