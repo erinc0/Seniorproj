@@ -85,7 +85,22 @@
   </style>
 </head>
 <body>
-  {% include 'topnavVendor.html' %}
+<nav style>
+  <div class="nav-content">
+    <div class="logo">
+      <img src = "{{ url_for('static', filename='estation.webp') }}" alt="logo"
+           style="width: 130px;height:70px; padding: 10px 4px;">
+    </div>
+
+    <ul class="nav-links" style="float: right">
+      <li><a href="{{url_for('Bhomepage')}}">Back to Home</a></li>
+      <li><a href="{{ url_for('search')}}">Search</a></li>
+      <li><a href="{{url_for('login')}}">Logout</a></li>
+    </ul>
+  </div>
+</nav>
+
+
   <h1 style="color: black">Build Your PC</h1>
 
   <script>

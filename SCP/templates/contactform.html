@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Contact Form</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='homes.css') }}">
     <style>
         #message-box {
             display: none;
@@ -26,14 +26,25 @@
     </style>
 </head>
 <body>
-    <img src="{{ url_for('static', filename='estation1.png') }}" alt="eStation Logo" width="150">
+<nav style>
+    <div class="nav-content">
+        <div class="logo">
+            <img src = "{{ url_for('static', filename='estation.webp') }}" alt="logo"
+                 style="width: 130px;height:70px; padding: 10px 4px;">
+        </div>
 
-    <h1>About Us</h1>
-    <p>eStation is an inventory management system for vendors across the world to connect with buyers. 
-       We take pride in making sure our customers are well taken care of. 
-       Contact us for any issues at all!</p>
+        <ul class="nav-links" style="float: right">
+            <li><a href="{{url_for('Bhomepage')}}">Back to Home</a></li>
+            <li><a href="{{ url_for('search')}}">Search</a></li>
+            <li><a href="{{url_for('login')}}">Logout</a></li>
 
-    <h1>Contact Us</h1>
+        </ul>
+    </div>
+</nav>
+
+
+
+    <h1 style="padding-top: 100px">Contact Us</h1>
 
     <form id="contactForm" action="{{ url_for('contactus') }}" method="post">
         <label>Name:<br>
@@ -54,7 +65,6 @@
     <!-- Success/Error Message Box -->
     <div id="message-box"></div>
 
-    <p> <a href="{{ url_for('homepage') }}"> Back to Home</a></p>
 
     <script>
         document.getElementById("contactForm").onsubmit = async function(event) {

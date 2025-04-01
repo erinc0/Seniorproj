@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" xmlns="http://www.w3.org/1999/html">
+<html lang="en" xmlns="http://www.w3.org/1999/html" xmlns="http://www.w3.org/1999/html">
 <head>
     <meta charset="UTF-8">
     <title>Search</title>
@@ -7,7 +7,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
     <style>
         form {
-            background-color: #1f4291;
+            background-color: black;
             height: 2px;
             display: flex;
             flex-direction: row;
@@ -37,9 +37,9 @@
 
         <ul class="nav-links" style="float: right">
             <li><a href="{{ url_for('Bhomepage') }}">Home</a></li>
-            <li><a href="#">Contact</a></li>
-            <li><a href="{{ url_for('cartpage') }}">Cart</a></li>
-            <li><a href="#">Login</a></li>
+            <li><a href="{{ url_for('contactus') }}">Contact</a></li>
+            <li><a href="{{ url_for('cartpage')}}">Cart</a></li>
+            <li><a href="{{url_for('login')}}">Login</a></li>
         </ul>
     </div>
 </nav>
@@ -62,10 +62,10 @@
     </div>
 </div>
 
-
-<div class="image-area">
+<div id="main">
+<div class="image-area" style="position: absolute">
     <img src="{{ url_for('static', filename='e3.png') }}">
-    <div class="text-overlay">
+    <div class="text-overlay" style="position: absolute">
         All Things Computers.
         <div class="buttons">
             <button>Vendors</button>
@@ -74,7 +74,7 @@
     </div>
 </div>
 <div class="image-container-section">
-<h2 style="padding-bottom: 40px">Explore Everything you need to Build your Computer.</h2>
+<h2 style="padding-top: 600px; padding-bottom: 20px">Explore Everything you need to Build your Computer.</h2>
 
     <div class="image-container">
     <div class="image-box">
@@ -115,57 +115,60 @@
         </div>
     </div>
 </div>
-<h3>
-    Interested in Building your own PC? Join Today!
-</h3>
-<div id="mySidenav" class="sidenav">
-    <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
-    <p>Filter by Price</p>
 
+
+</div>
+
+<div id="results">
+
+    </div>
+
+
+<span onclick="openNav()" style="font-size: 30px;cursor: pointer;position: absolute;top: 10px; left: 10px"><i class="fa-solid fa-bars" style="color: gray; position: absolute; font-size: 20px; padding-left: 30px; padding-top: 95px"></i></span>
+
+<div id="sidenav" class="sidenav">
+    <a href="javascript:void(0)" class="closebtn" onclick="closeNav()"><i class="fa-solid fa-x" style="color: gray; position: absolute; font-size: 20px; padding-left: 10px; padding-top: 50px"></i></a>
+    <p style="margin-bottom: -30px;padding-left: 20px; justify-content: center">Filter by price</p>
     <form style="padding-left: 50px; padding-top: 60px">
-        <label for="minval"> Minimum
-            <input type ="number" name ="minval" id="minval" style="width: 100px; position: relative; display: flex;>
-        </label>
-        <br>
-        <label for="maxval"> Maximum
-            <input type ="number" name ="maxval" id="maxval" style="width: 100px; ">
-        </label>
-        <br>
-        <button type = "button" onclick="userfilter()" style="width: 100px; position: relative; display: flex;"> Filter </button>
+        <label for="minval">Minimum</label>
+        <input type="number" name="minval" id="minval" style="position: relative; display: flex">
+        <br> <label for="maxval">Maximum</label>
+        <input type="number" name="maxval" id="maxval" style="width: 100px;"></label>
+        <br> <button type="button" onclick="userfilter()" style="width: 100px; height: 100px; position: relative; display: flex; justify-content: center">filter</button>
     </form>
 
 
 </div>
 
 
-
-<span onclick="openNav()"></span>
-
-
-
-
-
-<div id="results">
-
-</div>
-
 <script>
     function lookup() {
-        document.getElementById("bruh1").innerHTML= "";
+
+        document.getElementById("main").style.display = 'none';
+        document.getElementById("results").innerHTML= "";
         let search = document.getElementById("search").value;
         fetch(`/searchS?search=${search}`)
             .then(response => response.json())
             .then(data => {
                 let resultsDiv = document.getElementById("results");
                 resultsDiv.innerHTML = "";
+                let imageContainer = document.createElement('div');
+                imageContainer.className = "image-container-section";
+                imageContainer.innerHTML='<h2 style="padding-bottom:20px"> Search Results</h2><div class="image-container">'
+
                 data.forEach(product => {
-                    resultsDiv.innerHTML += `
-                    <p>
-                        <img src="/get_product_image/${product.ProductID}" style="width: 100px;height:100px;">
-                        ${product.ProdName} - $${product.ProdPrice}
+                    let imagebox = document.createElement('div');
+                    imagebox.className = 'image-box2';
+                    imagebox.innerHTML +=
+                       `<img src="/get_product_image/${product.ProductID}"style="height:auto; border-radius:10px;">
+                      <p style="text-align: center; margin-top:10px; font-weight: bold;">  ${product.ProdName} </p>
+                       <p style="text-align: center">$${product.ProdPrice}</p>
                         <button type="button" style="align-self: center" onclick="gotoItem(${product.ProductID})">Check item</button>
-                    </p>`;
+
+`;
+                    imageContainer.querySelector('.image-container').appendChild(imagebox);
                 });
+                resultsDiv.appendChild(imageContainer);
             });
     }
 
@@ -179,8 +182,10 @@
 </script>
 
 <script>
+    fetch(`http://127.0.0.1:5000/filterp?minval=${minval}&maxval=${maxval}&search=${search}`)
     function userfilter() {
-        document.getElementById("bruh1").innerHTML= "";
+        document.getElementById("main").style.display = 'none';
+        document.getElementById("results").innerHTML= "";
         let minval = document.getElementById("minval").value;
         let maxval = document.getElementById("maxval").value;
         let search = document.getElementById("search").value;
@@ -190,25 +195,37 @@
             .then(data => {
                 let resultsDiv = document.getElementById("results");
                 resultsDiv.innerHTML = "";
+                let imageContainer = document.createElement('div');
+                imageContainer.className = "image-container-section";
+                imageContainer.innerHTML='<h2 style="padding-bottom:20px"> Search Results</h2><div class="image-container">'
+
                 data.forEach(product => {
-                    resultsDiv.innerHTML += `
-                    <p>
-                        <img src="/get_product_image/${product.ProductID}" alt="Product Image" width="10px" height="10px">
-                        ${product.ProdName} - $${product.ProdPrice}
-                        <button type="button" onclick="gotoItem(${product.ProductID})">Check item</button>
-                    </p>`;
+                    let imagebox = document.createElement('div');
+                    imagebox.className = 'image-box2';
+                    imagebox.innerHTML +=
+                        `<img src="/get_product_image/${product.ProductID}"style="height:auto; border-radius:10px;">
+                      <p style="text-align: center; margin-top:10px; font-weight: bold;">  ${product.ProdName} </p>
+                       <p style="text-align: center">$${product.ProdPrice}</p>
+                        <button type="button" style="align-self: center" onclick="gotoItem(${product.ProductID})">Check item</button>
+
+`;
+                    imageContainer.querySelector('.image-container').appendChild(imagebox);
                 });
+                resultsDiv.appendChild(imageContainer);
             });
     }
 </script>
 <script>
     function openNav() {
-        document.getElementById("mySidenav").style.width = "250px";
+        document.getElementById("sidenav").classList.add("open");
+        document.body.classList.add("sidenav-open");
     }
+
 
     /* Set the width of the side navigation to 0 */
     function closeNav() {
-        document.getElementById("mySidenav").style.width = "0";
+        document.getElementById("sidenav").classList.remove("open");
+        document.body.classList.remove("sidenav-open")
     }
 </script>
 

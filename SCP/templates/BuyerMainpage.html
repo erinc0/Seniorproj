@@ -4,62 +4,69 @@
     <meta charset="UTF-8">
     <title>Title</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='homes.css') }}">
-	<style> img{
-	height: 290px;
-	width: 490px;
-	justify-self: center;
-	padding-left: 5px;
-	float: left;
-	}
-	</style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
 </head>
 <body>
-    {% include 'topnav.html' %}
-<header>
-    Buyer Homepage
-</header>
-<main>
-	<h1>Welcome, {{ session['username'] }}!</h1>
-    <p>Your ID: {{ session['id'] }}</p>
-<div class="row nomargin">
-    <div class="container">
-        <a href="{{ url_for('contactus') }}">
-            <img src="{{ url_for('static', filename='PhoneCall.jpg')}}" class="opimage"></a>
-        <div class ="mid">
-            <div class ="text"> Contact us
-            </div>
+<nav style>
+    <div class="nav-content">
+        <div class="logo">
+            <img src = "{{ url_for('static', filename='estation.webp') }}" alt="logo"
+                 style="width: 130px;height:70px; padding: 10px 4px;">
         </div>
-    </div>
-    <div class="container">
-        <a href="{{ url_for('BuyerOrders') }}">
-            <img src="{{ url_for('static', filename='graph.png')}}" class="opimage">
-        </a>
-        <div class="mid">
-            <div class ="text">Orders
-            </div>
-        </div>
-    </div>
-</div>	
-<div class="row nomargin">
-    <div class="container">
-        <a href="{{ url_for('search') }}">
-            <img src="{{ url_for('static', filename='2.png')}}" class="opimage">    </a>
-        <div class="mid">
-            <div class="text"> Search
-            </div>
-        </div>
-    </div>
 
-    <div class="container">
-        <a href="{{ url_for('cartpage') }}">
-            <img src="{{ url_for('static', filename='3.png')}}" class="opimage">    </a>
-        <div class="mid">
-            <div class="text"> Cart
-            </div>
-        </div>
+        <ul class="nav-links" style="float: right">
+            <li><a href="{{url_for('login')}}">Logout</a></li>
+        </ul>
     </div>
-</div>	
-</main>
+</nav>
+
+	<h1 style="padding-top: 70px">Welcome, {{ session['username'] }}!</h1>
+    <p>Your ID: {{ session['id'] }}</p>
+
+<div class="buyer-background">
+<div class="buyer-section">
+
+    <a href="{{ url_for('cartpage') }}" class="buyer-box">
+        <i class="fas fa-box"></i>
+        <h2> Cart</h2>
+        <p style="color: black">See what's in your cart.</p>
+    </a>
+
+    <a href="{{ url_for('BuyerOrders') }}" class="buyer-box">
+        <i class="fas fa-truck"></i>
+        <h2> Your Orders</h2>
+        <p style="color: black">Track the status of your orders here.</p>
+    </a>
+
+    <a href="{{ url_for('contactus') }}" class="buyer-box">
+        <i class="fas fa-clock"></i>
+        <h2> Contact Us</h2>
+        <p style="color: black">Let us know how we can help.</p></a>
+
+
+    <a href="{{ url_for('search') }}" class="buyer-box">
+        <i class="fas fa-magnifying-glass"></i>
+        <h2> Search</h2>
+        <p style="color: black">Get the parts you need.</p>
+    </a>
+
+    <a href="{{ url_for('contactus') }}" class="buyer-box">
+        <i class="fas fa-video"></i>
+        <h2> Help Videos</h2>
+        <p style="color: black">Get help building your computer.</p>
+    </a>
+
+
+    <a href="{{ url_for('pcbuilder') }}" class="buyer-box">
+        <i class="fas fa-computer"></i>
+        <h2>PC Build Simulation</h2>
+        <p style="color: black">Not sure what you're missing? Check out our cool simulation tool.</p>
+    </a>
+
+</div>
+
+</div>
+
 </body>
 <footer>
 </footer>

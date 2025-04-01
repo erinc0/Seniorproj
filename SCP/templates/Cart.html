@@ -6,7 +6,21 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='homes.css') }}">
 </head>
 <body>
-    {% include 'topnav.html' %}
+<nav style>
+    <div class="nav-content">
+        <div class="logo">
+            <img src = "{{ url_for('static', filename='estation.webp') }}" alt="logo"
+                 style="width: 130px;height:70px; padding: 10px 4px;">
+        </div>
+
+        <ul class="nav-links" style="float: right">
+            <li><a href="{{url_for('Bhomepage')}}">Back to Home</a></li>
+            <li><a href="{{ url_for('search')}}">Search</a></li>
+            <li><a href="{{url_for('login')}}">Logout</a></li>
+
+        </ul>
+    </div>
+</nav>
 
 <h1>Cart</h1>
 
@@ -16,7 +30,7 @@
 <div id="checkout">
 	<p> <a href="{{ url_for('checkoutpage') }}"> Checkout </a></p>
 </div>
-<p> <a href="{{ url_for('Bhomepage') }}"> Back to Buyer Homepage </a></p>
+
 
 <script>
     async function LoadCart() {
@@ -25,7 +39,7 @@
 		let total = 0;
         if (data.length === 0) {
             document.getElementById("cart-list").innerHTML = "<p>Cart empty.</p>";
-			document.getElementById("checkout").innerHTML = `<p> <a href="{{ url_for('search') }}"> Go to search </a></p>`;
+			document.getElementById("checkout").innerHTML = `<p> <a href="{{ url_for('search') }}">  </a></p>`;
             return;
         }else{
 			let table = "<table border='1'><tr><th>Product ID</th><th>Image</th><th>Product Name</th><th>Price</th><th>Quantity</th><th>Cost</th><th>Shipping Options</th><th>Actions</th></tr>";
