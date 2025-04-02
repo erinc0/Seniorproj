@@ -18,7 +18,7 @@ app.secret_key = 'your secret key'
 def home():
     username = session.get('username')
     usertype = session.get('usertype')
-    return render_template('Search.html', username=username, usertype=usertype)
+    return render_template('homepage.html', username=username, usertype=usertype)
 
 
 def connect_db():
