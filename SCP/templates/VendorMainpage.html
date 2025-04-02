@@ -2,74 +2,117 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <title>Edit Existing Products</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='homes.css') }}">
-	<style> img{
-	height: 290px;
-	width: 490px;
-	justify-self: center;
-	padding-left: 5px;
-	float: left;
-	}
-	</style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
 </head>
 <body>
+<nav>
+    <div class="nav-content">
+        <div class="logo">
+            <img src = "{{ url_for('static', filename='whiteversion.webp') }}" alt="logo"
+                 style="width: 130px;height:70px; padding: 10px 4px;">
+        </div>
 
-<header>
-    Vendor Homepage
-</header>
-<main>
-	<h1>Welcome, {{ session['username'] }}!</h1>
-    <p>Your ID: {{ session['id'] }}</p>
-<div class="row nomargin">
-    <div class="container">
-        <a href="{{ url_for('contactus') }}">
-            <img src="{{ url_for('static', filename='PhoneCall.jpg')}}" class="opimage"></a>
-        <div class ="mid">
-            <div class ="text"> Contact us
-            </div>
-        </div>
+        <ul class="nav-links">
+            <li><a href="{{ url_for('search')}}">Search</a></li>
+            <li><a href="{{url_for('login')}}">Logout</a></li>
+        </ul>
     </div>
-    <div class="container">
-        <a href="{{ url_for('VendorAdd') }}">
-            <img src="{{ url_for('static', filename='sell.png')}}" class="opimage">
-        </a>
-        <div class="mid">
-            <div class ="text">Add new listing
-            </div>
-        </div>
-    </div>
-	<div class="container">
-        <a href="{{ url_for('VendorEdit') }}">
-            <img src="{{ url_for('static', filename='sell.png')}}" class="opimage"></a>
-        <div class ="mid">
-            <div class ="text"> Vendor Edit
-            </div>
-        </div>
-    </div>
-</div>	
-<div class="row nomargin">
-    <div class="container">
-        <a href="{{ url_for('Vsearch') }}">
-            <img src="{{ url_for('static', filename='2.png')}}" class="opimage">    </a>
-        <div class="mid">
-            <div class="text"> Search
-            </div>
-        </div>
-    </div>
+</nav>
 
-    <div class="container">
-        <a href="{{ url_for('Vmetricspage') }}">
-            <img src="{{ url_for('static', filename='graph.png')}}" class="opimage">    </a>
-        <div class="mid">
-            <div class="text"> Cart
-            </div>
+<div class="container2" style="padding-top: 30px; padding-left: 9px" >
+    <div class="search-input">
+        <div class="search-bar"style="width: 900px;">
+            <input type="text" id="search" placeholder="Search by product name">
+            <button onclick="searchProducts()" style="width: 20%;
+    background-color: transparent;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-top: 0px;
+}"><i class="fa-solid fa-magnifying-glass" style="color: gray; position: absolute; padding-top: 5px;"></i></button>
         </div>
+
+        <h2 style="padding-bottom: 20px; padding-top: 20px; padding-left: 150px">Product Listings</h2>
+        <div id="results"></div>
+
+        <div class="container2">
     </div>
-</div>	
-</main>
+    <a href="{{ url_for('VendorAdd')}}">
+    <button style="width: 20%;
+    background-color: transparent;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}"><i class="fa-solid fa-plus" style="color: black; position: absolute; padding-left:1560px;font-size:40px; transform:translateX(-50%);bottom: 10px;justify-content: center;align-self: center"></i></a></button>
+</div>
+</div>
+
+<script>
+    function searchProducts() {
+        let search = document.getElementById("search").value;
+        fetch(`/vendor_products?search=${search}`)
+            .then(response => response.json())
+            .then(data => {
+                let resultsDiv = document.getElementById("results");
+                resultsDiv.innerHTML = "";
+                data.forEach(product => {
+                    resultsDiv.innerHTML += `
+                    <div class="vendor-box">
+                        <p>Product ID: ${product.ProductID}</p>
+                        <p>Product Name: ${product.ProdName}</p>
+                        <p>Price: $${product.ProdPrice}</p>
+                        <p>Quantity: ${product.ProdQuantity}</p>
+                        <p>Description: ${product.ProdDesc}</p>
+                        <p>Supplier ID: ${product.SupplierID}</p>
+                        <img src="data:image/jpeg;base64,${product.ProdImage}" alt="Product Image" width="100">
+                        <br>
+                        <button onclick="editProduct(${product.ProductID})">Edit</button>
+                    </div>`;
+                });
+            });
+    }
+
+    let search = document.getElementById("search").value;
+    fetch(`/vendor_products?search=${search}`)
+        .then(response => response.json())
+        .then(data => {
+            let resultsDiv = document.getElementById("results");
+            resultsDiv.innerHTML = "";
+            data.forEach(product => {
+                resultsDiv.innerHTML += `
+                <div class ="vendor-box">
+                <img src="data:image/jpeg;base64,${product.ProdImage}" alt="Product Image" width="100">
+                <div class = "vendor-description">
+                    <div style="margin: 10px; padding: 10px; border: 1px solid #000;">
+
+                        <p>Product Name: ${product.ProdName}</p>
+                        <p>Description: ${product.ProdDesc}</p>
+                           <p>Product ID: ${product.ProductID}</p>
+
+                        <p>Price: $${product.ProdPrice}</p>
+                        <p>Quantity: ${product.ProdQuantity}</p>
+
+                        </div>
+                        <button onclick="editProduct(${product.ProductID})"
+
+                        <i class="fa-solid fa-file-pen" style="color: black; position: absolute; font-size:40px; padding-top: 20px;"></i></button>
+                    </div>`;
+            });
+        });
+
+
+    function editProduct(productId) {
+        window.location.href = `/VendorEditProd/${productId}`;
+    }
+
+
+</script>
+
+
+
 </body>
-<footer>
-<a href="{{ url_for('logout') }}">Logout</a>
-</footer>
 </html>

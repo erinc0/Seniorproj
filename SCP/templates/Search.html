@@ -36,11 +36,17 @@
         </div>
 
         <ul class="nav-links" style="float: right">
-            <li><a href="{{ url_for('Bhomepage') }}">Home</a></li>
-            <li><a href="{{ url_for('contactus') }}">Contact</a></li>
-            <li><a href="{{ url_for('cartpage')}}">Cart</a></li>
-            <li><a href="{{url_for('login')}}">Login</a></li>
+            {% if username %}
+            <li><a href="{{ url_for('search') }}" style="padding-right: 50px;">Welcome {{ username }}</a></li>
+                <li><a href="{{ url_for('Bhomepage') }}">Home</a></li>
+                <li><a href="{{ url_for('cartpage') }}">Cart</a></li>
+                <li><a href="{{ url_for('logout') }}">Logout</a></li>
+            {% else %}
+                <li><a href="{{ url_for('contactus') }}">Contact</a></li>
+                <li><a href="{{ url_for('login') }}">Login</a></li>
+            {% endif %}
         </ul>
+        
     </div>
 </nav>
 
@@ -56,7 +62,7 @@
     border: none;
     border-radius: 5px;
     cursor: pointer;
-    margin-top: 0px;
+    margin-top: 0;
 }"><i class="fa-solid fa-magnifying-glass" style="color: gray; position: absolute; font-size: 20px; padding-left: 20px"></i></button>
         </div>
     </div>
@@ -69,7 +75,7 @@
         All Things Computers.
         <div class="buttons">
             <button>Vendors</button>
-            <button>Browse Products</button>
+            <button onclick="prodimg('')">Browse Products</button>
         </div>
     </div>
 </div>

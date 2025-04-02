@@ -16,7 +16,10 @@ app.secret_key = 'your secret key'
 
 @app.route('/')
 def home():
-    return render_template('Homepage.html')
+    username = session.get('username')
+    usertype = session.get('usertype')
+    return render_template('Search.html', username=username, usertype=usertype)
+
 
 def connect_db():
     """Creates a connection to the SQLite database."""
@@ -219,6 +222,9 @@ def history():
 def pcbuilder():
     return render_template('pcbuilder.html')
 
+@app.route('/helpvideos')
+def helpvideos():
+    return render_template('helpvideos.html')
             
 @app.route('/VendorAdd', methods=['GET', 'POST'])
 def VendorAdd():
@@ -327,7 +333,7 @@ def delete_product(product_id):
         cursor.execute("DELETE FROM Product WHERE ProductID = ?", (product_id,))
         cursor.execute("DELETE FROM ProductShipping WHERE ProductID = ?", (product_id,))
         conn.commit()
-        return redirect(url_for('VendorEdit'))
+        return redirect(url_for('Vhomepage'))
     except sqlite3.Error as e:
         return f"Error deleting product: {e}", 500
     finally:
@@ -362,17 +368,17 @@ def update_product(product_id):
             """, (name, price, quantity, description, product_id))
 
         conn.commit()
-        return redirect(url_for('VendorEdit'))
+        return redirect(url_for('Vhomepage'))
     except sqlite3.Error as e:
         return jsonify({'error': str(e)}), 500
     finally:
         conn.close()
 
 
-@app.route('/search') #used for search page for customer
+@app.route('/search')
 def search():
-    #print("boser")
-    return render_template('Search.html', username=session['username'])
+    return render_template('Search.html', username=session.get('username'), usertype=session.get('usertype'))
+
     
 @app.route('/Vsearch') #used for search page for vendors   
 def Vsearch():

@@ -1,19 +1,44 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns="http://www.w3.org/1999/html">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{{ item['ProdName'] }}</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='homes.css') }}">
 </head>
 <body>
-<h1>{{ item['ProdName'] }}</h1>
+
+<nav style>
+    <div class="nav-content">
+        <div class="logo">
+            <img src = "{{ url_for('static', filename='estation.webp') }}" alt="logo"
+                 style="width: 130px;height:70px; padding: 10px 4px;">
+        </div>
+
+        <ul class="nav-links" style="float: right">
+            {% if session.get('loggedin') %}
+                {% if session['usertype'] == 'Buyer' %}
+                    <li><a href="{{ url_for('Bhomepage') }}">Back to Home</a></li>
+                {% elif session['usertype'] == 'Vendor' %}
+                    <li><a href="{{ url_for('Vhomepage') }}">Back to Home</a></li>
+                {% endif %}
+                <li><a href="{{ url_for('search') }}">Search</a></li>
+                <li><a href="{{ url_for('logout') }}">Logout</a></li>
+            {% else %}
+                <li><a href="{{ url_for('search') }}">Search</a></li>
+                <li><a href="{{ url_for('login') }}">Login</a></li>
+            {% endif %}
+        </ul>
+        
+    </div>
+</nav>
+<h1 style="padding-top: 100px">{{ item['ProdName'] }}</h1>
 <p><strong>Price:</strong> ${{ '%.2f' % item['ProdPrice'] }}</p>
 <p><strong>Description:</strong> {{ item['ProdDesc'] }}</p>
 <p><strong>Quantity Available:</strong> {{ item['ProdQuantity'] }}</p>
-<p>	<input type="number" id="quantity" name="quantity" min="1" max={{ item['ProdQuantity'] }} oninput="checkValue(this)"> </p>
+<p>	<input type="number" id="quantity" name="quantity" min="1" max= {{ item['ProdQuantity'] }} oninput="checkValue(this)"> </p>
 <p>	<button onclick="addToCart()">Add to cart</button> </p>
-<a href="{{ url_for('search') }}">Back to Search</a>
+=
 
 <script>
     function addToCart() {

@@ -53,45 +53,32 @@
     .part-box:hover .tooltip {
       visibility: visible;
     }
-    .part-section {
-      width: 80%;
-      margin: 40px auto;
+    .result-item {
+      margin-top: 10px;
+      padding: 10px;
+      border-top: 1px solid #ccc;
       text-align: left;
-      border: 1px solid #ccc;
-      padding: 20px;
-      background: #f9f9f9;
-      border-radius: 8px;
     }
-    .part-section input {
-      padding: 6px;
-      width: 60%;
-    }
-    .part-section button {
-      padding: 6px 10px;
-      margin-left: 10px;
+    .result-item button {
+      padding: 5px 10px;
       background-color: #1f4291;
       color: white;
       border: none;
       border-radius: 4px;
     }
-    .part-section button:hover {
+    .result-item button:hover {
       background-color: #163172;
-    }
-    .result-item {
-      margin-top: 10px;
-      padding: 5px;
-      border-top: 1px solid #ccc;
     }
   </style>
 </head>
 <body>
-<nav style>
+
+<nav>
   <div class="nav-content">
     <div class="logo">
-      <img src = "{{ url_for('static', filename='estation.webp') }}" alt="logo"
+      <img src="{{ url_for('static', filename='estation.webp') }}" alt="logo"
            style="width: 130px;height:70px; padding: 10px 4px;">
     </div>
-
     <ul class="nav-links" style="float: right">
       <li><a href="{{url_for('Bhomepage')}}">Back to Home</a></li>
       <li><a href="{{ url_for('search')}}">Search</a></li>
@@ -100,107 +87,109 @@
   </div>
 </nav>
 
+<h1 style="color: black; padding-top: 80px;">Build Your PC</h1>
 
-  <h1 style="color: black">Build Your PC</h1>
+<div class="pc-container">
+  <img src="{{ url_for('static', filename='pcbuild.png') }}" class="pc-image" alt="PC Image" />
 
-  <script>
-    const buildSelections = {};
-    function addToBuild(category, product) {
-      const idSafe = category.toLowerCase().replace(/ /g, "_");
-      buildSelections[idSafe] = product;
+  <div class="part-box" id="box_cpu" onclick="loadCategory(['CPU'])" style="top: 185px; left: 230px; width: 80px; height: 80px;">
+    <div class="label">CPU</div>
+    <div class="tooltip">Click me to browse CPUs</div>
+  </div>
 
-      const partBox = document.getElementById(`box_${idSafe}`);
-      if (partBox) partBox.style.display = "none";
+  <div class="part-box" id="box_ram" onclick="loadCategory(['RAM'])" style="top: 170px; left: 340px; width: 40px; height: 110px;">
+    <div class="label">RAM</div>
+    <div class="tooltip">Click me to browse RAM</div>
+  </div>
 
-      const label = document.getElementById(`label_${idSafe}`);
-      if (label) {
-        label.innerHTML = `<strong>${product.ProdName}</strong> added to build`;
-      }
-    }
+  <div class="part-box" id="box_gpu" onclick="loadCategory(['GPU'])" style="top: 360px; left: 80px; width: 400px; height: 70px;">
+    <div class="label">GPU</div>
+    <div class="tooltip">Click me to browse GPUs</div>
+  </div>
 
-    function searchCategory(category) {
-      const idSafe = category.toLowerCase().replace(/ /g, "_");
-      const query = document.getElementById(`search_${idSafe}`).value;
+  <div class="part-box" id="box_storage" onclick="loadCategory(['SSD', 'HDD', 'NVMe'])" style="top: 450px; left: 170px; width: 200px; height: 40px;">
+    <div class="label">Storage</div>
+    <div class="tooltip">Click me to browse SSD, HDD, NVMe</div>
+  </div>
 
-      fetch(`/searchS?search=${query}`)
-        .then(res => res.json())
-        .then(data => {
-          const resultDiv = document.getElementById(`results_${idSafe}`);
-          resultDiv.innerHTML = "";
+  <div class="part-box" id="box_motherboard" onclick="loadCategory(['Motherboard'])" style="top: 110px; left: 110px; width: 300px; height: 40px;">
+    <div class="label">Motherboard</div>
+    <div class="tooltip">Click me to browse Motherboards</div>
+  </div>
 
-          const filtered = data.filter(p => p.ProdCategory.toLowerCase() === category.toLowerCase());
-          if (filtered.length === 0) {
-            resultDiv.innerHTML = "<p>No results found.</p>";
-          } else {
-            filtered.forEach(product => {
-              resultDiv.innerHTML += `
-                <div class="result-item">
-                  <img src="/get_product_image/${product.ProductID}" width="60" height="60" style="vertical-align: middle;" />
-                  <strong>${product.ProdName}</strong> - $${product.ProdPrice}
-                  <button onclick='addToBuild("${category}", ${JSON.stringify(product).replace(/'/g, "\'")})'>Add to Build</button>
-                </div>
-              `;
-            });
-          }
+  <div class="part-box" id="box_psu" onclick="loadCategory(['PSU'])" style="top: 600px; left: 140px; width: 160px; height: 80px;">
+    <div class="label">PSU</div>
+    <div class="tooltip">Click me to browse PSUs</div>
+  </div>
+
+  <div class="part-box" id="box_pc_cases" onclick="loadCategory(['PC Cases'])" style="top: 300px; left: 700px; width: 100px; height: 100px;">
+    <div class="label">Case</div>
+    <div class="tooltip">Click me to browse PC Cases</div>
+  </div>
+</div>
+
+<div id="selected-labels" style="margin-top: 20px;">
+  <p id="label_cpu"></p>
+  <p id="label_ram"></p>
+  <p id="label_gpu"></p>
+  <p id="label_storage"></p>
+  <p id="label_motherboard"></p>
+  <p id="label_psu"></p>
+  <p id="label_pc_cases"></p>
+</div>
+
+<div id="part-results" style="width: 80%; margin: 20px auto; text-align: left;"></div>
+
+<script>
+  const buildSelections = {};
+
+  function addToBuild(category, product) {
+  let displayCategory = category;
+
+  // Normalize SSD, HDD, NVMe to 'Storage' for UI mapping
+  if (["SSD", "HDD", "NVMe"].includes(category)) {
+    displayCategory = "Storage";
+  }
+
+  const idSafe = displayCategory.toLowerCase().replace(/ /g, "_");
+  buildSelections[idSafe] = product;
+
+  const partBox = document.getElementById(`box_${idSafe}`);
+  if (partBox) partBox.style.display = "none";
+
+  const label = document.getElementById(`label_${idSafe}`);
+  if (label) {
+    label.innerHTML = `<strong>${product.ProdName}</strong> added to build`;
+  }
+}
+``
+
+  function loadCategory(categories) {
+  const resultDiv = document.getElementById("part-results");
+  resultDiv.innerHTML = `<h2>${categories.join(", ")}</h2>`;
+
+  fetch(`/searchS?search=`)
+    .then(res => res.json())
+    .then(data => {
+      const filtered = data.filter(p => categories.includes(p.ProdCategory));
+
+      if (filtered.length === 0) {
+        resultDiv.innerHTML += "<p>No results found.</p>";
+      } else {
+        filtered.forEach(product => {
+          resultDiv.innerHTML += `
+            <div class="result-item">
+              <img src="/get_product_image/${product.ProductID}" width="60" height="60" style="vertical-align: middle;" />
+              <strong>${product.ProdName}</strong> - $${product.ProdPrice}
+              <button onclick='addToBuild("${product.ProdCategory}", ${JSON.stringify(product).replace(/'/g, "&#39;")})'>Add to Build</button>
+            </div>
+          `;
         });
-    }
+      }
+    });
+}
 
-    function gotoItem(productId) {
-      window.location.href = `/item/${productId}`;
-    }
-  </script>
+</script>
 
-  <!-- Image Map with IDs -->
-  <div class="pc-container">
-    <img src="{{ url_for('static', filename='pcbuild.png') }}" class="pc-image" alt="PC Image" />
-
-    <div class="part-box" id="box_cpu" style="top: 185px; left: 230px; width: 80px; height: 80px;">
-      <div class="label">CPU</div>
-      <div class="tooltip">Click me to browse CPUs</div>
-    </div>
-
-    <div class="part-box" id="box_ram" style="top: 170px; left: 340px; width: 40px; height: 110px;">
-      <div class="label">RAM</div>
-      <div class="tooltip">Click me to browse RAM</div>
-    </div>
-
-    <div class="part-box" id="box_gpu" style="top: 360px; left: 80px; width: 400px; height: 70px;">
-      <div class="label">GPU</div>
-      <div class="tooltip">Click me to browse GPUs</div>
-    </div>
-
-    <div class="part-box" id="box_storage" style="top: 450px; left: 170px; width: 200px; height: 40px;">
-      <div class="label">Storage</div>
-      <div class="tooltip">Click me to browse Storage</div>
-    </div>
-
-    <div class="part-box" id="box_motherboard" style="top: 110px; left: 110px; width: 300px; height: 40px;">
-      <div class="label">Motherboard</div>
-      <div class="tooltip">Click me to browse Motherboards</div>
-    </div>
-
-    <div class="part-box" id="box_psu" style="top: 600px; left: 140px; width: 160px; height: 80px;">
-      <div class="label">PSU</div>
-      <div class="tooltip">Click me to browse PSUs</div>
-    </div>
-
-    <div class="part-box" id="box_pc_cases" style="top: 300px; left: 700px; width: 100px; height: 100px;">
-      <div class="label">Case</div>
-      <div class="tooltip">Click me to browse Cases</div>
-    </div>
-  </div>
-
-  <!-- Search Sections -->
-  <div id="part-searches">
-    {% for category in ['CPU', 'GPU', 'RAM', 'Storage', 'Motherboard', 'PSU', 'PC Cases'] %}
-      <div class="part-section">
-        <h2>{{ category }}</h2>
-        <p id="label_{{ category | lower | replace(' ', '_') }}"></p>
-        <input type="text" id="search_{{ category | lower | replace(' ', '_') }}" placeholder="Search {{ category }}..." />
-        <button onclick="searchCategory('{{ category }}')">Search</button>
-        <div id="results_{{ category | lower | replace(' ', '_') }}"></div>
-      </div>
-    {% endfor %}
-  </div>
 </body>
 </html>
