@@ -3,10 +3,24 @@
 <head>
     <meta charset="UTF-8">
     <title>Edit Product</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='homes.css') }}">
 </head>
+<nav style>
+    <div class="nav-content">
+        <div class="logo">
+            <img src = "{{ url_for('static', filename='estation.webp') }}" alt="logo"
+                 style="width: 130px;height:70px; padding: 10px 4px;">
+        </div>
+
+        <ul class="nav-links">
+            <li><a href="{{ url_for('search')}}">Search</a></li>
+            <li><a href="{{url_for('Vhomepage')}}">Home</a></li>
+            <li><a href="{{url_for('login')}}">Logout</a></li>
+        </ul>
+    </div>
+</nav>
 <body>
-<h1>Edit Product</h1>
+<h1 style="padding-top: 100px">Edit Product</h1>
 
 
 <form action="{{ url_for('update_product', product_id=product['ProductID']) }}" method="post" enctype="multipart/form-data">

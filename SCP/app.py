@@ -9,13 +9,13 @@ from flask import Response
 app = Flask(__name__)
 CORS(app)  # Enables CORS for all routes
 
-DATABASE = "SeniorCapstoneDatabase.db"
+DATABASE = "SCP/SeniorCapstoneDatabase.db"
 
 app.secret_key = 'your secret key'
 
 @app.route('/')
 def home():
-    return render_template('Homepage.html')
+    return render_template('Search.html')
 
 def connect_db():
     """Creates a connection to the SQLite database."""
@@ -218,6 +218,9 @@ def history():
 def pcbuilder():
     return render_template('pcbuilder.html')
 
+@app.route('/helpvideos')
+def helpvideos():
+    return render_template('helpvideos.html')
             
 @app.route('/VendorAdd', methods=['GET', 'POST'])
 def VendorAdd():
@@ -326,7 +329,7 @@ def delete_product(product_id):
         cursor.execute("DELETE FROM Product WHERE ProductID = ?", (product_id,))
         cursor.execute("DELETE FROM ProductShipping WHERE ProductID = ?", (product_id,))
         conn.commit()
-        return redirect(url_for('VendorEdit'))
+        return redirect(url_for('Vhomepage'))
     except sqlite3.Error as e:
         return f"Error deleting product: {e}", 500
     finally:
@@ -361,7 +364,7 @@ def update_product(product_id):
             """, (name, price, quantity, description, product_id))
 
         conn.commit()
-        return redirect(url_for('VendorEdit'))
+        return redirect(url_for('Vhomepage'))
     except sqlite3.Error as e:
         return jsonify({'error': str(e)}), 500
     finally:
