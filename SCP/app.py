@@ -9,13 +9,16 @@ from flask import Response
 app = Flask(__name__)
 CORS(app)  # Enables CORS for all routes
 
-DATABASE = "SCP/SeniorCapstoneDatabase.db"
+DATABASE = "SeniorCapstoneDatabase.db"
 
 app.secret_key = 'your secret key'
 
 @app.route('/')
 def home():
-    return render_template('Search.html')
+    username = session.get('username')
+    usertype = session.get('usertype')
+    return render_template('Search.html', username=username, usertype=usertype)
+
 
 def connect_db():
     """Creates a connection to the SQLite database."""
@@ -371,10 +374,10 @@ def update_product(product_id):
         conn.close()
 
 
-@app.route('/search') #used for search page for customer
+@app.route('/search')
 def search():
-    #print("boser")
-    return render_template('Search.html', username=session['username'])
+    return render_template('Search.html', username=session.get('username'), usertype=session.get('usertype'))
+
     
 @app.route('/Vsearch') #used for search page for vendors   
 def Vsearch():

@@ -36,10 +36,16 @@
         </div>
 
         <ul class="nav-links" style="float: right">
-            <li><a href="{{ url_for('contactus') }}">Contact</a></li>
-            <li><a href="{{ url_for('cartpage')}}">Cart</a></li>
-            <li><a href="{{url_for('login')}}">Login</a></li>
+            {% if username %}
+            <li><a href="{{ url_for('search') }}" style="padding-right: 50px;">Welcome {{ username }}</a></li>
+                <li><a href="{{ url_for('cartpage') }}">Cart</a></li>
+                <li><a href="{{ url_for('logout') }}">Logout</a></li>
+            {% else %}
+                <li><a href="{{ url_for('contactus') }}">Contact</a></li>
+                <li><a href="{{ url_for('login') }}">Login</a></li>
+            {% endif %}
         </ul>
+        
     </div>
 </nav>
 

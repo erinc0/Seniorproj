@@ -16,10 +16,20 @@
         </div>
 
         <ul class="nav-links" style="float: right">
-            <li><a href="{{url_for('Bhomepage')}}">Back to Home</a></li>
-            <li><a href="{{ url_for('search')}}">Search</a></li>
-            <li><a href="{{url_for('login')}}">Logout</a></li>
+            {% if session.get('loggedin') %}
+                {% if session['usertype'] == 'Buyer' %}
+                    <li><a href="{{ url_for('Bhomepage') }}">Back to Home</a></li>
+                {% elif session['usertype'] == 'Vendor' %}
+                    <li><a href="{{ url_for('Vhomepage') }}">Back to Home</a></li>
+                {% endif %}
+                <li><a href="{{ url_for('search') }}">Search</a></li>
+                <li><a href="{{ url_for('logout') }}">Logout</a></li>
+            {% else %}
+                <li><a href="{{ url_for('search') }}">Search</a></li>
+                <li><a href="{{ url_for('login') }}">Login</a></li>
+            {% endif %}
         </ul>
+        
     </div>
 </nav>
 <h1 style="padding-top: 100px">{{ item['ProdName'] }}</h1>
