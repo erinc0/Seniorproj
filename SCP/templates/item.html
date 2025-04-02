@@ -5,9 +5,21 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{{ item['ProdName'] }}</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='homes.css') }}">
+
+    <style>
+        .image-area p{
+            font-size: 1.2vw;
+        }
+        .image-area p1{
+            font-size: 1vw;
+        }
+
+        .image-area h1{
+            font-size: 1.9vw;
+        }
+    </style>
 </head>
 <body>
-
 <nav style>
     <div class="nav-content">
         <div class="logo">
@@ -29,21 +41,30 @@
                 <li><a href="{{ url_for('login') }}">Login</a></li>
             {% endif %}
         </ul>
-        
+
     </div>
 </nav>
-<h1 style="padding-top: 100px">{{ item['ProdName'] }}</h1>
+
+<div class="container2" style="height: 100%;">
+<div class="image-box" style="width: 60%; height: 60%;max-width: 800px; overflow-x: hidden">
+<img src="{{ url_for('get_product_image', product_id=item['ProductID'])}}" style="width: 100%; height: 100%">
+</div>
+
+    <div class="image-area" style="width: 60%; height: 60%; padding-top: 60px">
+<h1>{{ item['ProdName'] }}</h1>
 <p><strong>Price:</strong> ${{ '%.2f' % item['ProdPrice'] }}</p>
 <p><strong>Description:</strong> {{ item['ProdDesc'] }}</p>
 <p><strong>Quantity Available:</strong> {{ item['ProdQuantity'] }}</p>
-<p>	<input type="number" id="quantity" name="quantity" min="1" max= {{ item['ProdQuantity'] }} oninput="checkValue(this)"> </p>
-<p>	<button onclick="addToCart()">Add to cart</button> </p>
-=
 
+
+<p>    <input style="width: 9vw; height: 3vw; border-color: #1f4291; border-radius: 30px" type="number" id="quantity" name="quantity" min="1" max={{ item['ProdQuantity'] }} oninput="checkValue(this)"> </p>
+<p>    <button style="width: 6.5vw; display:flex;justify-content:center; justify-self:center; height: 2.5vw; align-items: center" onclick="addToCart()"><p1>Add to cart</p1></button> </p>
+</div>
+</div>
 <script>
     function addToCart() {
         let quantity = document.getElementById("quantity").value;
-		let itemID = {{ item['ProductID'] }};
+        let itemID = {{ item['ProductID'] }};
         fetch(`/add_to_cart/${itemID}/${quantity}`, {
             method: 'POST'
         })
@@ -56,16 +77,20 @@
             }
         })
     }
-	function checkValue(sender) {
-		let min = sender.min;
-		let max = sender.max;
-		let value = parseInt(sender.value);
-		if (value>max) {
-			sender.value = max;
-		} else if (value<min) {
-			sender.value = min;
-		}
-	}
+	
+    function checkValue(sender) {
+        let min = sender.min;
+        let max = sender.max;
+        let value = parseInt(sender.value);
+        if (value>max) {
+            sender.value = max;
+        } else if (value<min) {
+            sender.value = min;
+        }
+    }
+
+
+
 </script>
 
 </body>

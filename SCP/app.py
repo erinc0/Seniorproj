@@ -18,7 +18,7 @@ app.secret_key = 'your secret key'
 def home():
     username = session.get('username')
     usertype = session.get('usertype')
-    return render_template('homepage.html', username=username, usertype=usertype)
+    return render_template('search.html', username=username, usertype=usertype)
 
 
 def connect_db():
@@ -38,7 +38,7 @@ def homepage():
     elif usertype == "Vendor":
         return render_template('VendorMainpage.html', username=username)
     else:
-        return render_template('Homepage.html')
+        return render_template('Search.html')
 
 @app.route('/get_product_image/<int:product_id>')
 def get_product_image(product_id):
