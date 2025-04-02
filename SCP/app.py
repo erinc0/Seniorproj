@@ -1,5 +1,6 @@
 from flask import Flask, jsonify, request, session, render_template, url_for, redirect
 from datetime import datetime
+import json
 import sqlite3
 import base64
 from flask_cors import CORS
@@ -55,7 +56,7 @@ def contactus():
         cursor = conn.cursor()
         name = request.form.get('name')
         email = request.form.get('email')
-        desc = request.form.get('desc')
+        desc= request.form.get('desc')
         try:
             cursor.execute("INSERT INTO HelpDesk (Name, Email, Description) VALUES (?, ?, ?)", (name, email, desc))
             conn.commit()
@@ -607,6 +608,7 @@ def remove_from_cart(ItemID):
 @app.route('/checkout', methods=['GET'])
 def checkoutpage():
     return render_template('Checkout.html')
+    
 @app.route('/checkout', methods=['GET','POST'])
 def checkout():
     if request.method == 'POST':
@@ -614,16 +616,38 @@ def checkout():
         conn = connect_db()
         cursor = conn.cursor()
         ID = session['id']
-        print(ID)
+        #print(ID)
         now = datetime.today().strftime('%Y-%m-%d')
-        print(now)
-        Total = 0.0
+        #print(now)
+        grandTotal = request.form.get('grandTotal')
+        #print(grandTotal)
+        PaymentType = request.form.get('Payment')
+        street1 = request.form.get('Street1') or ''
+        #print(street1)
+        street2 = request.form.get('Street2') or ''
+        #print(street2)
+        city = request.form.get('City') or ''
+        #print(city)
+        state = str(request.form.get('State')) or ''
+        #print(state)
+        ZIP = request.form.get('ZIP') or ''
+        #print(ZIP)
+        Address = street1 + street2 + "\n" + city + "\n" + state + "\n" + ZIP
+        #print(Address)
+        shipping_json = request.form.get('shippingSelections')
+        shipping_map = json.loads(shipping_json) if shipping_json else {}
+        #print("RAW shippingSelections:", shipping_json)
         try:
-            print("boser2")
-            cursor.execute("INSERT INTO 'Order' (BuyerID, DateStart, Status, Amount) VALUES (?, ?, ?, ?)", (ID, now, "Active", Total))
-            print("boser3")
+            shipping_map = json.loads(shipping_json) if shipping_json else {}
+        except json.JSONDecodeError as e:
+            print("JSON decode error:", e)
+            return jsonify({'error': 'Invalid shippingSelections JSON'}), 400
+        try:
+            #print("boser2")
+            cursor.execute("INSERT INTO 'Order' (BuyerID, DateStart, Status, Amount, Address, PayMethod) VALUES (?, ?, ?, ?, ?, ?)", (ID, now, "Active", grandTotal, Address, PaymentType))
+            #print("boser3")
             OrderID = cursor.lastrowid
-            print(OrderID)
+            #print(OrderID)
             cursor.execute("SELECT * FROM CartItems INNER JOIN Product ON CartItems.ProductID = Product.ProductID WHERE CartID=:ID", {"ID":ID})
             rows = cursor.fetchall()
             data = [dict(row) for row in rows]
@@ -632,10 +656,10 @@ def checkout():
                 Quantity = item["CartQuantity"]
                 Price = item["ProdPrice"]
                 Subtotal = Quantity * Price
-                Total += Subtotal
-                cursor.execute("INSERT INTO OrderItems (OrderID, ProductID, Quantity, Subtotal) VALUES (?,?,?,?)", (OrderID, ProductID, Quantity, Subtotal))
+                ShippingID = int(shipping_map.get(str(ProductID), 0))
+                #print(ShippingID)
+                cursor.execute("INSERT INTO OrderItems (OrderID, ProductID, Quantity, Subtotal, ShipOption) VALUES (?,?,?,?,?)", (OrderID, ProductID, Quantity, Subtotal, ShippingID))
                 cursor.execute("UPDATE Product SET ProdQuantity = ProdQuantity - ? WHERE ProductID = ?",(Quantity, ProductID))
-            cursor.execute("UPDATE 'Order' SET Amount = ? WHERE OrderID = ?",(Total, OrderID))
             cursor.execute("DELETE FROM CartItems WHERE CartID = ?", (ID,))
             conn.commit()
             return jsonify({'success': True}), 201
