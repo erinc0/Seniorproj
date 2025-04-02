@@ -31,10 +31,12 @@ def connect_db():
 
 @app.route('/homepage')
 def homepage():
-    if session['usertype'] == 'Buyer':
-        return render_template('BuyerMainpage.html', username=session['username'])
-    elif session['usertype'] == 'Vendor':
-        return render_template('VendorMainpage.html', username=session['username'])
+    usertype = session.get('usertype')
+    username = session.get('username')
+    if usertype == "Buyer":
+        return render_template('BuyerMainpage.html', username=username)
+    elif usertype == "Vendor":
+        return render_template('VendorMainpage.html', username=username)
     else:
         return render_template('Homepage.html')
 
@@ -121,7 +123,7 @@ def login():
 
 @app.route('/logout')
 def logout():
-    session.clear()  # Clears all session data
+    session.clear() #clears sessions data
     return redirect(url_for('login'))
 
 @app.route('/signup', methods=['GET', 'POST'])

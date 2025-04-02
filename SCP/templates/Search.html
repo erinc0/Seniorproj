@@ -36,12 +36,15 @@
         </div>
 
         <ul class="nav-links" style="float: right">
-            {% if username %}
-            <li><a href="{{ url_for('search') }}" style="padding-right: 50px;">Welcome {{ username }}</a></li>
-                <li><a href="{{ url_for('Bhomepage') }}">Home</a></li>
+            {% if usertype == "Buyer" %}
+				<li><a href="{{ url_for('search') }}" style="padding-right: 50px;">Welcome {{ username }}</a></li>
+                <li><a href="{{ url_for('homepage') }}">Home</a></li>
                 <li><a href="{{ url_for('cartpage') }}">Cart</a></li>
                 <li><a href="{{ url_for('logout') }}">Logout</a></li>
-            {% else %}
+            {% elif usertype =="Vendor" %}
+                <li><a href="{{ url_for('homepage') }}">Home</a></li>
+                <li><a href="{{ url_for('logout') }}">Logout</a></li>
+			{% else %}
                 <li><a href="{{ url_for('contactus') }}">Contact</a></li>
                 <li><a href="{{ url_for('login') }}">Login</a></li>
             {% endif %}
