@@ -392,7 +392,7 @@ def searchS():
     conn = connect_db()
     cursor = conn.cursor()
     search = request.args.get('search')
-    cursor.execute("SELECT * FROM Product WHERE ProdName LIKE ?", (f"%{search}%",))
+    cursor.execute("SELECT * FROM Product WHERE ProdName LIKE ? OR ProdCategory LIKE ?", (f"%{search}%",search))
     rows = cursor.fetchall()
     data = []
 
