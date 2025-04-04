@@ -7,6 +7,23 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='homes.css') }}">
 
     <style>
+		#message-box {
+            display: none;
+            margin-top: 10px;
+            padding: 10px;
+            border-radius: 5px;
+            font-weight: bold;
+        }
+        .success {
+            color: green;
+            border: 1px solid green;
+            background-color: #d4edda;
+        }
+        .error {
+            color: red;
+            border: 1px solid red;
+            background-color: #f8d7da;
+        }
         .image-area p{
             font-size: 1.2vw;
         }
@@ -223,6 +240,7 @@ textarea {
 <p>    <button style="width: 6.5vw; display:flex;justify-content:center; justify-self:center; height: 2.5vw; align-items: center" onclick="addToCart()"><p1>Add to cart</p1></button> </p>
 <p><div class="stars-landing" style="--rating:{{item['prodRating']}}; --percent: calc({{ item['prodRating'] }} / 5 * 100%);">★★★★★</div></p>
 <button class="open-button" onclick="openForm({{ item['ProductID'] }})">Open Form</button>
+<div id="message-box"></div>
 <div  class="form-popup" id="myForm">
   <form id="ReviewForm" name="ReviewForm" action="{{ url_for('post_review', ItemID=item['ProductID']) }}" method="post" class="form-container">
 	<div id="starZone" name="starZone">
@@ -356,6 +374,28 @@ function openReviewForm() {
 	reviewDiv.innerHTML='<textarea name="RevDesc"></textarea>';
 }
 
+document.getElementById("ReviewForm").onsubmit = async function(event) {
+			event.preventDefault(); 
+
+            const formData = new FormData(this);
+
+            const response = await fetch(this.action, {
+                method: "POST",
+                body: formData
+            });
+			const messageBox = document.getElementById("message-box");
+            if (response.ok) {
+				closeForm();
+                messageBox.textContent = "Review posted";
+                messageBox.className = "success";
+                this.reset(); 
+            } else {
+                messageBox.textContent = "Review unable to post";
+                messageBox.className = "error";
+            }
+
+            messageBox.style.display = "block"; 
+        };
 
 document.getElementById("ReviewForm").addEventListener("submit", function (e) {
 	const selected = document.querySelector('input[name="rate"]:checked');

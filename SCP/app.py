@@ -534,7 +534,7 @@ def post_review(ItemID):
                 VALUES (?, ?, ?, ?)
         """, (BuyerID,ItemID,Rating,RevDesc))
         conn.commit()
-        return jsonify({'success': True}), 200
+        return jsonify({'success': 'Post Submitted'}), 201
     except sqlite3.Error as e:
         return jsonify({'error': str(e)}), 500
     finally:
