@@ -491,11 +491,55 @@ def item(ItemID):
     cursor = conn.cursor()
     cursor.execute("SELECT * FROM Product WHERE ProductID = ?", (ItemID,))# Fetch item details
     item_data = cursor.fetchone()
+    cursor.execute("SELECT COUNT(*) FROM Reviews WHERE ProductID = ?", (ItemID,))# Fetch item details
+    num_reviews = cursor.fetchone()[0]
     conn.close()
     if item_data:
-        return render_template('item.html', item=item_data)
+        return render_template('item.html', item=item_data, review=num_reviews)
     else:
         return "Item not found", 404
+
+@app.route('/get_reviews/<int:ItemID>', methods=['GET', 'POST'])
+def get_reviews(ItemID):
+    conn = connect_db()
+    cursor = conn.cursor()
+    try:
+        cursor.execute("""
+            SELECT Buyer.BuyerName, Reviews.RevRating, Reviews.RevDesc, Reviews.BuyerID, Reviews.RevDate
+            FROM Reviews 
+            INNER JOIN Buyer ON Reviews.BuyerID = Buyer.BuyerID 
+            WHERE ProductID = ?
+        """, (ItemID,))
+        rows = cursor.fetchall()
+        data = [dict(row) for row in rows]
+        return jsonify(data)
+    except sqlite3.Error as e:
+        return jsonify({'error': str(e)}), 500
+    finally:
+        conn.close()
+
+@app.route('/post_review/<int:ItemID>', methods=['GET', 'POST'])
+def post_review(ItemID):
+    conn = connect_db()
+    cursor = conn.cursor()
+    BuyerID = session['id']
+    Rating = int(request.form.get('rate') or 0)
+    print(Rating)
+    RevDesc = request.form.get('RevDesc')
+    print(RevDesc)
+    try:
+        cursor.execute("DELETE FROM Reviews WHERE BuyerID=?", (BuyerID,))
+        cursor.execute("""
+            INSERT INTO Reviews (BuyerID, ProductID, RevRating, RevDesc) 
+                VALUES (?, ?, ?, ?)
+        """, (BuyerID,ItemID,Rating,RevDesc))
+        conn.commit()
+        return jsonify({'success': True}), 200
+    except sqlite3.Error as e:
+        return jsonify({'error': str(e)}), 500
+    finally:
+        conn.close()
+
 
 @app.route('/add_to_cart/<int:ItemID>/<int:quantity>', methods=['POST'])
 def add_to_cart(ItemID,quantity):

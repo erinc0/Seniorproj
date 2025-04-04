@@ -17,6 +17,168 @@
         .image-area h1{
             font-size: 1.9vw;
         }
+		/* i found this off of stack overflow -JASIN*/
+		:root {
+		  --star-size: 60px;
+		  --star-color: #fff;
+		  --star-background: #fc0;
+		}
+	
+		.stars-landing {
+			--percent: calc(var(--rating) / 5 * 100%);
+			display: inline-block;
+			font-size: var(--star-size);
+			font-family: 'Courier New', Courier, monospace;
+			line-height: 1;
+			text-align:left;
+			letter-spacing:0px;
+			padding-left:0px;
+			padding-right:0px;
+		}
+
+		.stars-landing::before {
+			--percent: calc(var(--rating) / 5 * 100%);
+			content: '★★★★★';
+			letter-spacing:0px;
+			background: linear-gradient(
+			  90deg,
+			  var(--star-background) 0%,
+			  var(--star-background) calc(var(--percent) - 0.5%),
+			  rgba(0, 0, 0, 1) calc(var(--percent) + 0.5%),
+			  rgba(0, 0, 0, 1) 100%
+			);
+			-webkit-background-clip: text;
+			-webkit-text-fill-color: transparent;
+			transform: translatey(60px);
+			display: block;
+			position: relative;
+			font-family: 'Courier New', Courier, monospace;
+		}
+		
+		{box-sizing: border-box;}
+/* I found this one on W3SChools -JASIN*/
+/* Button used to open the contact form - fixed at the bottom of the page */
+.open-button {
+  background-color: #555;
+  color: white;
+  padding: 16px 20px;
+  border: none;
+  cursor: pointer;
+  opacity: 0.8;
+  position: fixed;
+  bottom: 23px;
+  right: 28px;
+  width: 280px;
+}
+
+/* The popup form - hidden by default */
+.form-popup {
+	display: flex;
+	display: none;
+	position: fixed;
+	z-index: 99;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	background: rgba(0,0,0,0.5); /* semi-transparent overlay */
+	justify-content: center;
+	align-items: center;
+}
+
+/* Add styles to the form container */
+.form-container {
+  background: white;
+  max-width: 700px;
+  width: 90%;
+  padding: 30px;
+  border-radius: 12px;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+  overflow-y: auto;
+  max-height: 80vh;
+}
+
+/* Full-width input fields */
+.form-container input[type=text], .form-container input[type=password] {
+  width: 100%;
+  padding: 15px;
+  margin: 5px 0 22px 0;
+  border: none;
+  background: #f1f1f1;
+}
+
+/* When the inputs get focus, do something */
+.form-container input[type=text]:focus, .form-container input[type=password]:focus {
+  background-color: #ddd;
+  outline: none;
+}
+
+/* Set a style for the submit/login button */
+.form-container .btn {
+  background-color: #04AA6D;
+  color: white;
+  padding: 16px 20px;
+  border: none;
+  cursor: pointer;
+  width: 100%;
+  margin-bottom:10px;
+  opacity: 0.8;
+}
+
+/* Add a red background color to the cancel button */
+.form-container .cancel {
+  background-color: red;
+}
+
+/* Add some hover effects to buttons */
+.form-container .btn:hover, .open-button:hover {
+  opacity: 1;
+}
+/* this i found on https://codepen.io/hesguru/pen/BaybqXv -JASIN . . .
+ i do the sqlite stuff and the python stuff. I just needed to get these reviews working. SO NOT WORTH */
+*{
+    margin: 0;
+    padding: 0;
+}
+.rate {
+    float: left;
+    height: 46px;
+    padding: 0 10px;
+}
+.rate:not(:checked) > input {
+    position:absolute;
+    top:-9999px;
+}
+.rate:not(:checked) > label {
+    float:right;
+    width:1em;
+    overflow:hidden;
+    white-space:nowrap;
+    cursor:pointer;
+    font-size:30px;
+    color:#ccc;
+}
+.rate:not(:checked) > label:before {
+    content: '★ ';
+}
+.rate > input:checked ~ label {
+    color: #ffc700;    
+}
+.rate:not(:checked) > label:hover,
+.rate:not(:checked) > label:hover ~ label {
+    color: #deb217;  
+}
+.rate > input:checked + label:hover,
+.rate > input:checked + label:hover ~ label,
+.rate > input:checked ~ label:hover,
+.rate > input:checked ~ label:hover ~ label,
+.rate > label:hover ~ input:checked ~ label {
+    color: #c59b08;
+}
+textarea {
+  resize: none;
+  height: 200px;
+}		
     </style>
 </head>
 <body>
@@ -59,9 +221,48 @@
 
 <p>    <input style="width: 9vw; height: 3vw; border-color: #1f4291; border-radius: 30px" type="number" id="quantity" name="quantity" min="1" max={{ item['ProdQuantity'] }} oninput="checkValue(this)"> </p>
 <p>    <button style="width: 6.5vw; display:flex;justify-content:center; justify-self:center; height: 2.5vw; align-items: center" onclick="addToCart()"><p1>Add to cart</p1></button> </p>
+<p><div class="stars-landing" style="--rating:{{item['prodRating']}}; --percent: calc({{ item['prodRating'] }} / 5 * 100%);">★★★★★</div></p>
+<button class="open-button" onclick="openForm({{ item['ProductID'] }})">Open Form</button>
+<div  class="form-popup" id="myForm">
+  <form id="ReviewForm" name="ReviewForm" action="{{ url_for('post_review', ItemID=item['ProductID']) }}" method="post" class="form-container">
+	<div id="starZone" name="starZone">
+	<p><div class="stars-landing" style="--rating:{{item['prodRating']}}; --percent: calc({{ item['prodRating'] }} / 5 * 100%);">★★★★★</div></p>
+	</div>
+	<div id="WriteReview" style="margin-bottom: 20px; border-bottom: 1px solid #ddd; padding-bottom: 10px;">
+		{% if session.get('loggedin') %}
+			{% if session['usertype'] == 'Buyer' %}
+				<button class="open-button" action="WriteReview">Post Review</button>
+			{% elif session['usertype'] == 'Vendor' %}
+				<li>You Cant make reviews</li>
+			{% endif %}
+		{% else %}
+			<li>Log in to make reviews</li>
+		{% endif %}
+	</div>	
+		<div id="reviewSection" name="reviewSection">
+		</div>
+		<button type="button" onclick="closeForm()" style="
+    background: #d9534f;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    float: right;
+    border-radius: 6px;
+    cursor: pointer;">Close</button>
+  </form>
+</div>
 </div>
 </div>
 <script>
+const currentUserID = "{{ session['id'] }}";
+const userType = "{{ session['usertype'] }}";
+const isLoggedIn = {{ 'true' if session.get('loggedin') else 'false' }};
+
+
+</script>
+
+<script>
+
     function addToCart() {
         let quantity = document.getElementById("quantity").value;
         let itemID = {{ item['ProductID'] }};
@@ -88,9 +289,81 @@
             sender.value = min;
         }
     }
+	
+function openForm(itemID) {
+    document.getElementById("myForm").style.display = "block";
+	let StarDiv = document.getElementById("starZone");
+	StarDiv.innerHTML =`
+	<p><div class="stars-landing" style="--rating:{{item['prodRating']}}; --percent: calc({{ item['prodRating'] }} / 5 * 100%);">★★★★★</div></p>`;
+    fetch(`/get_reviews/${itemID}`, {
+        method: 'POST'
+    })
+    .then(response => response.json())
+	.then(data => {
+		if (!Array.isArray(data)) {
+			console.error("Unexpected response format:", data);
+			document.getElementById("reviewSection").innerHTML = "<p>No reviews found.</p>";
+			return;
+		}
+		const hasUserReviewed = data.some(review => review.BuyerID == currentUserID);
+		console.log(currentUserID);
+		console.log(hasUserReviewed);
+		console.log(data.find(review => review.BuyerID === 1));
+		const WriteDiv = document.getElementById("WriteReview");
+		if (!hasUserReviewed) {
+			if (!isLoggedIn) {
+				WriteDiv.innerHTML = `<p>Log in to make reviews</p>`;
+			} else if (userType === 'Vendor') {
+				WriteDiv.innerHTML = `<p>Vendors can't make reviews</p>`;
+			} else if (userType === 'Buyer') {
+				WriteDiv.innerHTML = `<button onclick="openReviewForm()">Post Review</button>`;
+			}
+		}else{
+		WriteDiv.innerHTML = `<button onclick="openReviewForm()">Rewrite Review</button>`;
+		}
+		let reviewDiv = document.getElementById("reviewSection");
+		reviewDiv.innerHTML = "";
+		data.forEach(review => {
+			reviewDiv.innerHTML += `
+				<div style="margin-bottom: 20px; border-bottom: 1px solid #ddd; padding-bottom: 10px;">
+					<h3 style="color: #1f4291;"><strong>${review.BuyerName}<strong>  ${review.RevDate}</h3>
+					<div class="stars-landing" style="--rating: ${review.RevRating}; --percent: calc(${review.RevRating} / 5 * 100%);">★★★★★</div>
+					<p><strong> ${review.RevDesc}</strong></p>
+				</div>`;
+		});
+	})
+}
+
+function openReviewForm() {
+	let StarDiv = document.getElementById("starZone");
+	let WriteDiv = document.getElementById("WriteReview");
+	let reviewDiv = document.getElementById("reviewSection");
+	StarDiv.innerHTML =`
+	<div class="rate">
+    <input type="radio" id="star5" name="rate" value="5" />
+    <label for="star5" title="text">5 stars</label>
+    <input type="radio" id="star4" name="rate" value="4" />
+    <label for="star4" title="text">4 stars</label>
+    <input type="radio" id="star3" name="rate" value="3" />
+    <label for="star3" title="text">3 stars</label>
+    <input type="radio" id="star2" name="rate" value="2" />
+    <label for="star2" title="text">2 stars</label>
+    <input type="radio" id="star1" name="rate" value="1" />
+    <label for="star1" title="text">1 star</label>
+    </div>`;
+	WriteDiv.innerHTML =`
+	<button type="submit" >Post Review</button>`;
+	reviewDiv.innerHTML='<textarea name="RevDesc"></textarea>';
+}
 
 
-
+document.getElementById("ReviewForm").addEventListener("submit", function (e) {
+	const selected = document.querySelector('input[name="rate"]:checked');
+	console.log("Rating selected:", selected ? selected.value : "None");
+});
+function closeForm() {
+  document.getElementById("myForm").style.display = "none";
+}
 </script>
 
 </body>
