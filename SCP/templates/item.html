@@ -238,7 +238,7 @@ textarea {
 
 <p>    <input style="width: 9vw; height: 3vw; border-color: #1f4291; border-radius: 30px" type="number" id="quantity" name="quantity" min="1" max={{ item['ProdQuantity'] }} oninput="checkValue(this)"> </p>
 <p>    <button style="width: 6.5vw; display:flex;justify-content:center; justify-self:center; height: 2.5vw; align-items: center" onclick="addToCart()"><p1>Add to cart</p1></button> </p>
-<p><div class="stars-landing" style="--rating:{{item['prodRating']}}; --percent: calc({{ item['prodRating'] }} / 5 * 100%);">★★★★★</div></p>
+<p><div class="stars-landing" style="--rating:{{item['prodRating']}}; --percent: calc({{ item['prodRating'] }} / 5 * 100%);">★★★★★</div>({{ review }})</p>
 <button class="open-button" onclick="openForm({{ item['ProductID'] }})">Open Form</button>
 <div id="message-box"></div>
 <div  class="form-popup" id="myForm">

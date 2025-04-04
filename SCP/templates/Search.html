@@ -45,6 +45,7 @@
                 <li><a href="{{ url_for('homepage') }}">Home</a></li>
                 <li><a href="{{ url_for('logout') }}">Logout</a></li>
 			{% else %}
+				<li><a href="{{ url_for('homepage') }}">Home</a></li>
                 <li><a href="{{ url_for('contactus') }}">Contact</a></li>
                 <li><a href="{{ url_for('login') }}">Login</a></li>
             {% endif %}
