@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <title>Cart</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='homes.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
 </head>
 <body>
 <nav style>
@@ -22,122 +23,134 @@
     </div>
 </nav>
 
-<h1 style="padding-top: 100px">Cart</h1>
+<h1 style="padding-top: 100px;">Cart<i class="fa-solid fa-shopping-cart" style="font-size: 30px; color: #1f4291; padding-bottom: 30px"></i> </h1>
 
 <div id="cart-list" onload="Check()">
     <p>Loading Cart...</p>
 </div>
+<div id="checkout-container">
 <div id="checkout">
-	<p> <a href="{{ url_for('checkoutpage') }}"> Checkout </a></p>
+    <a href="{{ url_for('checkoutpage') }}"><button> Checkout </button></a>
 </div>
-
+</div>
 
 <script>
     async function LoadCart() {
         const response = await fetch(`http://127.0.0.1:5000/cart`);
         const data = await response.json();
-		let total = 0;
+        let total = 0;
         if (data.length === 0) {
             document.getElementById("cart-list").innerHTML = "<p>Cart empty.</p>";
-			document.getElementById("checkout").innerHTML = `<p> <a href="{{ url_for('search') }}">  </a></p>`;
+            document.getElementById("checkout").innerHTML = `<p> <a href="{{ url_for('search') }}">  </a></p>`;
             return;
         }else{
-			let table = "<table border='1'><tr><th>Product ID</th><th>Image</th><th>Product Name</th><th>Price</th><th>Quantity</th><th>Cost</th><th>Shipping Options</th><th>Actions</th></tr>";
-			data.forEach(cart => {
-				const saved = JSON.parse(localStorage.getItem("selectedShipping") || "{}");
-				const selected = saved[cart.ProductID] || cart.ShippingOptions[0].ShippingID;
-				let shippingOptionsHTML = "<fieldset>";
-				cart.ShippingOptions.forEach(opt => {
-					shippingOptionsHTML += `
-						<label>
-							<input type="radio" name="shipping-${cart.ProductID}" value="${opt.ShippingID}"
-								${opt.ShippingID === selected ? 'checked' : ''}
-								onchange="saveShipping(${cart.ProductID}, ${opt.ShippingID})">
-							${opt.ShippingName} ($${opt.Cost.toFixed(2)})
-						</label><br>`;
-				});
-				shippingOptionsHTML += "</fieldset>";
-				let subtotal = cart.ProdPrice * cart.CartQuantity;
-				let FormatSubtotal = subtotal.toFixed(2);
-				total = total + subtotal;
-				table += `<tr>
-					<td>${cart.ProductID}</td>
-					<td><img src="/get_product_image/${cart.ProductID}" style="width: 100px;height:100px;"></td>
-					<td>${cart.ProdName}</td>
-					<td>$${cart.ProdPrice.toFixed(2)}</td>
-					<td>
-						<input type="number" style="width: 50px;"
-						id="quantity-${cart.ProductID}" name="quantity" 
-						value="${cart.CartQuantity}" min="1" step="1" max="${cart.ProdQuantity}"
-						oninput="checkValue(this)">
-					</td>
-					<td>$${(cart.ProdPrice * cart.CartQuantity).toFixed(2)}</td>
-					<td>${shippingOptionsHTML}</td>
-					<td>
-						<button onclick="updateCart(${cart.ProductID})">Update</button>
-						<button onclick="removeFromCart(${cart.ProductID})">Remove</button>
-					</td>
-				</tr>`;
-			});
-			table += "</table>";
-			document.getElementById("cart-list").innerHTML = table;
-			window._cartData = data; // store globally
-			updateSummary(data);
-		}
-	}
-	
-	
-	function saveShipping(productID, shippingID) {
-		let saved = JSON.parse(localStorage.getItem("selectedShipping") || "{}");
-		saved[productID] = shippingID;
-		localStorage.setItem("selectedShipping", JSON.stringify(saved));
-		
-		updateSummary(window._cartData);
-	}
-	
-	function updateSummary(cartData) {
-	let total = 0;
-	let shippingTotal = 0;
-	const saved = JSON.parse(localStorage.getItem("selectedShipping") || "{}");
+            let cartcontent= "";
+            data.forEach(cart => {
+                const saved = JSON.parse(localStorage.getItem("selectedShipping") || "{}");
+                const selected = saved[cart.ProductID] || cart.ShippingOptions[0].ShippingID;
+                let shippingOptionsHTML = "<div class='shipping-options'>";
+                cart.ShippingOptions.forEach(opt => {
+                    shippingOptionsHTML += `
+                   <label>
+                      <input type="radio" name="shipping-${cart.ProductID}" value="${opt.ShippingID}"
+                         ${opt.ShippingID === selected ? 'checked' : ''}
+                         onchange="saveShipping(${cart.ProductID}, ${opt.ShippingID})">
+                      ${opt.ShippingName} ($${opt.Cost.toFixed(2)})
+                   </label>`;
+                });
+                shippingOptionsHTML += "</div>";
+                let subtotal = cart.ProdPrice * cart.CartQuantity;
+                let FormatSubtotal = subtotal.toFixed(2);
+                total = total + subtotal;
+                cartcontent += `
+                <div class="cart-item" style="height: 60%; width: 70%; border-color: gray">
 
-	cartData.forEach(cart => {
-		total += cart.ProdPrice * cart.CartQuantity;
+                <img src="/get_product_image/${cart.ProductID}" style="width: 20%;height:20%;">
 
-		const selectedShippingID = saved[cart.ProductID];
-		const selectedOption = cart.ShippingOptions.find(opt => opt.ShippingID === selectedShippingID);
-		if (selectedOption) {
-			shippingTotal += selectedOption.Cost;
-		}
-	});
 
-	const tax = (total + shippingTotal) * 0.06;
-	const grandTotal = total + shippingTotal + tax;
-	
-	localStorage.setItem("grandTotal", grandTotal.toFixed(2));
+                 <div class="image-area" style="width: 60%; height: 60%;  ">
 
-	const summaryHTML = `
-		<p><strong>Item Subtotal:</strong> $${total.toFixed(2)}</p>
-		<p><strong>Shipping:</strong> $${shippingTotal.toFixed(2)}</p>
-		<p><strong>Sales Tax (6%):</strong> $${tax.toFixed(2)}</p>
-		<p><strong>Grand Total:</strong> $${grandTotal.toFixed(2)}</p>
-		<p><a href="{{ url_for('checkoutpage') }}"> Checkout </a></p>
-	`;
-	document.getElementById("checkout").innerHTML = summaryHTML;
-}
+                <p>${cart.ProdName}</p>
+                <p>$${cart.ProdPrice.toFixed(2)}</p>
+                <p>
 
-	
-	function checkValue(sender) {
-		let min = sender.min;
-		let max = sender.max;
-		let value = parseInt(sender.value);
-		if (value>max) {
-			sender.value = max;
-		} else if (value<min) {
-			sender.value = min;
-		}
-	}
-	
-	async function updateCart(productID) {
+                   <input type="number" style="width: 70px; height: 40px"
+                   id="quantity-${cart.ProductID}" name="quantity"
+                   value="${cart.CartQuantity}" min="1" step="1" max="${cart.ProdQuantity}"
+                   oninput="checkValue(this)"><button style="width: 60px; height: 40px; padding-bottom:1%;margin-left: -4px" onclick="updateCart(${cart.ProductID})">Update</button>
+                </p>
+
+
+                <p>$${(cart.ProdPrice * cart.CartQuantity).toFixed(2)}</p>
+                <p>${shippingOptionsHTML}</p>
+
+                <p>
+
+                   <button style="color: transparent;background-color: transparent; width: 30px; padding-left: 400px" onclick="removeFromCart(${cart.ProductID})"><i class="fa-solid fa-trash" style="font-size: 30px; color: #1f4291; "></i></button>
+                </p>
+                </div>
+             </div>`;
+            });
+            cartcontent += "</cartcontent>";
+            document.getElementById("cart-list").innerHTML = cartcontent;
+            window._cartData = data; // store globally
+            updateSummary(data);
+        }
+    }
+
+
+    function saveShipping(productID, shippingID) {
+        let saved = JSON.parse(localStorage.getItem("selectedShipping") || "{}");
+        saved[productID] = shippingID;
+        localStorage.setItem("selectedShipping", JSON.stringify(saved));
+
+        updateSummary(window._cartData);
+
+    }
+
+    function updateSummary(cartData) {
+        let total = 0;
+        let shippingTotal = 0;
+        const saved = JSON.parse(localStorage.getItem("selectedShipping") || "{}");
+
+        cartData.forEach(cart => {
+            total += cart.ProdPrice * cart.CartQuantity;
+
+            const selectedShippingID = saved[cart.ProductID];
+            const selectedOption = cart.ShippingOptions.find(opt => opt.ShippingID === selectedShippingID);
+            if (selectedOption) {
+                shippingTotal += selectedOption.Cost;
+            }
+        });
+
+        const tax = (total + shippingTotal) * 0.06;
+        const grandTotal = total + shippingTotal + tax;
+
+        localStorage.setItem("grandTotal", grandTotal.toFixed(2));
+
+        const summaryHTML = `
+       <p><strong>Item Subtotal:</strong> $${total.toFixed(2)}</p>
+       <p><strong>Shipping:</strong> $${shippingTotal.toFixed(2)}</p>
+       <p><strong>Sales Tax (6%):</strong> $${tax.toFixed(2)}</p>
+       <p><strong>Grand Total:</strong> $${grandTotal.toFixed(2)}</p>
+       <p><a href="{{ url_for('checkoutpage') }}"> Checkout </a></p>
+    `;
+        document.getElementById("checkout").innerHTML = summaryHTML;
+    }
+
+
+    function checkValue(sender) {
+        let min = sender.min;
+        let max = sender.max;
+        let value = parseInt(sender.value);
+        if (value>max) {
+            sender.value = max;
+        } else if (value<min) {
+            sender.value = min;
+        }
+    }
+
+    async function updateCart(productID) {
         let quantity = document.getElementById(`quantity-${productID}`).value;
         const response = await fetch(`/update_cart/${productID}/${quantity}`, {
             method: "POST"
@@ -152,7 +165,7 @@
         }
     }
 
-	async function removeFromCart(productID) {
+    async function removeFromCart(productID) {
         const response = await fetch(`/remove_from_cart/${productID}`, {
             method: "DELETE"
         });
@@ -165,7 +178,7 @@
             alert("Error: " + data.error);
         }
     }
-	
+
     window.onload = LoadCart;
 </script>
 

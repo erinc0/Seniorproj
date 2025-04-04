@@ -121,7 +121,7 @@ h2{
 
 }
 body {
-   height: 100vh;
+    height: 100vh;
     justify-content: center;
     min-height: 100vh;
     margin:0;
@@ -139,14 +139,14 @@ input, textarea {
 }
 
 img{
-     height: 290px;
-     width: 490px;
-     justify-self: center;
-     padding-left: 5px;
-     float: left;
+    height: 290px;
+    width: 490px;
+    justify-self: center;
+    padding-left: 5px;
+    float: left;
 
 
- }
+}
 .catalog{
     width: 760px;
     height: 500px;
@@ -228,15 +228,25 @@ header {
 
 }
 
-.row{
+.row {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
     width: 50%;
     padding-left: 25%;
-justify-content: center;
-  margin-top: 0;
+    justify-content: center;
+    margin-top: 0;
+
+}
 
 
+.image-area label{
+    display: flex;
+    align-items: flex-start;
+    vertical-align: center;
+    flex-direction: row-reverse;
+    font-size: 14px;
+    margin: 0;
+    padding: 0;
 
 }
 .row div {
@@ -432,6 +442,15 @@ body.sidenav-open #main{
     justify-content: center;
     border-radius: 28px;
 }
+
+.container3{
+    width: 100%;
+    align-items: center;
+    justify-content: center;
+    border-radius: 28px;
+    padding: 30px;
+
+}
 .search-input{
     border: none;
     outline: none;
@@ -441,7 +460,7 @@ body.sidenav-open #main{
     font-size: 1.2rem;
 }
 .search-bar{
-width: 100%;
+    width: 100%;
     max-width: 70vw;
     background: rgba(255, 255, 255,0.2);
     display: flex;
@@ -509,7 +528,7 @@ width: 100%;
     font-size: 20px;
     transition: background-color 0.3s ease;
 }
-.container3{
+.container4{
     background-image: url("back.jpg");
 }
 .image-container-section{
@@ -666,4 +685,69 @@ width: 100%;
 }
 .product-box p{
     margin: 5px 0;
+}
+
+.cart-item{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 80%;
+
+    border:1px solid gray;
+}
+.cart-item img{
+    width: 20%;
+    height: auto;
+    object-fit: cover;
+}
+.shipping-options{
+    width: 100%;
+    display: -moz-grid;
+    align-items: center;
+    max-width: 600px;
+    justify-content: center;
+    flex-direction: column;
+
+
+}
+.shipping-options label{
+display: flex;
+    align-items: center;
+    font-size: 14px;
+margin-right: 170px;
+
+    padding: 0;
+    margin-top: 0;
+}
+
+.image-area input[type="radio"]{
+
+    transform: scale(1.5);
+    vertical-align: center;
+   margin: 10px;
+    padding: 0;
+    width: 15px;
+
+
+}
+
+#checkout{
+   width: 100%;
+    padding: 15px;
+    box-sizing: border-box;
+
+}
+#shipping-options-container{
+   width: 100%;
+}
+#checkout-container{
+    width: 30%;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    position: absolute;
+    top:100px;
+    right: 0;
+    padding-top: 65px;
+    font-size: 19px;
 }
