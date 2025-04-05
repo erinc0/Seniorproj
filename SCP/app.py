@@ -10,7 +10,7 @@ from flask import Response
 app = Flask(__name__)
 CORS(app)  # Enables CORS for all routes
 
-DATABASE = "scp/SeniorCapstoneDatabase.db"
+DATABASE = "SeniorCapstoneDatabase.db"
 
 app.secret_key = 'your secret key'
 
@@ -219,7 +219,77 @@ def history():
     else:
         return render_template('BuyerOrder.html')
     
+@app.route('/VendorOrders')
+def VendorOrders():
+    return render_template('VendorOrder.html', username=session['username'])
+    
+@app.route('/Vhistory', methods=['GET']) #purchase history
+def Vhistory():
+        print("here1")
+        conn = connect_db()
+        cursor = conn.cursor()
+        SupplierID = session['id']
+        cursor.execute("SELECT * FROM OrderIWS WHERE SupplierID=?",(SupplierID,))
+        rows = cursor.fetchall()
+        data = [dict(row) for row in rows]
+        print(data)
+        conn.close()
+        return jsonify(data)
 
+@app.route('/vendor_cancel/<int:OrderItemID>', methods=['POST'])
+def vendor_cancel(OrderItemID):
+    conn = connect_db()
+    cursor = conn.cursor()
+    try:
+        cursor.execute("SELECT ProductID, Quantity FROM OrderItems WHERE OrderItemID = ?", (OrderItemID,))
+        row = cursor.fetchone()
+        if not row:
+            return jsonify({'error': 'OrderItem not found'}), 404
+        ProductID = row["ProductID"]
+        Quantity = row["Quantity"]
+        cursor.execute("""
+            UPDATE OrderItems
+            SET Status = 'Vendor Cancelled',
+                DateEnd = CURRENT_DATE
+            WHERE OrderItemID = ?
+        """, (OrderItemID,))
+        cursor.execute("""
+            UPDATE Product
+            SET ProdQuantity = ProdQuantity + ?
+            WHERE ProductID = ?
+        """, (Quantity, ProductID))
+        conn.commit()
+        return jsonify({'success': True}), 200
+    except sqlite3.Error as e:
+        return jsonify({'error': str(e)}), 500
+    finally:
+        conn.close()
+
+@app.route('/vendor_approve/<int:OrderItemID>', methods=['POST'])
+def vendor_approve(OrderItemID):
+        conn = connect_db()
+        cursor = conn.cursor()
+        if (OrderItemID == 0):
+            try:
+                cursor.execute("""UPDATE OrderItems SET Status = 'Processing'
+                WHERE ProductID IN (
+                    SELECT ProductID FROM Product WHERE SupplierID = ?
+                ) AND Status = 'Pending'""", (session['id'],))
+                conn.commit()
+                return jsonify({'success': True}), 200
+            except sqlite3.Error as e:
+                return jsonify({'error': str(e)}), 500
+        else:  
+            try:
+                cursor.execute("""UPDATE OrderItems SET Status = 'Processing'
+                WHERE OrderItemID=? AND Status = 'Pending'""", (OrderItemID,))
+                conn.commit()
+                return jsonify({'success': True}), 200
+            except sqlite3.Error as e:
+                return jsonify({'error': str(e)}), 500
+            finally:
+                conn.close()           
+        
 @app.route('/pcbuilder')
 def pcbuilder():
     return render_template('pcbuilder.html')
@@ -545,6 +615,8 @@ def post_review(ItemID):
 def add_to_cart(ItemID,quantity):
     if 'loggedin' not in session:
         return jsonify({'error': 'User not logged in'}), 401
+    if (session['usertype'] != "Buyer"):
+        return jsonify({'error': 'Vendors cant buy'}), 401    
     print("boser")
     conn = connect_db()
     cursor = conn.cursor()
