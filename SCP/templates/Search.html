@@ -138,13 +138,26 @@
 
 <div id="sidenav" class="sidenav">
     <a href="javascript:void(0)" class="closebtn" onclick="closeNav()"><i class="fa-solid fa-x" style="color: gray; position: absolute; font-size: 20px; padding-left: 1px; padding-top: 50px"></i></a>
-    <p style="margin-bottom: -30px;justify-content: center">Filter by price</p>
+    <p style="margin-bottom: -40px;justify-content: center; padding-left: 5px; font-weight: bold">Filter by price range</p>
     <form style="padding-left: 50px; padding-top: 60px">
-        <label for="minval">Minimum</label>
-        <input type="number" name="minval" id="minval" style="position: relative; display: flex">
-        <br> <label for="maxval">Maximum</label>
-        <input type="number" name="maxval" id="maxval" style="width: 100px;"></label>
-        <br> <button type="button" onclick="userfilter()" style="width: 100px; height: 100px; position: relative; display: flex; justify-content: center">filter</button>
+
+        <input type="button" style="color: white; background-color: black; border: none; cursor: pointer; width: 70px" onclick="lowrange()" value="$0-$200">
+        <input type="button" style="color: white; background-color: black; border: none; cursor: pointer; width: 90px" onclick="midrange()" value="$200-$500">
+        <input type="button" style="color: white; background-color: black; border: none; cursor: pointer; width: 90px" onclick="expensive()" value="$500-$900">
+        <input type="button" style="color: white; background-color: black; border: none; cursor: pointer; width: 70px" onclick="veryexpensive()" value="$900+">
+<br>
+        <br><p style="margin-bottom: 20px;justify-content: center; padding-left: 5px; font-weight: bold">Custom</p>
+
+        <div style="display:flex;gap:10px; justify-content: space-between; align-items: center">
+
+
+        <input type="number" placeholder="min" name="minval" id="minval" style="position: relative; display: flex; width: 70px">
+
+        <input type="number" placeholder="max" name="maxval" id="maxval" style="width: 70px;"></label>
+
+        </div>
+        <br> <button type="button" onclick="userfilter()" style="width: 154px;  height: 40px; position: relative; display: flex; margin-top: -15px; justify-content: center">filter</button>
+        <br>
     </form>
 
 
@@ -253,6 +266,138 @@
                 resultsDiv.appendChild(imageContainer);
             });
     }
+
+
+    fetch(`http://127.0.0.1:5000/filterp?minval=${0}&maxval=${200}&search=${search}`)
+    function lowrange() {
+        document.getElementById("main").style.display = 'none';
+        document.getElementById("results").innerHTML= "";
+        let search = document.getElementById("search").value;
+
+        fetch(`http://127.0.0.1:5000/filterp?minval=${0}&maxval=${200}&search=${search}`)
+            .then(response => response.json())
+            .then(data => {
+                let resultsDiv = document.getElementById("results");
+                resultsDiv.innerHTML = "";
+                let imageContainer = document.createElement('div');
+                imageContainer.className = "image-container-section";
+                imageContainer.innerHTML='<h2 style="padding-bottom:20px"> Search Results</h2><div class="image-container">'
+
+                data.forEach(product => {
+                    let imagebox = document.createElement('div');
+                    imagebox.className = 'image-box2';
+                    imagebox.innerHTML +=
+                        `<img src="/get_product_image/${product.ProductID}"style="height:auto; border-radius:10px;">
+                      <p style="text-align: center; margin-top:10px; font-weight: bold;">  ${product.ProdName} </p>
+                       <p style="text-align: center">$${product.ProdPrice}</p>
+                        <button type="button" style="align-self: center" onclick="gotoItem(${product.ProductID})">Check item</button>
+
+`;
+                    imageContainer.querySelector('.image-container').appendChild(imagebox);
+                });
+                resultsDiv.appendChild(imageContainer);
+            });
+    }
+
+    fetch(`http://127.0.0.1:5000/filterp?minval=${200}&maxval=${500}&search=${search}`)
+    function midrange() {
+        document.getElementById("main").style.display = 'none';
+        document.getElementById("results").innerHTML= "";
+        let search = document.getElementById("search").value;
+
+        fetch(`http://127.0.0.1:5000/filterp?minval=${200}&maxval=${500}&search=${search}`)
+            .then(response => response.json())
+            .then(data => {
+                let resultsDiv = document.getElementById("results");
+                resultsDiv.innerHTML = "";
+                let imageContainer = document.createElement('div');
+                imageContainer.className = "image-container-section";
+                imageContainer.innerHTML='<h2 style="padding-bottom:20px"> Search Results</h2><div class="image-container">'
+
+                data.forEach(product => {
+                    let imagebox = document.createElement('div');
+                    imagebox.className = 'image-box2';
+                    imagebox.innerHTML +=
+                        `<img src="/get_product_image/${product.ProductID}"style="height:auto; border-radius:10px;">
+                      <p style="text-align: center; margin-top:10px; font-weight: bold;">  ${product.ProdName} </p>
+                       <p style="text-align: center">$${product.ProdPrice}</p>
+                        <button type="button" style="align-self: center" onclick="gotoItem(${product.ProductID})">Check item</button>
+
+`;
+                    imageContainer.querySelector('.image-container').appendChild(imagebox);
+                });
+                resultsDiv.appendChild(imageContainer);
+            });
+    }
+
+
+
+    fetch(`http://127.0.0.1:5000/filterp?minval=${500}&maxval=${900}&search=${search}`)
+    function expensive() {
+        document.getElementById("main").style.display = 'none';
+        document.getElementById("results").innerHTML= "";
+        let search = document.getElementById("search").value;
+
+        fetch(`http://127.0.0.1:5000/filterp?minval=${500}&maxval=${900}&search=${search}`)
+            .then(response => response.json())
+            .then(data => {
+                let resultsDiv = document.getElementById("results");
+                resultsDiv.innerHTML = "";
+                let imageContainer = document.createElement('div');
+                imageContainer.className = "image-container-section";
+                imageContainer.innerHTML='<h2 style="padding-bottom:20px"> Search Results</h2><div class="image-container">'
+
+                data.forEach(product => {
+                    let imagebox = document.createElement('div');
+                    imagebox.className = 'image-box2';
+                    imagebox.innerHTML +=
+                        `<img src="/get_product_image/${product.ProductID}"style="height:auto; border-radius:10px;">
+                      <p style="text-align: center; margin-top:10px; font-weight: bold;">  ${product.ProdName} </p>
+                       <p style="text-align: center">$${product.ProdPrice}</p>
+                        <button type="button" style="align-self: center" onclick="gotoItem(${product.ProductID})">Check item</button>
+
+`;
+                    imageContainer.querySelector('.image-container').appendChild(imagebox);
+                });
+                resultsDiv.appendChild(imageContainer);
+            });
+    }
+
+
+
+    fetch(`http://127.0.0.1:5000/filterp?minval=${900}&maxval=${100000}&search=${search}`)
+    function veryexpensive() {
+        document.getElementById("main").style.display = 'none';
+        document.getElementById("results").innerHTML= "";
+        let search = document.getElementById("search").value;
+
+        fetch(`http://127.0.0.1:5000/filterp?minval=${900}&maxval=${1000000}&search=${search}`)
+            .then(response => response.json())
+            .then(data => {
+                let resultsDiv = document.getElementById("results");
+                resultsDiv.innerHTML = "";
+                let imageContainer = document.createElement('div');
+                imageContainer.className = "image-container-section";
+                imageContainer.innerHTML='<h2 style="padding-bottom:20px"> Search Results</h2><div class="image-container">'
+
+                data.forEach(product => {
+                    let imagebox = document.createElement('div');
+                    imagebox.className = 'image-box2';
+                    imagebox.innerHTML +=
+                        `<img src="/get_product_image/${product.ProductID}"style="height:auto; border-radius:10px;">
+                      <p style="text-align: center; margin-top:10px; font-weight: bold;">  ${product.ProdName} </p>
+                       <p style="text-align: center">$${product.ProdPrice}</p>
+                        <button type="button" style="align-self: center" onclick="gotoItem(${product.ProductID})">Check item</button>
+
+`;
+                    imageContainer.querySelector('.image-container').appendChild(imagebox);
+                });
+                resultsDiv.appendChild(imageContainer);
+            });
+    }
+
+
+
 
 
 
