@@ -78,7 +78,7 @@
     <div class="text-overlay" style="position: absolute">
         All Things Computers.
         <div class="buttons">
-            <button>Vendors</button>
+            <button onclick="window.location.href = '{{ url_for('login') }}'">Vendors</button>
             <button onclick="prodimg('')">Browse Products</button>
         </div>
     </div>
@@ -215,7 +215,7 @@
 
 <script>
     function gotoItem(productId) {
-        window.location.href = `/item/${productId}`;  // Redirect to item page with the product ID
+        window .location.href = `/item/${productId}`;  // Redirect to item page with the product ID
         document.getElementById("bruh1").remove();
     }
 </script>

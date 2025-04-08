@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Edit Existing Products</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='homes.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
+</head>
+<body>
+
+<nav style>
+    <div class="nav-content">
+        <div class="logo">
+            <img src = "{{ url_for('static', filename='estation.webp') }}" alt="logo"
+                 style="width: 130px;height:70px; padding: 10px 4px;">
+        </div>
+
+        <ul class="nav-links" style="float: right">
+            <li><a href="{{url_for('Vhomepage')}}">Back to Home</a></li>
+            <li><a href="{{ url_for('search')}}">Search</a></li>
+            <li><a href="{{url_for('login')}}">Logout</a></li>
+        </ul>
+    </div>
+</nav>
+
+
+<div class="container2" style="padding-top: 30px; padding-left: 19px" >
+    <div class="search-input">
+        <div class="search-bar"style="width: 900px; padding-left: 140px">
+            <input type="text" id="search" placeholder="Search by product name">
+            <button onclick="searchProducts()" style="width: 20%;
+    background-color: transparent;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-top: 0px;
+}"><i class="fa-solid fa-magnifying-glass" style="color: gray; position: absolute; padding-top: 5px;"></i></button>
+        </div>
+
+        <h2 style="padding-bottom: 20px; padding-top: 20px; padding-left: 150px">Product Listings</h2>
+        <div id="results"></div>
+
+        <div class="container2">
+    </div>
+
+</div>
+</div>
+
+<script>
+    function searchProducts() {
+        let search = document.getElementById("search").value;
+        fetch(`/vendor_products?search=${search}`)
+            .then(response => response.json())
+            .then(data => {
+                let resultsDiv = document.getElementById("results");
+                resultsDiv.innerHTML = "";
+                data.forEach(product => {
+                    resultsDiv.innerHTML += `
+                    <div class="vendor-box">
+                        <p>Product ID: ${product.ProductID}</p>
+                        <p>Product Name: ${product.ProdName}</p>
+                        <p>Price: $${product.ProdPrice}</p>
+                        <p>Quantity: ${product.ProdQuantity}</p>
+                        <p>Description: ${product.ProdDesc}</p>
+                        <p>Supplier ID: ${product.SupplierID}</p>
+                        <img src="data:image/jpeg;base64,${product.ProdImage}" alt="Product Image" width="100">
+                        <br>
+                        <button onclick="editProduct(${product.ProductID})">Edit</button>
+                    </div>`;
+                });
+            });
+    }
+
+    let search = document.getElementById("search").value;
+    fetch(`/vendor_products?search=${search}`)
+        .then(response => response.json())
+        .then(data => {
+            let resultsDiv = document.getElementById("results");
+            resultsDiv.innerHTML = "";
+            data.forEach(product => {
+                resultsDiv.innerHTML += `
+                <div class ="vendor-box">
+                <img src="data:image/jpeg;base64,${product.ProdImage}" alt="Product Image" width="100">
+                <div class = "vendor-description">
+                    <div style="margin: 10px; padding: 10px;">
+
+                        <p>Product Name: ${product.ProdName}</p>
+                        <p>Description: ${product.ProdDesc}</p>
+                           <p>Product ID: ${product.ProductID}</p>
+
+                        <p>Price: $${product.ProdPrice}</p>
+                        <p>Quantity: ${product.ProdQuantity}</p>
+
+                        </div>
+                        <button onclick="editProduct(${product.ProductID})"
+
+                        <i class="fa-solid fa-file-pen" style="color: black; position: absolute; font-size:40px; padding-top: 20px;"></i></button>
+                    </div>`;
+            });
+        });
+
+
+    function editProduct(productId) {
+        window.location.href = `/VendorEditProd/${productId}`;
+    }
+
+
+</script>
+
+
+
+</body>
+</html>

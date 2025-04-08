@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+
     <meta charset="UTF-8">
     <title>Vendors Orders</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='homes.css') }}">
@@ -14,16 +15,16 @@
         </div>
 
         <ul class="nav-links" style="float: right">
-            <li><a href="{{url_for('homepage')}}">Back to Home</a></li>
+            <li><a href="{{url_for('Vhomepage')}}">Back to Home</a></li>
             <li><a href="{{ url_for('search')}}">Search</a></li>
             <li><a href="{{url_for('login')}}">Logout</a></li>
         </ul>
     </div>
 </nav>
 
-<h1 style="padding-top: 50px">Active Orders</h1>
+<h1 style="padding-top: 100px">Active Orders</h1>
 
-<button onclick="VApproveOrder(0)">Approve All</button>
+<button style="width: 190px; display:flex; justify-self: center; justify-content: center; text-align: center; align-items: center" onclick="VApproveOrder(0)">Approve All</button>
 <div id="ActiveOrder-list" action="onload">
     <p>Loading orders...</p>
 </div>
