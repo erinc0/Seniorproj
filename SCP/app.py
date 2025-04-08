@@ -10,11 +10,8 @@ from flask import Response
 app = Flask(__name__)
 CORS(app)  # Enables CORS for all routes
 
-<<<<<<< HEAD
-DATABASE = "scp/SeniorCapstoneDatabase.db"
-=======
 DATABASE = "SCP/SeniorCapstoneDatabase.db"
->>>>>>> parent of 66a6edd (Merge remote-tracking branch 'origin/bruh' into bruh)
+
 
 app.secret_key = 'your secret key'
 
@@ -297,6 +294,10 @@ def vendor_approve(OrderItemID):
 @app.route('/pcbuilder')
 def pcbuilder():
     return render_template('pcbuilder.html')
+
+@app.route('/overview')
+def overview():
+    return render_template('overview.html')
 
 @app.route('/helpvideos')
 def helpvideos():
