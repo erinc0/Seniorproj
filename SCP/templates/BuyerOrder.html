@@ -4,6 +4,17 @@
     <meta charset="UTF-8">
     <title>Recent Orders</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='homes.css') }}">
+    <style>
+        button{
+            background-color: #1f4291;
+            padding:14px 0;
+    font-size: 1.3em;
+            border-radius: 4px;
+            scale: 60%;
+
+        }
+
+    </style>
 </head>
 <body>
 <nav style>
@@ -21,7 +32,7 @@
     </div>
 </nav>
 
-<h1 style="padding-top: 50px">Recent Orders</h1>
+<h1 style="padding-top: 110px;padding-bottom: 25px">Recent Orders</h1>
 
 <div id="order-list">
     <p>Loading orders...</p>
@@ -37,27 +48,41 @@
             document.getElementById("order-list").innerHTML = "<p>No recent orders found.</p>";
             return;
         }
+        let ordersHTML=`
+            <table>
+                <thead>
+                <tr>
+                <th> Order ID</th>
+                   <th> Date</th>
+                   <th> Status</th>
+                   <th> Amount</th>
+                      <th> Action</th>
+                      </tr>
+                      </thead>
+                      <tbody>`;
 
-        let table = "<table border='1'><tr><th>Order ID</th><th>Buyer ID</th><th>Date</th><th>Status</th><th>Amount</th><th>Action</th></tr>";
+
 
         data.forEach(order => {
-            table += `<tr>
+            ordersHTML += `<tr>
                         <td>${order.OrderID}</td>
-                        <td>${order.BuyerID}</td>
+
                         <td>${order.DateStart}</td>
                         <td>${order.Status}</td>
                         <td>$${order.Amount.toFixed(2)}</td>`;
+
             if (order.Status === "Active") {
-                table += `<td><button onclick="deleteOrder(${order.OrderID})">Cancel</button></td>`;
+                ordersHTML += `<td><button onclick="deleteOrder(${order.OrderID})">Cancel</button></td>`;
             } else {
-                table += `<td><button onclick="alert('Sorry, this order cannot be cancelled due to its status being ${order.Status}. Please contact the help desk.')" disabled>Cannot Cancel</button></td>`;
+                ordersHTML += `<td><button onclick="alert('Sorry, this order cannot be cancelled due to its status being ${order.Status}. Please contact the help desk.')" disabled>Cannot Cancel</button></td>`;
             }
 
-            table += "</tr>";
-        });
 
-        table += "</table>";
-        document.getElementById("order-list").innerHTML = table;
+        });
+        ordersHTML+= `</tbody
+            </table>`;
+
+        document.getElementById("order-list").innerHTML = ordersHTML;
     }
 
     async function deleteOrder(OrderID) {

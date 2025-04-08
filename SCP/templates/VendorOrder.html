@@ -1,35 +1,35 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+
     <meta charset="UTF-8">
     <title>Vendors Orders</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='homes.css') }}">
 </head>
 <body>
-<nav>
+<nav style>
     <div class="nav-content">
         <div class="logo">
-            <img src="{{ url_for('static', filename='estation.webp') }}" alt="logo"
+            <img src = "{{ url_for('static', filename='estation.webp') }}" alt="logo"
                  style="width: 130px;height:70px; padding: 10px 4px;">
         </div>
 
         <ul class="nav-links" style="float: right">
-            <li><a href="{{ url_for('homepage') }}">Back to Home</a></li>
-            <li><a href="{{ url_for('search') }}">Search</a></li>
-            <li><a href="{{ url_for('login') }}">Logout</a></li>
+            <li><a href="{{url_for('Vhomepage')}}">Back to Home</a></li>
+            <li><a href="{{ url_for('search')}}">Search</a></li>
+            <li><a href="{{url_for('login')}}">Logout</a></li>
         </ul>
     </div>
 </nav>
 
-<h1 style="padding-top: 50px">Active Orders</h1>
+<h1 style="padding-top: 100px">Active Orders</h1>
 
-<button onclick="VApproveOrder(0)">Approve All</button>
-
-<div id="ActiveOrder-list">
+<button style="width: 190px; display:flex; justify-self: center; justify-content: center; text-align: center; align-items: center" onclick="VApproveOrder(0)">Approve All</button>
+<div id="ActiveOrder-list" action="onload">
     <p>Loading orders...</p>
 </div>
 
-<div id="ClosedOrder-list">
+<div id="ClosedOrder-list" action="onload">
     <p>Loading orders...</p>
 </div>
 
@@ -37,79 +37,89 @@
     async function loadOrders() {
         const response = await fetch(`/Vhistory`);
         const data = await response.json();
-
         if (data.length === 0) {
             document.getElementById("ActiveOrder-list").innerHTML = "<p>No recent orders found.</p>";
-            document.getElementById("ClosedOrder-list").innerHTML = "<p>No orders found.</p>";
+			document.getElementById("ClosedOrder-list").innerHTML = "<p>No orders found.</p>";
             return;
         }
+        let ActiveTable = `<table border='1'><tr><th>Order Item ID</th><th>Order ID</th><th>Buyer ID</th>
+		<th>ProductID</th><th>DateStart</th><th>DateEnd</th><th>Quantity</th><th>Subtotal</th>
+		<th>Status</th><th>Action</th></tr>`;
 
-        function buildTable(title, rows, isActive) {
-            let table = `<table border='1'>
-                <colgroup>
-                    <col style="width: 80px;">
-                    <col style="width: 80px;">
-                    <col style="width: 200px;"> <!-- Buyer -->
-                    <col style="width: 220px;"> <!-- Product -->
-                    <col style="width: 100px;">
-                    <col style="width: 100px;">
-                    <col style="width: 80px;">
-                    <col style="width: 100px;">
-                    <col style="width: 100px;">
-                    <col style="width: 140px;">
-                </colgroup>
-                <tr>
-                    <th>Order Item ID</th>
-                    <th>Order ID</th>
-                    <th>Buyer</th>
-                    <th>Product</th>
-                    <th>DateStart</th>
-                    <th>DateEnd</th>
-                    <th>Quantity</th>
-                    <th>Subtotal</th>
-                    <th>Status</th>
-                    <th>Action</th>
-                </tr>`;
+        data.forEach(order => {
+			console.log(order)
+			if (order.Status === ("Pending")){
+				ActiveTable += `<tr>
+					<td>${order.OrderItemID}</td>
+					<td>${order.OrderID}</td>
+					<td>${order.BuyerID}</td>
+					<td>${order.ProductID}</td>
+					<td>${order.DateStart}</td>
+					<td>${order.DateEnd}</td>
+					<td>${order.Quantity}</td>
+					<td>$${order.Subtotal.toFixed(2)}</td>
+					<td>${order.Status}</td>
+					<td><button onclick="VApproveOrder(${order.OrderItemID})">Approve</button>
+					<br><button onclick="VCancelOrder(${order.OrderItemID})">Cancel</button></td>`;
+				ActiveTable += "</tr>";
+			} else if (order.Status == ('Processing')){
+				ActiveTable += `<tr>
+					<td>${order.OrderItemID}</td>
+					<td>${order.OrderID}</td>
+					<td>${order.BuyerID}</td>
+					<td>${order.ProductID}</td>
+					<td>${order.DateStart}</td>
+					<td>${order.DateEnd}</td>
+					<td>${order.Quantity}</td>
+					<td>$${order.Subtotal.toFixed(2)}</td>
+					<td>${order.Status}</td>
+					<td><button onclick="VCancelOrder(${order.OrderItemID})">Cancel</button></td>`;
+				ActiveTable += "</tr>";
+            } else if (order.Status == ('Shipping')){
+				ActiveTable += `<tr>
+					<td>${order.OrderItemID}</td>
+					<td>${order.OrderID}</td>
+					<td>${order.BuyerID}</td>
+					<td>${order.ProductID}</td>
+					<td>${order.DateStart}</td>
+					<td>${order.DateEnd}</td>
+					<td>${order.Quantity}</td>
+					<td>$${order.Subtotal.toFixed(2)}</td>
+					<td>${order.Status}</td>
+					<td>No Actions available</td>`;
+				ActiveTable += "</tr>";
+            }
+        });
+        ActiveTable += "</table>";
+        document.getElementById("ActiveOrder-list").innerHTML = ActiveTable;
+		
+		let ClosedTable = `<table border='1'><tr><th>Order Item ID</th><th>Order ID</th><th>Buyer ID</th>
+		<th>ProductID</th><th>DateStart</th><th>DateEnd</th><th>Quantity</th><th>Subtotal</th>
+		<th>Status</th><th>Action</th></tr>`;
 
-            rows.forEach(order => {
-                const dateEnd = order.DateEnd === null || order.DateEnd === "null" ? "N/A" : order.DateEnd;
-                let actions = "No Actions";
-
-                if (order.Status === "Pending") {
-                    actions = `<button onclick="VApproveOrder(${order.OrderItemID})">Approve</button><br>
-                               <button onclick="VCancelOrder(${order.OrderItemID})">Cancel</button>`;
-                } else if (order.Status === "Processing") {
-                    actions = `<button onclick="VCancelOrder(${order.OrderItemID})">Cancel</button>`;
-                }
-
-                table += `
-                    <tr>
-                        <td>${order.OrderItemID}</td>
-                        <td>${order.OrderID}</td>
-                        <td>${order.BuyerName}</td>
-                        <td>${order.ProdName}</td>
-                        <td>${order.DateStart}</td>
-                        <td>${dateEnd}</td>
-                        <td>${order.Quantity}</td>
-                        <td>$${order.Subtotal.toFixed(2)}</td>
-                        <td>${order.Status}</td>
-                        <td>${actions}</td>
-                    </tr>`;
-            });
-
-            table += "</table>";
-            return table;
-        }
-
-        const activeOrders = data.filter(order => ["Pending", "Processing", "Shipping"].includes(order.Status));
-        const closedOrders = data.filter(order => !["Pending", "Processing", "Shipping"].includes(order.Status));
-
-        document.getElementById("ActiveOrder-list").innerHTML = buildTable("Active Orders", activeOrders, true);
-        document.getElementById("ClosedOrder-list").innerHTML = buildTable("Closed Orders", closedOrders, false);
-    }
+        data.forEach(order => {
+			if (order.Status !== "Pending" && order.Status !== "Processing" && order.Status !== "Shipping"){
+				ClosedTable += `<tr>
+					<td>${order.OrderItemID}</td>
+					<td>${order.OrderID}</td>
+					<td>${order.BuyerID}</td>
+					<td>${order.ProductID}</td>
+					<td>${order.DateStart}</td>
+					<td>${order.DateEnd}</td>
+					<td>${order.Quantity}</td>
+					<td>$${order.Subtotal.toFixed(2)}</td>
+					<td>${order.Status}</td>
+					<td>No Actions</td>`;
+				ClosedTable += "</tr>";
+			}
+            
+        });
+        ClosedTable += "</table>";
+        document.getElementById("ClosedOrder-list").innerHTML = ClosedTable;
+	}
 
     async function VCancelOrder(OrderItemID) {
-        const response = await fetch(`/vendor_cancel/${OrderItemID}`, {
+        const response = await fetch(`/vendor_cancel/$OrderItemID`, {
             method: 'POST'
         });
         const result = await response.json();
@@ -120,11 +130,11 @@
             alert("Error: " + result.error);
         }
     }
-
-    async function VApproveOrder(OrderItemID) {
+	
+	async function VApproveOrder(OrderItemID) {
         const response = await fetch(`/vendor_approve/${OrderItemID}`, {
-            method: 'POST'
-        });
+			method: 'POST'
+		})
         const result = await response.json();
         if (result.success) {
             alert("Order Approved successfully");
@@ -133,9 +143,9 @@
             alert("Error: " + result.error);
         }
     }
-
+	
+//
     window.onload = loadOrders;
 </script>
-
 </body>
 </html>

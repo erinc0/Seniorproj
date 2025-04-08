@@ -3,13 +3,34 @@
 <head>
     <meta charset="UTF-8">
     <title>Cart</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='homes.css') }}">
+	<style>
+		input{
+			height: 80%;
+		}
+	</style>
 </head>
 <body>
+<nav style>
+	<div class="nav-content">
+		<div class="logo">
+			<img src = "{{ url_for('static', filename='estation.webp') }}" alt="logo"
+				 style="width: 130px;height:70px; padding: 10px 4px;">
+		</div>
+
+		<ul class="nav-links" style="float: right">
+			<li><a href="{{url_for('Bhomepage')}}">Back to Home</a></li>
+			<li><a href="{{ url_for('search')}}">Search</a></li>
+			<li><a href="{{url_for('login')}}">Logout</a></li>
+			<li> <a href="{{ url_for('cartpage') }}"> Return to Cart </a></li>
+		</ul>
+	</div>
+</nav>
+
 <header>
-<img src="{{ url_for('static', filename='estation1.png') }}" alt="eStation Logo" width="150">
 </header>
 <body>
+
 <div id="main">
     <h1>Checkout</h1>
     <form id="checkoutForm" action="{{ url_for('checkout') }}" method="post">
@@ -78,7 +99,7 @@
 		<br>
 		<label for="ZIP">ZIP/Postal code </label>
 		<input type="text" id="ZIP" name="ZIP" placeholder="48309" required>
-		<label for="BillingSame"> is the billing address the same </label><br>
+		<label for="BillingSame"> Is the billing address the same? </label>
 		<input onclick="ShowBilling()" type="checkbox" id="BillingSame" name="BillingSame" value="same" checked>
 		<div id="BillingAddress" hidden>
 			<p>Billing Address</p>
@@ -148,9 +169,10 @@
 		</div>
 		<button type="button" onclick="GoToPaySection()">Go to Payment Section</button>
 	</div>
+
 	<div id="PaySection" hidden="True">
-		<button type="button" onclick="GoToAddressSection()">Go to Address Section</button>
-        <label>Payment Type:<br>
+		<a href="javascript:void(0);" onclick="GoToAddressSection()">Return to Address Section</a><br><br>
+        <label style="font-weight: bold; font-size: 16px">Payment Type:<br><br>
         <select  name="Payment" id="Pay" onchange="PayType()">
 			<option disabled selected value> -- select an option -- </option>
 			<option value="Paypal">Paypal</option>
@@ -166,8 +188,7 @@
 	<div id ="test">
 <p>Grand Total: <span id="grand-total">loading...</span></p>
 	</div>
-	<p> <a href="{{ url_for('cartpage') }}"> Back to Cart </a></p>
-    <p> <a href="{{ url_for('Bhomepage') }}"> Back to Home</a></p>
+
 </div>
 <script>
 	
@@ -276,7 +297,7 @@
 		}
 		return true; // Return true if the element is not found
 	}
-	
+
 	document.addEventListener("DOMContentLoaded", function () {
 		const shippingSelections = JSON.parse(localStorage.getItem("selectedShipping") || "{}");
 		const grandTotal = localStorage.getItem("grandTotal");
@@ -288,11 +309,6 @@
 	});
 </script>
 </body>
-
-
-
-
-
 
 
 
