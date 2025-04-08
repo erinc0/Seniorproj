@@ -10,7 +10,11 @@ from flask import Response
 app = Flask(__name__)
 CORS(app)  # Enables CORS for all routes
 
+<<<<<<< HEAD
 DATABASE = "scp/SeniorCapstoneDatabase.db"
+=======
+DATABASE = "SCP/SeniorCapstoneDatabase.db"
+>>>>>>> parent of 66a6edd (Merge remote-tracking branch 'origin/bruh' into bruh)
 
 app.secret_key = 'your secret key'
 
@@ -223,37 +227,18 @@ def history():
 def VendorOrders():
     return render_template('VendorOrder.html', username=session['username'])
     
-@app.route('/Vhistory', methods=['GET'])
+@app.route('/Vhistory', methods=['GET']) #purchase history
 def Vhistory():
-    conn = connect_db()
-    cursor = conn.cursor()
-    SupplierID = session['id']
-    cursor.execute("""
-        SELECT 
-            OI.OrderItemID,
-            OI.OrderID,
-            B.BuyerName,
-            P.ProdName,
-            OI.DateStart,
-            OI.DateEnd,
-            OI.Quantity,
-            OI.Subtotal,
-            OI.Status
-        FROM OrderIWS OI
-        JOIN Buyer B ON OI.BuyerID = B.BuyerID
-        JOIN Product P ON OI.ProductID = P.ProductID
-        WHERE OI.SupplierID = ?
-    """, (SupplierID,))
-    rows = cursor.fetchall()
-    data = []
-    for row in rows:
-        row = dict(row)
-        if row["DateEnd"] in (None, "null"):
-            row["DateEnd"] = "N/A"
-        data.append(row)
-    conn.close()
-    return jsonify(data)
-
+        print("here1")
+        conn = connect_db()
+        cursor = conn.cursor()
+        SupplierID = session['id']
+        cursor.execute("SELECT * FROM OrderIWS WHERE SupplierID=?",(SupplierID,))
+        rows = cursor.fetchall()
+        data = [dict(row) for row in rows]
+        print(data)
+        conn.close()
+        return jsonify(data)
 
 @app.route('/vendor_cancel/<int:OrderItemID>', methods=['POST'])
 def vendor_cancel(OrderItemID):
