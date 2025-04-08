@@ -1,41 +1,14 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <style>
-input[type="checkbox"]{
-    transform: scale(.5);
-float: right;
-    display: flex;
-}
-.checkbox-label{
-    display: flex;
-    align-items: center;
-}
-
-    </style>
     <meta charset="UTF-8">
     <link rel="stylesheet" href="{{ url_for('static', filename='homes.css') }}">
     <title>VendorAdd</title>
 </head>
 <body>
+    {% include 'topnavVendor.html' %}
 
-<nav style>
-    <div class="nav-content">
-        <div class="logo">
-            <img src = "{{ url_for('static', filename='estation.webp') }}" alt="logo"
-                 style="width: 130px;height:70px; padding: 10px 4px;">
-        </div>
-
-        <ul class="nav-links" style="float: right">
-            <li><a href="{{url_for('Vhomepage')}}">Back to Home</a></li>
-            <li><a href="{{ url_for('search')}}">Search</a></li>
-            <li><a href="{{url_for('login')}}">Logout</a></li>
-        </ul>
-    </div>
-</nav>
-
-
-<h1 style="padding-top: 100px">New Listing</h1>
+<h1>New Listing</h1>
 <main>
     <hr>
     <form action="{{ url_for('VendorAdd') }}" method="post" enctype="multipart/form-data">
@@ -74,19 +47,19 @@ float: right;
             <option value="Expansion Cards">Expansion Cards</option>
             <option value="Cables and Connectors">Cables and Connectors</option>
         </select><br><br>
-		<label>Shipping Options:</label><br><br>
-            USPS Ground Advantage<input type="checkbox" name="shipping" value="1" checked> <br>
-            USPS Priority Mail<input type="checkbox" name="shipping" value="2"> <br>
-            USPS Priority Mail Express<input type="checkbox" name="shipping" value="3">  <br>
-            UPS Ground<input type="checkbox" name="shipping" value="4"> <br>
-            UPS 2nd Day Air<input type="checkbox" name="shipping" value="5"> <br>
-            UPS Next Day Air<input type="checkbox" name="shipping" value="6"> <br>
-            FedEx Ground<input type="checkbox" name="shipping" value="7"> <br>
-            FedEx 2Day<input type="checkbox" name="shipping" value="8"><br>
-            FedEx Standard Overnight	<input type="checkbox" name="shipping" value="9"> <br>
+		<label>Shipping Options:</label><br>
+			<input type="checkbox" name="shipping" value="1" checked> USPS Ground Advantage<br>
+			<input type="checkbox" name="shipping" value="2"> USPS Priority Mail<br>
+			<input type="checkbox" name="shipping" value="3"> USPS Priority Mail Express<br>
+			<input type="checkbox" name="shipping" value="4"> UPS Ground<br>
+			<input type="checkbox" name="shipping" value="5"> UPS 2nd Day Air<br>
+			<input type="checkbox" name="shipping" value="6"> UPS Next Day Air<br>
+			<input type="checkbox" name="shipping" value="7"> FedEx Ground<br>
+			<input type="checkbox" name="shipping" value="8"> FedEx 2Day<br>
+			<input type="checkbox" name="shipping" value="9"> FedEx Standard Overnight<br>
         </label>
 		<label>Image:<br>
-        <input style="height: 45px" type="file" name="file" formenctype="multipart/form-data"/>
+        <input type="file" name="file" formenctype="multipart/form-data"/>
         </label>
 		<label> Description: <br>
 		<textarea name="description" rows="4" cols ="40"></textarea>
@@ -94,6 +67,7 @@ float: right;
         </label>
 	</form>
 </main>
+<p> <a href="{{ url_for('Vhomepage') }}"> Back to Vendor Homepage </a></p>
 </body>
 </html>
 
