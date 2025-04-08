@@ -345,7 +345,7 @@ footer {
 
 /* The navigation menu links */
 .sidenav a {
-    padding: 8px 8px 8px 32px;
+    padding: 8px 8px 8px 20px;
     text-decoration: none;
     font-size: 25px;
     color: #818181;
@@ -368,9 +368,10 @@ footer {
 }
 .sidenav.open{
     width: 250px;
+
 }
 .sidenav form{
-    padding: 20px;
+    padding: 45px;
     display: flex;
     flex-direction: column;
 }
