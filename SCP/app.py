@@ -10,7 +10,7 @@ from flask import Response
 app = Flask(__name__)
 CORS(app)  # Enables CORS for all routes
 
-DATABASE = "SeniorCapstoneDatabase.db"
+DATABASE = "SCP/SeniorCapstoneDatabase.db"
 
 app.secret_key = 'your secret key'
 
