@@ -70,7 +70,8 @@
 
 
                          </div>
-                        <button onclick="editProduct(${product.ProductID})"><i class="fa-solid fa-file-pen" style="color: black; position: absolute; font-size:40px; padding-top: 20px;"></i></button></button>
+                        <button onclick="editProduct(${product.ProductID})">
+                        <i class="fa-solid fa-file-pen" style="color: black; position: absolute; font-size:40px; padding-top: 20px;"></i></button>
                     </div>`;
                 });
             });
@@ -91,13 +92,11 @@
 
                         <p>Product Name: ${product.ProdName}</p>
                         <p>Description: ${product.ProdDesc}</p>
-
-
                         <p>Price: $${product.ProdPrice}</p>
                         <p>Quantity: ${product.ProdQuantity}</p>
 
                         </div>
-                        <button onclick="editProduct(${product.ProductID})"
+                        <button onclick="editProduct(${product.ProductID})">
 
                         <i class="fa-solid fa-file-pen" style="color: black; position: absolute; font-size:40px; padding-top: 20px;"></i></button>
                     </div>`;
