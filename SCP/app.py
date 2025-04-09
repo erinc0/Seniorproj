@@ -270,20 +270,22 @@ def vendor_cancel(OrderItemID):
 def vendor_approve(OrderItemID):
         conn = connect_db()
         cursor = conn.cursor()
+        now = datetime.today().strftime('%Y-%m-%d')
+        print(now)
         if (OrderItemID == 0):
             try:
-                cursor.execute("""UPDATE OrderItems SET Status = 'Delivered'
+                cursor.execute("""UPDATE OrderItems SET Status = 'Delivered', DateEnd = ?
                 WHERE ProductID IN (
                     SELECT ProductID FROM Product WHERE SupplierID = ?
-                ) AND Status = 'Pending'""", (session['id'],))
+                ) AND Status = 'Pending'""", (now, session['id'],))
                 conn.commit()
                 return jsonify({'success': True}), 200
             except sqlite3.Error as e:
                 return jsonify({'error': str(e)}), 500
         else:  
             try:
-                cursor.execute("""UPDATE OrderItems SET Status = 'Delivered'
-                WHERE OrderItemID=? AND Status = 'Pending'""", (OrderItemID,))
+                cursor.execute("""UPDATE OrderItems SET Status = 'Delivered', DateEnd = ?
+                WHERE OrderItemID=? AND Status = 'Pending'""", (now,OrderItemID,))
                 conn.commit()
                 return jsonify({'success': True}), 200
             except sqlite3.Error as e:
@@ -422,7 +424,7 @@ def delete_product(product_id):
 def update_product(product_id):
     conn = connect_db()
     cursor = conn.cursor()
-
+    now = datetime.today().strftime('%Y-%m-%d')
     name = request.form.get('name')
     price = request.form.get('price')
     quantity = request.form.get('quantity')
