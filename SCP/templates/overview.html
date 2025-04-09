@@ -58,15 +58,19 @@
                 data.forEach(product => {
                     resultsDiv.innerHTML += `
                     <div class="vendor-box">
-                        <p>Product ID: ${product.ProductID}</p>
+                    <img src="data:image/jpeg;base64,${product.ProdImage}" alt="Product Image" width="100">
+
+                        <div class = "vendor-description">
+                    <div style="margin: 10px; padding: 10px;">
                         <p>Product Name: ${product.ProdName}</p>
-                        <p>Price: $${product.ProdPrice}</p>
-                        <p>Quantity: ${product.ProdQuantity}</p>
                         <p>Description: ${product.ProdDesc}</p>
-                        <p>Supplier ID: ${product.SupplierID}</p>
-                        <img src="data:image/jpeg;base64,${product.ProdImage}" alt="Product Image" width="100">
-                        <br>
-                        <button onclick="editProduct(${product.ProductID})">Edit</button>
+                        <p>Price: $${product.ProdPrice}</p>
+
+                        <p>Quantity: ${product.ProdQuantity}</p>
+
+
+                         </div>
+                        <button onclick="editProduct(${product.ProductID})"><i class="fa-solid fa-file-pen" style="color: black; position: absolute; font-size:40px; padding-top: 20px;"></i></button></button>
                     </div>`;
                 });
             });
@@ -87,7 +91,7 @@
 
                         <p>Product Name: ${product.ProdName}</p>
                         <p>Description: ${product.ProdDesc}</p>
-                           <p>Product ID: ${product.ProductID}</p>
+
 
                         <p>Price: $${product.ProdPrice}</p>
                         <p>Quantity: ${product.ProdQuantity}</p>
