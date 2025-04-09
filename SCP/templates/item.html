@@ -47,7 +47,8 @@
 			font-size: var(--star-size);
 			font-family: 'Courier New', Courier, monospace;
 			line-height: 1;
-			text-align:left;
+			text-align:center;
+            width: 100%;
 			letter-spacing:0px;
 			padding-left:0px;
 			padding-right:0px;
@@ -152,7 +153,7 @@
   opacity: 1;
 }
 /* this i found on https://codepen.io/hesguru/pen/BaybqXv -JASIN . . .
- i do the sqlite stuff and the python stuff. I just needed to get these reviews working. SO NOT WORTH */
+ i do the sqlite stuff and the python stuff. I just needed to get these reviews working.  */
 *{
     margin: 0;
     padding: 0;
@@ -238,8 +239,8 @@ textarea {
 
 <p>    <input style="width: 9vw; height: 3vw; border-color: #1f4291; border-radius: 30px" type="number" id="quantity" name="quantity" min="1" max={{ item['ProdQuantity'] }} oninput="checkValue(this)"> </p>
 <p>    <button style="width: 6.5vw; display:flex;justify-content:center; justify-self:center; height: 2.5vw; align-items: center" onclick="addToCart()"><p1>Add to cart</p1></button> </p>
-<p><div class="stars-landing" style="--rating:{{item['prodRating']}}; --percent: calc({{ item['prodRating'] }} / 5 * 100%);">★★★★★</div>({{ review }})</p>
-<button class="open-button" onclick="openForm({{ item['ProductID'] }})">Open Form</button>
+        <p><div class="stars-landing" style="--rating:{{item['prodRating']}}; --percent: calc({{ item['prodRating'] }} / 5 * 100%);">★★★★★</div><div style="text-align: center"> ({{ review }})</div></p>
+<button class="open-button" onclick="openForm({{ item['ProductID'] }})">Write Review</button>
 <div id="message-box"></div>
 <div  class="form-popup" id="myForm">
   <form id="ReviewForm" name="ReviewForm" action="{{ url_for('post_review', ItemID=item['ProductID']) }}" method="post" class="form-container">
@@ -312,7 +313,7 @@ function openForm(itemID) {
     document.getElementById("myForm").style.display = "block";
 	let StarDiv = document.getElementById("starZone");
 	StarDiv.innerHTML =`
-	<p><div class="stars-landing" style="--rating:{{item['prodRating']}}; --percent: calc({{ item['prodRating'] }} / 5 * 100%);">★★★★★</div></p>`;
+	<p><div class="stars-landing" style="--rating:{{item['prodRating']}}; --percent: calc({{ item['prodRating'] }} / 5 * 100%); align-self: center; align-content: center; align-items: center">★★★★★</div></p>`;
     fetch(`/get_reviews/${itemID}`, {
         method: 'POST'
     })
