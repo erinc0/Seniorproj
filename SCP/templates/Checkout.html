@@ -29,7 +29,6 @@
 
 <header>
 </header>
-<body>
 
 <div id="main">
     <h1>Checkout</h1>
@@ -191,7 +190,7 @@
 
 </div>
 <script>
-	
+
 	function ShowBilling(){
 		const checkbox = document.getElementById("BillingSame");
 		const BillingAddress = document.getElementById("BillingAddress");
@@ -201,7 +200,7 @@
 			BillingAddress.removeAttribute("hidden");
 		  }
 	}
-	
+
 	function GoToPaySection() {
 	const billingSame = document.getElementById("BillingSame").checked;
 	const shippingFields = ["Street1", "City", "State", "ZIP"];
@@ -229,15 +228,15 @@
 	document.getElementById("PaySection").removeAttribute("hidden");
 	document.getElementById("addressSection").setAttribute("hidden", "true");
 }
-	
-	
+
+
 	function GoToAddressSection(){
 		const PaySection = document.getElementById("PaySection");
 		const addressSection = document.getElementById("addressSection");
 		addressSection.removeAttribute("hidden");
 		PaySection.setAttribute("hidden", "true");
 	}
-	
+
 	function PayType() {
         let InfoDiv = document.getElementById("PaymentInfo");
         if (document.getElementById("Pay").value === "Paypal") {
@@ -262,7 +261,7 @@
             InfoDiv.innerHTML = "";
         }
     }
-	
+
 	function CompletePayment() {
 	const shipo = document.getElementById("shippingSelections");
 	console.log(shipo)
@@ -289,7 +288,7 @@
         alert("Unexpected error occurred.");
     });
 }
-	
+
 	function isInputEmpty(inputId) {
 		const inputElement = document.getElementById(inputId);
 		if (inputElement) {
@@ -312,5 +311,4 @@
 
 
 
-</body>
 </html>

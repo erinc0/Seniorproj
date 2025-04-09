@@ -29,6 +29,7 @@
     <p>Loading orders...</p>
 </div>
 
+<h1 style="padding-top: 100px">Closed Orders</h1>
 <div id="ClosedOrder-list" action="onload">
     <p>Loading orders...</p>
 </div>
@@ -42,7 +43,7 @@
 			document.getElementById("ClosedOrder-list").innerHTML = "<p>No orders found.</p>";
             return;
         }
-        let ActiveTable = `<table border='1'><tr><th>Order Item ID</th><th>Order ID</th><th>Buyer ID</th>
+        let ActiveTable = `<table border='1'><tr><th>Order Item ID</th><th>Order ID</th><th>Buyer Name</th>
 		<th>ProductID</th><th>DateStart</th><th>DateEnd</th><th>Quantity</th><th>Subtotal</th>
 		<th>Status</th><th>Action</th></tr>`;
 
@@ -52,7 +53,7 @@
 				ActiveTable += `<tr>
 					<td>${order.OrderItemID}</td>
 					<td>${order.OrderID}</td>
-					<td>${order.BuyerID}</td>
+					<td>${order.BuyerName}</td>
 					<td>${order.ProductID}</td>
 					<td>${order.DateStart}</td>
 					<td>${order.DateEnd}</td>
@@ -66,7 +67,7 @@
 				ActiveTable += `<tr>
 					<td>${order.OrderItemID}</td>
 					<td>${order.OrderID}</td>
-					<td>${order.BuyerID}</td>
+					<td>${order.BuyerName}</td>
 					<td>${order.ProductID}</td>
 					<td>${order.DateStart}</td>
 					<td>${order.DateEnd}</td>
@@ -79,7 +80,7 @@
 				ActiveTable += `<tr>
 					<td>${order.OrderItemID}</td>
 					<td>${order.OrderID}</td>
-					<td>${order.BuyerID}</td>
+					<td>${order.BuyerName}</td>
 					<td>${order.ProductID}</td>
 					<td>${order.DateStart}</td>
 					<td>${order.DateEnd}</td>
@@ -93,7 +94,7 @@
         ActiveTable += "</table>";
         document.getElementById("ActiveOrder-list").innerHTML = ActiveTable;
 		
-		let ClosedTable = `<table border='1'><tr><th>Order Item ID</th><th>Order ID</th><th>Buyer ID</th>
+		let ClosedTable = `<table border='1'><tr><th>Order Item ID</th><th>Order ID</th><th>Buyer Name</th>
 		<th>ProductID</th><th>DateStart</th><th>DateEnd</th><th>Quantity</th><th>Subtotal</th>
 		<th>Status</th><th>Action</th></tr>`;
 
@@ -102,7 +103,7 @@
 				ClosedTable += `<tr>
 					<td>${order.OrderItemID}</td>
 					<td>${order.OrderID}</td>
-					<td>${order.BuyerID}</td>
+					<td>${order.BuyerName}</td>
 					<td>${order.ProductID}</td>
 					<td>${order.DateStart}</td>
 					<td>${order.DateEnd}</td>

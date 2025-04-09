@@ -691,6 +691,7 @@ body.sidenav-open #main{
 .vendor-box button{
     padding: 10px;
     background-color: transparent;
+    margin-left: auto;
     color: white;
     border-radius: 5px;
     position: absolute;
