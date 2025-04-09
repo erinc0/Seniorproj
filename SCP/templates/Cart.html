@@ -46,8 +46,8 @@
         }else{
             let cartcontent= "";
             data.forEach(cart => {
-                const saved = JSON.parse(localStorage.getItem("selectedShipping") || "{}");
-                const selected = saved[cart.ProductID] || cart.ShippingOptions[0].ShippingID;
+                let saved = JSON.parse(localStorage.getItem("selectedShipping") || "{}");
+                const selected = saved[cart.ProductID] || cart.ShippingOptions[0].ShippingID
                 let shippingOptionsHTML = "<div class='shipping-options'>";
                 cart.ShippingOptions.forEach(opt => {
                     shippingOptionsHTML += `
@@ -90,7 +90,10 @@
                 </p>
                 </div>
              </div>`;
-            });
+            saved[cart.ProductID] = selected;
+			console.log(saved)
+			localStorage.setItem("selectedShipping", JSON.stringify(saved));
+			});
             cartcontent += "</cartcontent>";
             document.getElementById("cart-list").innerHTML = cartcontent;
             window._cartData = data; // store globally
