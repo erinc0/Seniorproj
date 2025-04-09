@@ -272,7 +272,7 @@ def vendor_approve(OrderItemID):
         cursor = conn.cursor()
         if (OrderItemID == 0):
             try:
-                cursor.execute("""UPDATE OrderItems SET Status = 'Processing'
+                cursor.execute("""UPDATE OrderItems SET Status = 'Delivered'
                 WHERE ProductID IN (
                     SELECT ProductID FROM Product WHERE SupplierID = ?
                 ) AND Status = 'Pending'""", (session['id'],))
@@ -282,7 +282,7 @@ def vendor_approve(OrderItemID):
                 return jsonify({'error': str(e)}), 500
         else:  
             try:
-                cursor.execute("""UPDATE OrderItems SET Status = 'Processing'
+                cursor.execute("""UPDATE OrderItems SET Status = 'Delivered'
                 WHERE OrderItemID=? AND Status = 'Pending'""", (OrderItemID,))
                 conn.commit()
                 return jsonify({'success': True}), 200
