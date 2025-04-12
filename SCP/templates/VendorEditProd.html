@@ -43,9 +43,40 @@
 </form>
 
 <!-- so much timeee-->
-<form action="{{ url_for('delete_product', product_id=product['ProductID']) }}" method="post" onsubmit="return confirm('Are you sure you want to delete this product?');">
+<form action="{{ url_for('delete_product', product_id=product['ProductID']) }}" method="post" onsubmit="return confirmDelete(this);">
+
     <button type="submit" style="background-color: red; color: white;">Delete Product</button>
 </form>
+
+<div id="confirm-overlay" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.4); backdrop-filter:blur(3px); z-index:9998;"></div>
+
+<div id="confirm-box" style="display:none; position:fixed; top:50%; left:50%; transform:translate(-50%, -50%); background:white; border:2px solid black; padding:25px 40px; z-index:9999; text-align:center; box-shadow:0 4px 20px rgba(0,0,0,0.3); border-radius:10px; max-width: 400px;">
+    <p id="confirm-message" style="margin-bottom: 20px; font-size: 16px;">Are you sure you want to delete this product?</p>
+    <button onclick="confirmYes()" style="background-color:#dc3545; color:white; border:none; padding:10px 20px; border-radius:4px; cursor:pointer; margin-right:10px;">Yes</button>
+    <button onclick="confirmNo()" style="background-color:#007BFF; color:white; border:none; padding:10px 20px; border-radius:4px; cursor:pointer;">No</button>
+</div>
+<script>
+    let confirmForm = null;
+
+    function confirmDelete(form) {
+        confirmForm = form;
+        document.getElementById('confirm-box').style.display = 'block';
+        document.getElementById('confirm-overlay').style.display = 'block';
+        return false; // prevent default form submission
+    }
+
+    function confirmYes() {
+        document.getElementById('confirm-box').style.display = 'none';
+        document.getElementById('confirm-overlay').style.display = 'none';
+        if (confirmForm) confirmForm.submit();
+    }
+
+    function confirmNo() {
+        document.getElementById('confirm-box').style.display = 'none';
+        document.getElementById('confirm-overlay').style.display = 'none';
+        confirmForm = null;
+    }
+</script>
 
 </body>
 </html>
